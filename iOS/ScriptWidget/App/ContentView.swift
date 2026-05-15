@@ -31,6 +31,8 @@ struct ContentView: View {
                 .tabItem({ TabLabel(imageName: "chart.xyaxis.line", label: "Components")})
             APIsHomeView()
                 .tabItem({ TabLabel(imageName: "pencil.line", label: "APIs")})
+            DocsHomeView()
+                .tabItem({ TabLabel(imageName: "book.fill", label: "Docs")})
         }
     }
 }

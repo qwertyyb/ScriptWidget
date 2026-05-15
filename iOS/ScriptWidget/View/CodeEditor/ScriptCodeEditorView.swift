@@ -56,6 +56,8 @@ struct ScriptCodeEditorView: View {
     @State var showEditAttributesView = false
     @State var showShareActivity = false
     @State var showResourceCodeView = false
+    @State var showDocsOverlay = false
+    @State private var docsOverlayDetent: PresentationDetent = .large
     
     @State private var showingAlert = false
     @State private var alertMessage = ""
@@ -106,7 +108,16 @@ struct ScriptCodeEditorView: View {
     
     var leadingButtons: some View {
         HStack {
-            if self.mode != .creator  {
+            if self.mode != .creator {
+                ScriptCodeEditorNavButtonView(image: "doc.text") {
+                    self.showDocsOverlay.toggle()
+                }
+                .sheet(isPresented: $showDocsOverlay) {
+                    DocsOverlayView()
+                        .presentationDetents([.large, .medium], selection: $docsOverlayDetent)
+                        .presentationDragIndicator(.visible)
+                }
+
                 ScriptCodeEditorNavButtonView(image: "book") {
                     self.showResourceCodeView.toggle()
                 }

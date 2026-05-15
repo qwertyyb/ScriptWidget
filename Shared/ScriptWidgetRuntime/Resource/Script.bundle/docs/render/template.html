@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="marked.min.js"></script>
+  <script src="highlight.min.js"></script>
+  <script>
+    // Register javascript language for highlight.js
+    if (typeof hljs !== 'undefined' && typeof hljsDefineJavascript !== 'undefined') {
+      hljs.registerLanguage('javascript', hljsDefineJavascript);
+      hljs.registerLanguage('jsx', hljsDefineJavascript);
+      hljs.registerLanguage('js', hljsDefineJavascript);
+    }
+
+    function renderMarkdown(md, anchor) {
+      if (typeof marked === 'undefined') {
+        document.getElementById('content').innerHTML = '<p style="color:red">Error: marked.js not loaded</p>';
+        return;
+      }
+
+      // Configure marked
+      marked.setOptions({
+        breaks: true,
+        gfm: true
+      });
+
+      document.getElementById('content').innerHTML = marked.parse(md);
+
+      // Apply syntax highlighting
+      if (typeof hljs !== 'undefined') {
+        document.querySelectorAll('pre code').forEach(function(block) {
+          hljs.highlightElement(block);
+        });
+      }
+
+      // Scroll to anchor
+      if (anchor) {
+        setTimeout(function() {
+          const id = anchor.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-').replace(/^-|-$/g, '');
+          let el = document.getElementById(id);
+          if (!el) {
+            // Try headings by text content
+            const headings = document.querySelectorAll('h1, h2, h3, h4');
+            for (let h of headings) {
+              if (h.textContent.trim().includes(anchor)) {
+                el = h;
+                break;
+              }
+            }
+          }
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="content"></div>
+</body>
+</html>

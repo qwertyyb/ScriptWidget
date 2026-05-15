@@ -130,6 +130,17 @@ struct SidebarView: View {
                     Label("Templates", systemImage: "scribble.variable")
                 }
             }
+            Section("Docs") {
+                NavigationLink(destination: DocDetailView(title: "Quick Start", markdownFile: "getting-started.md")) {
+                    Label("Quick Start", systemImage: "sparkles")
+                }
+                NavigationLink(destination: DocDetailView(title: "Components", markdownFile: "components.md")) {
+                    Label("Components", systemImage: "square.stack.3d.up")
+                }
+                NavigationLink(destination: DocDetailView(title: "APIs", markdownFile: "api.md")) {
+                    Label("APIs", systemImage: "book")
+                }
+            }
         }
     }
 }
