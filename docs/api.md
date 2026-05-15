@@ -431,6 +431,7 @@ $render(
 |--------|------|--------|
 | `widget-size` | 小组件尺寸 | `large` / `medium` / `small` |
 | `widget-param` | 用户配置的参数 | 用户自定义字符串 |
+| `script-dir` | 当前脚本所在目录的绝对路径 | `/var/mobile/.../MyScript` |
 
 ```jsx
 const widget_size = $getenv("widget-size");

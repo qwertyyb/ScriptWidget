@@ -96,9 +96,18 @@ class ScriptWidgetElementTagImage {
             )
         }
         
-        // name or id
+        // filePath: relative to script directory, supports any image format
+        if let filePath = element.getPropString("filePath") {
+            let fileUrl = context.package.path.appendingPathComponent(filePath)
+            return AnyView(
+                FileSyncImage(fileUrl: fileUrl)
+                    .modifier(ScriptWidgetAttributeImageModifier(element, context))
+                    .modifier(ScriptWidgetAttributeGeneralModifier(element, context))
+            )
+        }
+        
+        // name or id: reads from <script-dir>/image/{name}.png
         if let imageName = element.getPropString("name", or: "id") {
-            // first try local image
             if let image = context.package.getImage(imageName) {
                 return AnyView(
                     FileSyncImage(fileUrl: image.path)

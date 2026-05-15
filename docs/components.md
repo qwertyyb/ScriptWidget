@@ -156,13 +156,17 @@
 | 属性 | 类型 | 说明 |
 |------|------|------|
 | `systemName` | String | SF Symbols 图标名 |
-| `name` / `id` | String | 本地图片资源名 |
+| `filePath` | String | 相对于脚本目录的图片路径，支持任意图片格式 |
+| `name` / `id` | String | 本地图片资源名，需将图片放在 `<script-dir>/image/{name}.png` |
 | `url` / `src` | String | 图片 URL 或 Base64 |
 | `ratio` | number | 宽高比 |
 | `mode` | String | 显示模式：`fit` 或 `fill` |
 
 ```jsx
 <Image systemName="star.fill" />
+{/* 读取 <script-dir>/assets/photo.jpg，支持任意路径和格式 */}
+<Image filePath="assets/photo.jpg" />
+{/* 读取 <script-dir>/image/logo.png */}
 <Image name="logo" />
 <Image url="https://example.com/image.png" mode="fit" />
 ```

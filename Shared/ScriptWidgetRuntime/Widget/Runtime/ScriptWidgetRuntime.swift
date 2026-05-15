@@ -86,7 +86,9 @@ class ScriptWidgetRuntime {
     
     init(package: ScriptWidgetPackage, environments: [String:String]) {
         self.package = package
-        self.environments = environments
+        var envs = environments
+        envs["script-dir"] = package.path.path
+        self.environments = envs
         // APIs like $file/$console read runtime data from sharedRunningState.
         // Ensure widget/extension runtime also initializes it.
         sharedRunningState = ScriptWidgetRunningState(package: package)
