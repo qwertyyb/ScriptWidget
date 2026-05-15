@@ -115,8 +115,8 @@ class ScriptWidgetRuntime {
             JSX = paramJSX
         }
         return Future<String, ScriptWidgetError> { promise in
-            guard let babelContent = self.readSupportScript("core.js") else {
-                promise(.failure(.internalError("Babel file not found")))
+            guard let jsxCompilerContent = self.readSupportScript("jsx-compiler.js") else {
+                promise(.failure(.internalError("JSX compiler not found")))
                 return
             }
             
@@ -127,14 +127,7 @@ class ScriptWidgetRuntime {
                 print("transform exception : \(exception!.toString() ?? "exception is nil")")
                 exceptionInfo = exception?.toString()
             }
-            transformContext.evaluateScript(babelContent)
-            
-            transformContext.evaluateScript("""
-                        function ScriptWidgetTransform(input) {
-                            var output = Babel.transform(input, { presets: ['scriptwidget'] }).code
-                            return output
-                        }
-                    """)
+            transformContext.evaluateScript(jsxCompilerContent)
             
             guard let result = transformContext.objectForKeyedSubscript("ScriptWidgetTransform")?
                     .call(withArguments: [JSX]) else {
