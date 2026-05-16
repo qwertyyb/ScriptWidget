@@ -34,7 +34,7 @@
     { "name": "size", "detail": "string|object", "info": "尺寸（\"max\" 或 {width, height}）" },
     { "name": "justify", "detail": "string", "values": ["start", "center", "end"], "info": "水平对齐" },
     { "name": "align", "detail": "string", "values": ["start", "center", "end"], "info": "垂直对齐" },
-    { "name": "padding", "detail": "number|string", "info": "内边距" },
+    { "name": "padding", "detail": "number|object", "info": "内边距（数字或 {horizontal, vertical, top, bottom, leading, trailing, left, right}）" },
     { "name": "backgroundColor", "detail": "string", "info": "背景色" },
     { "name": "foregroundColor", "detail": "string", "info": "前景色" },
     { "name": "cornerRadius", "detail": "number", "info": "圆角" },
@@ -74,7 +74,7 @@
       { "name": "spacing", "info": "间距" }
     ],
     "text": [
-      { "name": "font", "info": "字体大小" },
+      { "name": "font", "info": "字体：语义名 / 数字字号 / {name,weight,design,size} / {custom,size}" },
       { "name": "bold", "info": "粗体" },
       { "name": "italic", "info": "斜体" },
       { "name": "color", "info": "文字颜色" },
@@ -114,8 +114,17 @@
       { "name": "url", "info": "链接地址" },
       { "name": "destination", "info": "目标" }
     ],
-    "divider": [],
-    "line": [],
+    "divider": [
+      { "name": "thickness", "info": "线宽（默认 1）" },
+      { "name": "axis", "values": ["horizontal", "vertical"], "info": "方向" },
+      { "name": "color", "info": "颜色" }
+    ],
+    "line": [
+      { "name": "thickness", "info": "线宽（默认 2）" },
+      { "name": "length", "info": "长度（默认 48）" },
+      { "name": "axis", "values": ["horizontal", "vertical"], "info": "方向" },
+      { "name": "color", "info": "颜色" }
+    ],
     "roundedrect": [{ "name": "cornerRadius", "info": "圆角半径" }],
     "icon": [
       { "name": "name", "info": "SF Symbol 名" },
@@ -150,8 +159,8 @@
     { "name": "$system", "methods": ["brightness", "volume"] },
     { "name": "$health", "methods": ["requestAuthorization", "query"] },
     { "name": "$location", "methods": ["requestAuthorization", "current"] },
-    { "name": "$storage", "methods": ["get", "set", "remove", "clear"] },
-    { "name": "$getenv", "methods": ["get"] },
+    { "name": "$storage", "methods": ["getString", "setString", "getJSON", "setJSON", "remove", "keys", "clear"] },
+    { "name": "$getenv", "methods": [] },
     { "name": "$import", "methods": [] },
     { "name": "$render", "methods": [] },
     { "name": "$dynamic_island", "methods": [] },

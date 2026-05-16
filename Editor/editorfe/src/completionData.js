@@ -60,8 +60,8 @@ export const commonAttributes = [
   },
   {
     "name": "padding",
-    "detail": "number|string",
-    "info": "内边距"
+    "detail": "number|object",
+    "info": "内边距（数字或 {horizontal, vertical, top, bottom, leading, trailing, left, right}）"
   },
   {
     "name": "backgroundColor",
@@ -237,7 +237,7 @@ export const tagAttributes = {
   "text": [
     {
       "name": "font",
-      "info": "字体大小"
+      "info": "字体：语义名 / 数字字号 / {name,weight,design,size} / {custom,size}"
     },
     {
       "name": "bold",
@@ -361,8 +361,46 @@ export const tagAttributes = {
       "info": "目标"
     }
   ],
-  "divider": [],
-  "line": [],
+  "divider": [
+    {
+      "name": "thickness",
+      "info": "线宽（默认 1）"
+    },
+    {
+      "name": "axis",
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
+      "info": "方向"
+    },
+    {
+      "name": "color",
+      "info": "颜色"
+    }
+  ],
+  "line": [
+    {
+      "name": "thickness",
+      "info": "线宽（默认 2）"
+    },
+    {
+      "name": "length",
+      "info": "长度（默认 48）"
+    },
+    {
+      "name": "axis",
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
+      "info": "方向"
+    },
+    {
+      "name": "color",
+      "info": "颜色"
+    }
+  ],
   "roundedrect": [
     {
       "name": "cornerRadius",
@@ -489,17 +527,18 @@ export const apis = [
   {
     "name": "$storage",
     "methods": [
-      "get",
-      "set",
+      "getString",
+      "setString",
+      "getJSON",
+      "setJSON",
       "remove",
+      "keys",
       "clear"
     ]
   },
   {
     "name": "$getenv",
-    "methods": [
-      "get"
-    ]
+    "methods": []
   },
   {
     "name": "$import",

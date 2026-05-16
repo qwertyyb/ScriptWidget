@@ -201,14 +201,22 @@
     const vsPath = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs';
     require.config({ paths: { vs: vsPath } });
     require(['vs/editor/editor.main'], () => {
-      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      const widgetCompilerOptions = {
         allowNonTsExtensions: true,
         allowJs: true,
         jsx: monaco.languages.typescript.JsxEmit.React,
         jsxFactory: 'JSWidget.createElement',
         target: monaco.languages.typescript.ScriptTarget.ES2020,
+        module: monaco.languages.typescript.ModuleKind.ESNext,
         moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-      });
+        // Exclude DOM lib so jswidget.d.ts can declare `console` / `fetch` without conflicting with globals.
+        lib: ['es2020'],
+        noLib: false,
+        // Widget scripts use top-level await; treat editor buffer as a module without requiring export {}.
+        moduleDetection: monaco.languages.typescript.ModuleDetectionKind?.Force ?? 3,
+      };
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions(widgetCompilerOptions);
+      monaco.languages.typescript.javascriptDefaults.setCompilerOptions(widgetCompilerOptions);
       loadMonacoTypes().then(dts => {
         monaco.languages.typescript.typescriptDefaults.addExtraLib(dts, 'file:///jswidget.d.ts');
       }).catch(() => {});
