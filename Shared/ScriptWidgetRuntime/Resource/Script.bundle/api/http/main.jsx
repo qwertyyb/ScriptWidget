@@ -12,7 +12,7 @@ console.log(get_result);
 
 // query json example with header
 // https://docs.github.com/en/rest/reference/projects
-const get_with_header_result = await $http.get("https://api.github.com/users/everettjf/orgs", {
+const get_with_header_result = await $http.get("https://api.github.com/users/qwertyyb/orgs", {
   headers: {
     Accept: "application/vnd.github.inertia-preview+json",
   },

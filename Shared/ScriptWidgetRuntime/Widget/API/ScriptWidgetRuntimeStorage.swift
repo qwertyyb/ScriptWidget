@@ -20,7 +20,7 @@ import JavaScriptCore
 
 @objc public class ScriptWidgetRuntimeStorage: NSObject, ScriptWidgetRuntimeStorageExports {
     private static func defaults() -> UserDefaults {
-        return UserDefaults(suiteName: "group.everettjf.scriptwidget") ?? UserDefaults.standard
+        return UserDefaults(suiteName: "group.qwertyyb.scriptwidget") ?? UserDefaults.standard
     }
 
     static func getString(_ key: String) -> String {

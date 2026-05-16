@@ -51,7 +51,7 @@ export default defineConfig({
       { text: 'API', link: '/api/' },
       {
         text: 'GitHub',
-        link: 'https://github.com/everettjf/ScriptWidget',
+        link: 'https://github.com/qwertyyb/ScriptWidget',
       },
     ],
 
@@ -110,7 +110,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/everettjf/ScriptWidget' },
+      { icon: 'github', link: 'https://github.com/qwertyyb/ScriptWidget' },
     ],
 
     footer: {

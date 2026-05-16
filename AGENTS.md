@@ -18,7 +18,8 @@
 - `pnpm run build`: produce static editor assets in `Editor/editorfe/build`.
 - `cd Tools/jsx-compiler && pnpm install`: install JSX compiler dependencies.
 - `node test.mjs`: run JSX compiler tests; `npx tsdown`: rebuild the bundled `jsx-compiler.js`.
-- When running iOS/macOS targets, enable the `iCloud.ScriptWidget` container and `group.everettjf.scriptwidget` app group so script storage works.
+- When running iOS/macOS targets, enable the `iCloud.ScriptWidget` container and `group.qwertyyb.scriptwidget` app group so script storage works.
+- The GitHub repository is at `https://github.com/qwertyyb/ScriptWidget`.
 
 ## Coding Style & Naming Conventions
 - Swift: 4-space indentation, Xcode defaults, `UpperCamelCase` for types, `lowerCamelCase` for methods/vars. Keep SwiftUI views in `View/` and managers in `Manager/`.

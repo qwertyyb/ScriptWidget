@@ -23,7 +23,7 @@ import CoreLocation
     private static let locationCacheKey = "ScriptWidget.LocationCache.v1"
 
     private static func defaults() -> UserDefaults {
-        return UserDefaults(suiteName: "group.everettjf.scriptwidget") ?? UserDefaults.standard
+        return UserDefaults(suiteName: "group.qwertyyb.scriptwidget") ?? UserDefaults.standard
     }
 
     static func isAvailable() -> Bool {

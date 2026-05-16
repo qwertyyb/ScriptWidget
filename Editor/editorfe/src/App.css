@@ -58,6 +58,66 @@ body {
   color: #fff;
 }
 
+.peer-panel {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #fff;
+  background: rgba(0,122,255,0.85);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.peer-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.peer-panel-header .status-text {
+  flex: 1;
+  font-weight: 600;
+}
+.peer-panel-header .btn-disconnect {
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  background: rgba(255,59,48,0.9);
+  color: #fff;
+}
+.peer-panel-hint {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+.peer-panel-url-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.peer-panel-url {
+  flex: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  word-break: break-all;
+  background: rgba(255,255,255,0.15);
+  padding: 4px 8px;
+  border-radius: 4px;
+  line-height: 1.4;
+  -webkit-user-select: all;
+  user-select: all;
+}
+.peer-panel-url-row .btn-action {
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  flex-shrink: 0;
+}
+
 .editor {
   flex: 1;
   width: 100%;

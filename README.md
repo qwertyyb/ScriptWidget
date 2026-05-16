@@ -2,11 +2,11 @@
 
 <div align="center">
 
-[![GitHub Stars](https://img.shields.io/github/stars/everettjf/ScriptWidget?style=flat-square&color=4ECDC4)](https://github.com/everettjf/ScriptWidget/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/everettjf/ScriptWidget?style=flat-square)](https://github.com/everettjf/ScriptWidget/network)
+[![GitHub Stars](https://img.shields.io/github/stars/qwertyyb/ScriptWidget?style=flat-square&color=4ECDC4)](https://github.com/qwertyyb/ScriptWidget/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/qwertyyb/ScriptWidget?style=flat-square)](https://github.com/qwertyyb/ScriptWidget/network)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20macOS-lightgrey?style=flat-square&logo=apple)](https://developer.apple.com)
-[![Version](https://img.shields.io/badge/Version-3.0-blue?style=flat-square)](https://github.com/everettjf/ScriptWidget/releases)
+[![Version](https://img.shields.io/badge/Version-3.0-blue?style=flat-square)](https://github.com/qwertyyb/ScriptWidget/releases)
 
 **Create native widgets for iOS & macOS using JavaScript and JSX**
 
@@ -49,7 +49,7 @@ Think of it as "React Native for Widgets" - but simpler and more flexible.
 
 ```bash
 # Clone the repository
-git clone https://github.com/everettjf/ScriptWidget.git
+git clone https://github.com/qwertyyb/ScriptWidget.git
 cd ScriptWidget
 ```
 
@@ -157,7 +157,7 @@ function TodoList({ todos }) {
 
 ```bash
 # Clone and setup
-git clone https://github.com/everettjf/ScriptWidget.git
+git clone https://github.com/qwertyyb/ScriptWidget.git
 cd ScriptWidget
 
 # Open in Xcode
@@ -265,7 +265,7 @@ Inspired by:
 
 <div align="center">
 
-[![Star History Chart](https://api.star-history.com/svg?repos=everettjf/ScriptWidget&type=Date&theme=dark)](https://star-history.com/#everettjf/ScriptWidget&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=qwertyyb/ScriptWidget&type=Date&theme=dark)](https://star-history.com/#qwertyyb/ScriptWidget&Date)
 
 </div>
 
@@ -275,11 +275,11 @@ Inspired by:
 
 <div align="center">
 
-[![GitHub Issues](https://img.shields.io/badge/Issues-Bug_Reports-FF6B6B?style=for-the-badge&logo=github)](https://github.com/everettjf/ScriptWidget/issues)
-[![GitHub Discussions](https://img.shields.io/badge/Discussions-Q&A-4ECDC4?style=for-the-badge&logo=github)](https://github.com/everettjf/ScriptWidget/discussions)
+[![GitHub Issues](https://img.shields.io/badge/Issues-Bug_Reports-FF6B6B?style=for-the-badge&logo=github)](https://github.com/qwertyyb/ScriptWidget/issues)
+[![GitHub Discussions](https://img.shields.io/badge/Discussions-Q&A-4ECDC4?style=for-the-badge&logo=github)](https://github.com/qwertyyb/ScriptWidget/discussions)
 [![Discord](https://img.shields.io/badge/Discord-Join_Chat-7289DA?style=for-the-badge&logo=discord)](https://discord.gg/scriptwidget)
 
-**有问题？去 [Issues](https://github.com/everettjf/ScriptWidget/issues) 提问！**
+**有问题？去 [Issues](https://github.com/qwertyyb/ScriptWidget/issues) 提问！**
 
 </div>
 
@@ -287,8 +287,8 @@ Inspired by:
 
 <div align="center">
 
-**Made with ❤️ by [Everett](https://github.com/everettjf)**
+**Made with ❤️ by [qwertyyb](https://github.com/qwertyyb)**
 
-**Project Link:** [https://github.com/everettjf/ScriptWidget](https://github.com/everettjf/ScriptWidget)
+**Project Link:** [https://github.com/qwertyyb/ScriptWidget](https://github.com/qwertyyb/ScriptWidget)
 
 </div>

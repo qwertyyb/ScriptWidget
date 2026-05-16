@@ -242,13 +242,27 @@ export default function App() {
       );
     }
     if (peerState === 'hosting') {
+      const editorUrl = `https://qwertyyb.github.io/ScriptWidget/editor/index.html?peer=${encodeURIComponent(peerIdText)}`;
       return (
-        <div className="peer-banner">
-          <span className="status-text">Waiting for PC — ID: {peerIdText}</span>
-          <button className="btn-action" onClick={() => {
-            if (navigator.clipboard) navigator.clipboard.writeText(peerIdText);
-          }}>Copy ID</button>
-          <button className="btn-disconnect" onClick={handleDisconnect}>Stop</button>
+        <div className="peer-panel">
+          <div className="peer-panel-header">
+            <span className="status-text">Waiting for PC…</span>
+            <button className="btn-disconnect" onClick={handleDisconnect}>Stop</button>
+          </div>
+          <div className="peer-panel-hint">Open this link on your computer:</div>
+          <div className="peer-panel-url-row">
+            <span className="peer-panel-url">{editorUrl}</span>
+            <button className="btn-action" onClick={() => {
+              if (navigator.clipboard) navigator.clipboard.writeText(editorUrl);
+            }}>Copy</button>
+          </div>
+          <div className="peer-panel-hint" style={{ marginTop: 6 }}>Peer ID:</div>
+          <div className="peer-panel-url-row">
+            <span className="peer-panel-url">{peerIdText}</span>
+            <button className="btn-action" onClick={() => {
+              if (navigator.clipboard) navigator.clipboard.writeText(peerIdText);
+            }}>Copy</button>
+          </div>
         </div>
       );
     }

@@ -1994,7 +1994,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 26.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.everettjf.scriptwidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.scriptwidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "ScriptWidget/ScriptWidget-Bridging-Header.h";
@@ -2047,7 +2047,7 @@
 				);
 				MARKETING_VERSION = 26.5;
 				OTHER_SWIFT_FLAGS = "-D IsWidgetTarget";
-				PRODUCT_BUNDLE_IDENTIFIER = com.everettjf.scriptwidget.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.scriptwidget.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2095,7 +2095,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 26.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.everettjf.scriptwidget.share;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.scriptwidget.share;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;

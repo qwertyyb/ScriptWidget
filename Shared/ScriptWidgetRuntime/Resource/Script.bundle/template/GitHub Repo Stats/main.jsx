@@ -6,7 +6,7 @@
 // widget-param: "owner/repo"
 //
 
-const repo = ($getenv("widget-param") || "everettjf/ScriptWidget").trim();
+const repo = ($getenv("widget-param") || "qwertyyb/ScriptWidget").trim();
 const url = `https://api.github.com/repos/${repo}`;
 const result = await fetch(url);
 const data = JSON.parse(result);

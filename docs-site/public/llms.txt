@@ -21,7 +21,7 @@
 
 ## 通过 raw.githubusercontent.com 拉取（将 BRANCH 换为 main 或当前默认分支）
 
-将 `OWNER/REPO` 替换为你的远端（上游示例为 `everettjf/ScriptWidget`）。
+将 `OWNER/REPO` 替换为你的远端（上游示例为 `qwertyyb/ScriptWidget`）。
 
 - `https://raw.githubusercontent.com/OWNER/REPO/BRANCH/docs/api.md`
 - `https://raw.githubusercontent.com/OWNER/REPO/BRANCH/docs/components.md`
@@ -35,4 +35,4 @@
 
 ## 可选：项目仓库
 
-- https://github.com/everettjf/ScriptWidget
+- https://github.com/qwertyyb/ScriptWidget
