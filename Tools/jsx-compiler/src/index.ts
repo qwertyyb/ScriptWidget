@@ -128,9 +128,7 @@ function transformJSX(tree: any, factoryName: string, fragmentName: string) {
           { ...fragmentNode },
           makeLiteral(null),
         ];
-        if (children.length > 0) {
-          args.push({ type: "ArrayExpression", elements: children });
-        }
+        args.push(...children);
         this.replace(callFactory({ ...factoryNode }, args));
         return;
       }
@@ -150,9 +148,7 @@ function transformJSX(tree: any, factoryName: string, fragmentName: string) {
           args.push(makeLiteral(null));
         }
 
-        if (children.length > 0) {
-          args.push({ type: "ArrayExpression", elements: children });
-        }
+        args.push(...children);
 
         this.replace(callFactory({ ...factoryNode }, args));
         return;

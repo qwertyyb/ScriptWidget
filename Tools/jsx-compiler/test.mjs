@@ -76,7 +76,7 @@ function transformJSX(tree, factoryName, fragmentName) {
       if (node.type === "JSXFragment") {
         const children = node.children;
         const args = [{ ...fragmentNode }, makeLiteral(null)];
-        if (children.length > 0) args.push({ type: "ArrayExpression", elements: children });
+        args.push(...children);
         this.replace(callFactory({ ...factoryNode }, args));
         return;
       }
@@ -89,7 +89,7 @@ function transformJSX(tree, factoryName, fragmentName) {
         } else {
           args.push(makeLiteral(null));
         }
-        if (children.length > 0) args.push({ type: "ArrayExpression", elements: children });
+        args.push(...children);
         this.replace(callFactory({ ...factoryNode }, args));
         return;
       }
