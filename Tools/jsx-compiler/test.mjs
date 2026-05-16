@@ -128,12 +128,12 @@ const testCases = [
   },
   {
     name: "Object expression prop (double braces)",
-    input: `<vstack frame={{maxWidth: "infinity", maxHeight: "infinity"}}>test</vstack>`,
-    check: (out) => out.includes("maxWidth") && out.includes("maxHeight"),
+    input: `<col size={{width: "fill", height: "fill"}}>test</col>`,
+    check: (out) => out.includes("width") && out.includes("height"),
   },
   {
     name: "Nested JSX",
-    input: `<vstack><text>a</text><text>b</text></vstack>`,
+    input: `<col><text>a</text><text>b</text></col>`,
     check: (out) => (out.match(/JSWidget\.createElement/g) || []).length === 3,
   },
   {

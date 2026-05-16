@@ -13,7 +13,7 @@ let gaugeSections = [
 ];
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <gauge 
       // type="original" // default to original internal, <= iOS15
       angle="260" 
@@ -25,5 +25,5 @@ $render(
       sections={$json(gaugeSections)}
       >
     </gauge>
-  </vstack>
+  </col>
 );

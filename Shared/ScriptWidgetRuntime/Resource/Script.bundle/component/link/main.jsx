@@ -6,22 +6,22 @@
 // 
 
 $render(
-  <vstack frame="max" linkurl="https://xnu.app/scriptwidget">
+  <col size="max" linkurl="https://xnu.app/scriptwidget">
     <link url="https://www.baidu.com" backgroundColor="blue">
       <text font="title">Hello Baidu</text>
     </link>
     <link url="https://www.google.com" backgroundColor="green">
-      <hstack>
+      <row>
         <text>Hello</text>
         <text>Google</text>
-      </hstack>
+      </row>
     </link>
     <link url="https://www.bing.com" backgroundColor="yellow">
-      <vstack>
+      <col>
         <text>Hello</text>
         <text>Bing</text>
-      </vstack>
+      </col>
     </link>
-  </vstack>
+  </col>
 );
 

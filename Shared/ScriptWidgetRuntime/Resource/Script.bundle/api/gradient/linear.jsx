@@ -13,7 +13,7 @@ let linearGradient = {
 };
 
 $render(
-  <vstack backgroundGradient={linearGradient} frame="max">
+  <col backgroundGradient={linearGradient} size="max">
     <text font="title">LinearGradient</text>
-  </vstack>
+  </col>
 );

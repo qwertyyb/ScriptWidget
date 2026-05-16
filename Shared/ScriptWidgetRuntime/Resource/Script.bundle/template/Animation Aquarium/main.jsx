@@ -44,34 +44,34 @@ let linearGradient = {
   endPoint: "bottom",
 };
 $render(
-  <vstack backgroundGradient={linearGradient} frame="max" alignment="top">
-    <hstack alignment="leading">
+  <col backgroundGradient={linearGradient} size="max" align="start">
+    <row align="start">
       <text font="body">  🛟</text>
       <spacer />
-    </hstack>
-    <hstack alignment="leading">
+    </row>
+    <row align="start">
       <text font="body">  🪼        🐟    🐠         🫧</text>
       <text font="body" animation={fishVertical}>🐠</text>
       <text font="body">         🫧</text>
       <spacer />
-    </hstack>
-    <hstack alignment="leading">
+    </row>
+    <row align="start">
       <text font="body">  🫧</text>
       <text font="body">       </text>
       <text font="body" animation={bubbleVertical}>🫧</text>
       <text font="body" animation={fishHorizontal}>🐡🐡</text>
       <spacer />
-    </hstack>
-    <hstack alignment="leading">
+    </row>
+    <row align="start">
       <text font="body">  🪼    🫧    🐬       🐬</text>
-    </hstack>
-    <hstack alignment="leading">
+    </row>
+    <row align="start">
       <text font="body">  🪼   🫧    🦐          🫧🫧</text>
       <spacer />
-    </hstack>
-    <hstack alignment="leading">
+    </row>
+    <row align="start">
       <text font="body">  🍀 🪸🌿🪸⚓️🗿🐙🐙  🌿🌿 🌿🪸🪸</text>
       <spacer />
-    </hstack>
-  </vstack>
+    </row>
+  </col>
 );

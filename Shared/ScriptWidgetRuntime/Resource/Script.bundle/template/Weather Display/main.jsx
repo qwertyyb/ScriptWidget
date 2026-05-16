@@ -18,7 +18,7 @@ console.log(result);
 const data = JSON.parse(result);
 
 $render(
-  <vstack frame="max" backgroundColor="#3a86ff">
+  <col size="max" backgroundColor="#3a86ff">
     <text font="title3" color="white">
       Weather
     </text>
@@ -34,5 +34,5 @@ $render(
     <text font="caption2" color="white">
       Updated At: {data.current.last_updated}
     </text>
-  </vstack>
+  </col>
 );

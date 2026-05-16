@@ -76,6 +76,8 @@
 		D1995CC929536BB800D1BD94 /* ScriptWidgetAttributeFontModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1995C7929536BB800D1BD94 /* ScriptWidgetAttributeFontModifier.swift */; };
 		D1995CCA29536BB800D1BD94 /* ScriptWidgetAttributeTextAlignmentModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1995C7A29536BB800D1BD94 /* ScriptWidgetAttributeTextAlignmentModifier.swift */; };
 		D1995CCB29536BB800D1BD94 /* ScriptWidgetAttributeTextAlignmentModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1995C7A29536BB800D1BD94 /* ScriptWidgetAttributeTextAlignmentModifier.swift */; };
+		D1995CE829536BB800D1BD94 /* ScriptWidgetAttributeLineLimitModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1995CE929536BB800D1BD94 /* ScriptWidgetAttributeLineLimitModifier.swift */; };
+		D1995CEA29536BB800D1BD94 /* ScriptWidgetAttributeLineLimitModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1995CE929536BB800D1BD94 /* ScriptWidgetAttributeLineLimitModifier.swift */; };
 		D1995CCC29536BB800D1BD94 /* ScriptWidgetAttributeDebugModeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1995C7C29536BB800D1BD94 /* ScriptWidgetAttributeDebugModeModifier.swift */; };
 		D1995CCD29536BB800D1BD94 /* ScriptWidgetAttributeDebugModeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1995C7C29536BB800D1BD94 /* ScriptWidgetAttributeDebugModeModifier.swift */; };
 		D1995CCE29536BB800D1BD94 /* ScriptWidgetElementTagLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1995C7E29536BB800D1BD94 /* ScriptWidgetElementTagLink.swift */; };
@@ -246,6 +248,7 @@
 		D1995C7829536BB800D1BD94 /* ScriptWidgetAttributeForegroundModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetAttributeForegroundModifier.swift; sourceTree = "<group>"; };
 		D1995C7929536BB800D1BD94 /* ScriptWidgetAttributeFontModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetAttributeFontModifier.swift; sourceTree = "<group>"; };
 		D1995C7A29536BB800D1BD94 /* ScriptWidgetAttributeTextAlignmentModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetAttributeTextAlignmentModifier.swift; sourceTree = "<group>"; };
+		D1995CE929536BB800D1BD94 /* ScriptWidgetAttributeLineLimitModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetAttributeLineLimitModifier.swift; sourceTree = "<group>"; };
 		D1995C7C29536BB800D1BD94 /* ScriptWidgetAttributeDebugModeModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetAttributeDebugModeModifier.swift; sourceTree = "<group>"; };
 		D1995C7E29536BB800D1BD94 /* ScriptWidgetElementTagLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetElementTagLink.swift; sourceTree = "<group>"; };
 		D1995C7F29536BB800D1BD94 /* ScriptWidgetElementTagStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetElementTagStack.swift; sourceTree = "<group>"; };
@@ -470,6 +473,7 @@
 				D1995C7829536BB800D1BD94 /* ScriptWidgetAttributeForegroundModifier.swift */,
 				D1995C7929536BB800D1BD94 /* ScriptWidgetAttributeFontModifier.swift */,
 				D1995C7A29536BB800D1BD94 /* ScriptWidgetAttributeTextAlignmentModifier.swift */,
+				D1995CE929536BB800D1BD94 /* ScriptWidgetAttributeLineLimitModifier.swift */,
 			);
 			path = Text;
 			sourceTree = "<group>";
@@ -947,6 +951,7 @@
 				F29118C82791DEC800B860B0 /* EditorWebView.swift in Sources */,
 				F2461642279F1B1600C3D90F /* DeleteConfirmView.swift in Sources */,
 				D1995CCA29536BB800D1BD94 /* ScriptWidgetAttributeTextAlignmentModifier.swift in Sources */,
+				D1995CE829536BB800D1BD94 /* ScriptWidgetAttributeLineLimitModifier.swift in Sources */,
 				F205237D27A4CB7100C6EB45 /* ResourceCodeView.swift in Sources */,
 				10C52B7474F14621A0766FC7 /* DocDetailView.swift in Sources */,
 				F29118BC2791D83000B860B0 /* SidebarView.swift in Sources */,
@@ -1063,6 +1068,7 @@
 				D1995C9529536BB800D1BD94 /* MineGaugeView.swift in Sources */,
 				D1995CBB29536BB800D1BD94 /* ScriptWidgetAttributeRotation3DEffectModifier.swift in Sources */,
 				D1995CCB29536BB800D1BD94 /* ScriptWidgetAttributeTextAlignmentModifier.swift in Sources */,
+				D1995CEA29536BB800D1BD94 /* ScriptWidgetAttributeLineLimitModifier.swift in Sources */,
 				D1995CA729536BB800D1BD94 /* ScriptWidgetAppState.swift in Sources */,
 				D1995CDF29536BB800D1BD94 /* ScriptWidgetElementTagChart.swift in Sources */,
 			);

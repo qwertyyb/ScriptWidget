@@ -10,7 +10,7 @@
 
 
 $render(
-  <vstack>
+  <col>
     <gif file="test" />
-  </vstack>
+  </col>
 );

@@ -25,7 +25,7 @@ const thisWillBeUndefined = someArray?.[5];
 console.log(thisWillBeUndefined);
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <text font="title">Hello ES2020</text>
-  </vstack>
+  </col>
 );

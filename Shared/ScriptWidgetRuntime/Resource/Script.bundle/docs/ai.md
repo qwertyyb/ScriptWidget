@@ -29,7 +29,7 @@
 
 规则摘要（若与上述文档冲突，以文档为准）：
 - 入口脚本写顶层代码；桌面小组件用 $render；灵动岛相关场景用 $dynamic_island，勿混淆。
-- JSX 使用文档中的小写标签（如 vstack、text），不要使用 HTML 或 React DOM 标签名臆造。
+- JSX 使用文档中的小写标签（如 col、row、text），不要使用 HTML 或 React DOM 标签名臆造。
 
 用户接下来会用自然语言描述想要的组件。请输出：
 （1）简短实现思路；

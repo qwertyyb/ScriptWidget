@@ -42,9 +42,11 @@ declare namespace JSWidget {
   const Fragment: string;
   namespace JSX {
     interface IntrinsicElements {
-      /** hstack */
-      hstack: {
-      frame?: string;
+      /** row */
+      row: {
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -56,14 +58,41 @@ declare namespace JSWidget {
       shadow?: string;
       blur?: number;
       animation?: string;
-      /** 垂直对齐 */
-      alignment?: "top" | "bottom" | "center" | "firstTextBaseline" | "lastTextBaseline";
+      /** 交叉轴对齐（垂直） */
+      align?: "start" | "end" | "center" | "firstBaseline" | "lastBaseline";
+      /** 主轴分布（水平） */
+      justify?: "start" | "center" | "end";
       /** 水平间距 */
       spacing?: string | number | boolean;
       };
-      /** vstack */
-      vstack: {
-      frame?: string;
+      /** col */
+      col: {
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
+      padding?: number | string;
+      backgroundColor?: string;
+      foregroundColor?: string;
+      cornerRadius?: number;
+      opacity?: number;
+      rotationEffect?: number;
+      scaleEffect?: number;
+      offset?: string;
+      shadow?: string;
+      blur?: number;
+      animation?: string;
+      /** 交叉轴对齐（水平） */
+      align?: "start" | "end" | "center";
+      /** 主轴分布（垂直） */
+      justify?: "start" | "center" | "end";
+      /** 垂直间距 */
+      spacing?: string | number | boolean;
+      };
+      /** stack */
+      stack: {
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -76,50 +105,15 @@ declare namespace JSWidget {
       blur?: number;
       animation?: string;
       /** 水平对齐 */
-      alignment?: "leading" | "trailing" | "center";
-      /** 垂直间距 */
-      spacing?: string | number | boolean;
+      justify?: "start" | "center" | "end";
+      /** 垂直对齐 */
+      align?: "start" | "center" | "end";
       };
-      /** zstack */
-      zstack: {
-      frame?: string;
-      padding?: number | string;
-      backgroundColor?: string;
-      foregroundColor?: string;
-      cornerRadius?: number;
-      opacity?: number;
-      rotationEffect?: number;
-      scaleEffect?: number;
-      offset?: string;
-      shadow?: string;
-      blur?: number;
-      animation?: string;
-
-      };
-      /** hgrid */
-      hgrid: {
-      frame?: string;
-      padding?: number | string;
-      backgroundColor?: string;
-      foregroundColor?: string;
-      cornerRadius?: number;
-      opacity?: number;
-      rotationEffect?: number;
-      scaleEffect?: number;
-      offset?: string;
-      shadow?: string;
-      blur?: number;
-      animation?: string;
-      /** 行数 */
-      rows?: string | number | boolean;
-      /** 列配置 JSON 字符串 */
-      columns?: string | number | boolean;
-      /** 间距 */
-      spacing?: string | number | boolean;
-      };
-      /** vgrid */
-      vgrid: {
-      frame?: string;
+      /** grid */
+      grid: {
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -135,12 +129,41 @@ declare namespace JSWidget {
       rows?: string | number | boolean;
       /** 列数 */
       columns?: string | number | boolean;
+      /** 水平对齐 */
+      align?: "start" | "end" | "center";
+      /** 间距 */
+      spacing?: string | number | boolean;
+      };
+      /** grid-row */
+      grid-row: {
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
+      padding?: number | string;
+      backgroundColor?: string;
+      foregroundColor?: string;
+      cornerRadius?: number;
+      opacity?: number;
+      rotationEffect?: number;
+      scaleEffect?: number;
+      offset?: string;
+      shadow?: string;
+      blur?: number;
+      animation?: string;
+      /** 行数 */
+      rows?: string | number | boolean;
+      /** 列配置 JSON 字符串 */
+      columns?: string | number | boolean;
+      /** 垂直对齐 */
+      align?: "start" | "end" | "center" | "firstBaseline" | "lastBaseline";
       /** 间距 */
       spacing?: string | number | boolean;
       };
       /** text */
       text: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -160,6 +183,8 @@ declare namespace JSWidget {
       italic?: string | number | boolean;
       /** 文字颜色 */
       color?: string | number | boolean;
+      /** 文本对齐 */
+      textAlign?: "start" | "center" | "end";
       /** 行数限制 */
       lineLimit?: string | number | boolean;
       /** 最小缩放 */
@@ -167,7 +192,9 @@ declare namespace JSWidget {
       };
       /** date */
       date: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -186,7 +213,9 @@ declare namespace JSWidget {
       };
       /** image */
       image: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -211,7 +240,9 @@ declare namespace JSWidget {
       };
       /** gif */
       gif: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -228,7 +259,9 @@ declare namespace JSWidget {
       };
       /** spacer */
       spacer: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -240,14 +273,14 @@ declare namespace JSWidget {
       shadow?: string;
       blur?: number;
       animation?: string;
-      /** 最小长度 */
-      minLength?: string | number | boolean;
-      /** 最大长度 */
-      maxLength?: string | number | boolean;
+      /** 最小占用长度 */
+      length?: string | number | boolean;
       };
       /** rect */
       rect: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -263,7 +296,9 @@ declare namespace JSWidget {
       };
       /** capsule */
       capsule: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -279,7 +314,9 @@ declare namespace JSWidget {
       };
       /** ellipse */
       ellipse: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -295,7 +332,9 @@ declare namespace JSWidget {
       };
       /** circle */
       circle: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -311,7 +350,9 @@ declare namespace JSWidget {
       };
       /** gauge */
       gauge: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -332,7 +373,9 @@ declare namespace JSWidget {
       };
       /** chart */
       chart: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -351,7 +394,9 @@ declare namespace JSWidget {
       };
       /** link */
       link: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -370,7 +415,9 @@ declare namespace JSWidget {
       };
       /** divider */
       divider: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -386,7 +433,9 @@ declare namespace JSWidget {
       };
       /** line */
       line: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -402,7 +451,9 @@ declare namespace JSWidget {
       };
       /** roundedrect */
       roundedrect: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -419,7 +470,9 @@ declare namespace JSWidget {
       };
       /** icon */
       icon: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -438,7 +491,9 @@ declare namespace JSWidget {
       };
       /** label */
       label: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -454,7 +509,9 @@ declare namespace JSWidget {
       };
       /** progress */
       progress: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -471,7 +528,9 @@ declare namespace JSWidget {
       };
       /** ring */
       ring: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -487,7 +546,9 @@ declare namespace JSWidget {
       };
       /** badge */
       badge: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -503,7 +564,9 @@ declare namespace JSWidget {
       };
       /** chip */
       chip: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -519,7 +582,9 @@ declare namespace JSWidget {
       };
       /** stat */
       stat: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -535,7 +600,9 @@ declare namespace JSWidget {
       };
       /** button */
       button: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;
@@ -554,7 +621,9 @@ declare namespace JSWidget {
       };
       /** toggle */
       toggle: {
-      frame?: string;
+      size?: string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" };
+      justify?: "start" | "center" | "end";
+      align?: "start" | "center" | "end";
       padding?: number | string;
       backgroundColor?: string;
       foregroundColor?: string;

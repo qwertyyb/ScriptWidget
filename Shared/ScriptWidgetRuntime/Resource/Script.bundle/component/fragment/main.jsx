@@ -12,8 +12,8 @@ var aaa = (
 )
 
 $render(
-    <vstack frame="max">
+    <col size="max">
         {aaa}
         <text>a text</text>
-    </vstack>
+    </col>
 );

@@ -36,6 +36,9 @@ struct ScriptCodePreviewView: View {
             .alert(isPresented: $showAlert) { () -> Alert in
                 Alert(title: Text(self.showAlertMessage))
             }
+            .onAppear {
+                state.changeWidgetSizeType(widgetSizeType)
+            }
     }
     
     var content: some View {

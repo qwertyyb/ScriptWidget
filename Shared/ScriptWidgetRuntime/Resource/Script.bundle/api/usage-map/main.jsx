@@ -12,8 +12,8 @@ const test = values.map((value) => {
 })
 
 $render(
-  <vstack>
+  <col>
     <text font="title">test</text>
     {test}
-  </vstack>
+  </col>
 );

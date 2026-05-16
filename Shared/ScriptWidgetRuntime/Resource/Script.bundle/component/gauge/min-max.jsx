@@ -6,7 +6,7 @@
 // 
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <gauge 
       type="system"
       value="0.6"
@@ -17,5 +17,5 @@ $render(
       style="circular" // default
       >
     </gauge>
-  </vstack>
+  </col>
 );

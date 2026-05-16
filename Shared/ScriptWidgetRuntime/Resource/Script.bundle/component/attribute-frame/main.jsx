@@ -7,31 +7,30 @@
 
 /*
 
- frame="max"
- frame={{maxWidth: "infinity", maxHeight: "infinity", alignment: "topLeading"}}
- frame={{width: 10, height: 20}}
- frame={{width: 10, height: 20, alignment: "topLeading"}}
+ size="max"
+ size="max" justify="start" align="start"
+ size={{width: 10, height: 20}}
+ size={{width: 10, height: 20}} justify="start" align="start"
  
- frame={{maxWidth: "infinity", height: 20}}
- frame={{width: 10, maxHeight: "infinity"}}
- frame={{maxWidth: "infinity", height: 20, alignment: "topLeading"}}
- frame={{width: 10, maxHeight: "infinity", alignment: "topLeading"}}
+ size={{maxWidth: "fill", height: 20}}
+ size={{width: 10, maxHeight: "fill"}}
+ size={{maxWidth: "fill", height: 20}} justify="start" align="start"
+ size={{width: 10, maxHeight: "fill"}} justify="start" align="start"
 
 
- the "topLeading" represent alignment, could be one of the values below:
-    "center"
-    "leading"
-    "trailing"
-    "top"
-    "bottom"
-    "topLeading"
-    "topTrailing"
-    "bottomLeading"
-    "bottomTrailing"
+ justify: horizontal alignment, could be one of the values below:
+   "center"
+   "start"
+   "end"
+
+ align: vertical alignment, could be one of the values below:
+   "center"
+   "start"
+   "end"
 */
 $render(
-  <vstack frame="max">
-    <rect frame={{width: 50, height: 30}} color="green"></rect>
-    <rect frame={{width: 50, height: 30}} color="blue" corner="5"></rect>
-  </vstack>
+  <col size="max">
+    <rect size={{width: 50, height: 30}} color="green"></rect>
+    <rect size={{width: 50, height: 30}} color="blue" corner="5"></rect>
+  </col>
 );

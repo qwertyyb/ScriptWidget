@@ -6,8 +6,8 @@
 // 
 
 $render(
-  <vstack frame="max">
-    <rect frame={{width: 50, maxHeight: "infinity"}} color="green"></rect>
-    <rect frame={{width: 50, height: 30}} color="blue" corner="5"></rect>
-  </vstack>
+  <col size="max">
+    <rect size={{width: 50, maxHeight: "fill"}} color="green"></rect>
+    <rect size={{width: 50, height: 30}} color="blue" corner="5"></rect>
+  </col>
 );

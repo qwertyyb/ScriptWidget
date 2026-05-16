@@ -229,12 +229,12 @@ const memory = $system.memory();
 const cpuCount = $system.processorCount();
 
 $render(
-  <vstack>
+  <col>
     <text font="title">{app.name}</text>
     <text font="caption">Version: {app.version} ({app.build})</text>
     <text font="caption">Platform: {$system.platform()}</text>
     <text font="caption">Timezone: {tz.identifier}</text>
-  </vstack>
+  </col>
 );
 ```
 
@@ -257,18 +257,18 @@ $render(
 ```jsx
 if (!$health.isAvailable()) {
   $render(
-    <vstack>
+    <col>
       <text font="title3" color="#f87171">HealthKit Unavailable</text>
-    </vstack>
+    </col>
   );
 } else {
   const granted = await $health.requestAuthorization();
 
   if (!granted) {
     $render(
-      <vstack>
+      <col>
         <text font="title3" color="#fbbf24">Permission Needed</text>
-      </vstack>
+      </col>
     );
   } else {
     const steps = await $health.stepCountToday();
@@ -276,11 +276,11 @@ if (!$health.isAvailable()) {
     const heart = await $health.heartRateLatest();
 
     $render(
-      <vstack>
+      <col>
         <text font="title3">Steps: {steps.value.toFixed(0)}</text>
         <text font="caption">Active Energy: {energy.value.toFixed(0)} kcal</text>
         <text font="caption">Latest HR: {heart.value.toFixed(0)} bpm</text>
-      </vstack>
+      </col>
     );
   }
 }
@@ -333,9 +333,9 @@ if (!$health.isAvailable()) {
 ```jsx
 if (!$location.isAvailable()) {
   $render(
-    <vstack>
+    <col>
       <text font="title3" color="#f87171">Location Unavailable</text>
-    </vstack>
+    </col>
   );
 } else {
   const status = $location.authorizationStatus();
@@ -347,9 +347,9 @@ if (!$location.isAvailable()) {
 
   if (!granted) {
     $render(
-      <vstack>
+      <col>
         <text font="title3" color="#fbbf24">Permission Needed</text>
-      </vstack>
+      </col>
     );
   } else {
     const location = await $location.current({
@@ -359,14 +359,14 @@ if (!$location.isAvailable()) {
     });
 
     $render(
-      <vstack>
+      <col>
         <text font="title3">
           {location.latitude.toFixed(5)}, {location.longitude.toFixed(5)}
         </text>
         <text font="caption">
           Accuracy: {Math.round(location.accuracy)}m ({location.accuracyAuthorization})
         </text>
-      </vstack>
+      </col>
     );
   }
 }
@@ -407,11 +407,11 @@ const profile = $storage.getJSON("profile");
 const allKeys = $storage.keys();
 
 $render(
-  <vstack>
+  <col>
     <text font="title">{greeting}</text>
     <text font="caption">Name: {profile.name}</text>
     <text font="caption">Keys: {allKeys.join(", ")}</text>
-  </vstack>
+  </col>
 );
 ```
 
@@ -440,10 +440,10 @@ const widget_size = $getenv("widget-size");
 const widget_param = $getenv("widget-param");
 
 $render(
-  <vstack>
+  <col>
     <text font="title">Widget Size: {widget_size}</text>
     <text font="caption">Parameter: {widget_param}</text>
-  </vstack>
+  </col>
 );
 ```
 
@@ -474,11 +474,11 @@ export const sum = (a, b) => a + b;
 $import("util.jsx");
 
 $render(
-  <vstack>
+  <col>
     <text font="title">test</text>
     {textItems}
     <text font="title">{sum(1, 2)}</text>
-  </vstack>
+  </col>
 );
 ```
 
@@ -496,11 +496,11 @@ $render(
 
 ```jsx
 $render(
-  <vstack frame="max" backgroundColor="#0f172a">
+  <col size="max" backgroundColor="#0f172a">
     <text font="title" color="#e2e8f0">Hello JSWidget</text>
     <spacer />
     <text font="caption" color="#94a3b8">Welcome!</text>
-  </vstack>
+  </col>
 );
 ```
 
@@ -548,10 +548,10 @@ $dynamic_island({
 ```jsx
 $component("MyCard", (title, content) => {
   return (
-    <vstack backgroundColor="#f1f5f9" cornerRadius={12}>
+    <col backgroundColor="#f1f5f9" cornerRadius={12}>
       <text font="headline">{title}</text>
       <text font="body">{content}</text>
-    </vstack>
+    </col>
   );
 });
 ```
@@ -603,9 +603,9 @@ await delay(1000);
 const result = await $http.get("https://api.example.com/data");
 
 $render(
-  <vstack>
+  <col>
     <text>{result}</text>
-  </vstack>
+  </col>
 );
 ```
 

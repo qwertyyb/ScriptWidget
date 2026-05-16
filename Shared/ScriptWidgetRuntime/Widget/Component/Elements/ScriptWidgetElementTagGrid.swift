@@ -106,25 +106,25 @@ class ScriptWidgetElementTagGrid {
     
         
     static func getHorizontalAlignment(_ element: ScriptWidgetRuntimeElement) -> HorizontalAlignment {
-        guard let alignment = element.getPropString("alignment") else { return .center }
+        guard let align = element.getPropString("align") else { return .center }
         
-        switch alignment {
-        case "leading": return .leading
-        case "trailing": return .trailing
+        switch align {
+        case "start": return .leading
+        case "end": return .trailing
         case "center": return .center
         default: return .center
         }
     }
     
     static func getVerticalAlignment(_ element: ScriptWidgetRuntimeElement) -> VerticalAlignment {
-        guard let alignment = element.getPropString("alignment") else { return .center }
+        guard let align = element.getPropString("align") else { return .center }
         
-        switch alignment {
-        case "top": return .top
-        case "bottom": return .bottom
+        switch align {
+        case "start": return .top
+        case "end": return .bottom
         case "center": return .center
-        case "firstTextBaseline": return .firstTextBaseline
-        case "lastTextBaseline": return .lastTextBaseline
+        case "firstBaseline": return .firstTextBaseline
+        case "lastBaseline": return .lastTextBaseline
         default: return .center
         }
     }

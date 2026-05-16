@@ -6,7 +6,7 @@
 //
 
 $render(
-  <vstack frame="max" padding={12}>
-    <roundedrect radius="12" color="#38bdf8" frame={{width: 140, height: 60}} />
-  </vstack>
+  <col size="max" padding={12}>
+    <roundedrect radius="12" color="#38bdf8" size={{width: 140, height: 60}} />
+  </col>
 );

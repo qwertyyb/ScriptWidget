@@ -14,7 +14,7 @@ let radialGradient = {
 };
 
 $render(
-  <vstack backgroundGradient={radialGradient} frame="max">
+  <col backgroundGradient={radialGradient} size="max">
     <text font="title">RadialGradient</text>
-  </vstack>
+  </col>
 );

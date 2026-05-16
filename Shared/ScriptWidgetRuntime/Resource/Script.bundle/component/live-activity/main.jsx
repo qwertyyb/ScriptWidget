@@ -8,9 +8,9 @@
 
 // $render is also for lock screen live activity
 $render(
-    <vstack frame="max">
+    <col size="max">
         <text>hello live activity</text>
-    </vstack>
+    </col>
 );
 
 

@@ -6,7 +6,7 @@
 // 
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <link url="https://www.baidu.com" backgroundColor="blue">
       <text>Baidu</text>
     </link>
@@ -16,5 +16,5 @@ $render(
     <link url="https://www.163.com" backgroundColor="yellow">
       <text>163</text>
     </link>
-  </vstack>
+  </col>
 );

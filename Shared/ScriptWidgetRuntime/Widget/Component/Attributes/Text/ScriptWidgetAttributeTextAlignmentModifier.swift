@@ -7,40 +7,33 @@
 
 import SwiftUI
 
-
-
 struct ScriptWidgetAttributeTextAlignmentModifier: ViewModifier {
     
     let textAlignment: TextAlignment?
     
     init(_ element: ScriptWidgetRuntimeElement) {
-        
-        var textAlignment: TextAlignment? = nil
-        if let alignmentValue = element.getPropString("alignment") {
-            textAlignment = ScriptWidgetAttributeTextAlignmentModifier.getTextAlignmentStringName(alignmentValue)
+        if let value = element.getPropString("textAlign") {
+            self.textAlignment = Self.parse(value)
+        } else {
+            self.textAlignment = nil
         }
-        self.textAlignment = textAlignment
     }
     
     @ViewBuilder
     func body(content: Content) -> some View {
         if let textAlignment = self.textAlignment {
-            content
-                .multilineTextAlignment(textAlignment)
+            content.multilineTextAlignment(textAlignment)
         } else {
             content
         }
     }
     
-    static func getTextAlignmentStringName(_ name: String) -> TextAlignment? {
-        var textAlignment: TextAlignment? = nil
+    private static func parse(_ name: String) -> TextAlignment? {
         switch name {
-        case "leading": textAlignment = .leading
-        case "center" : textAlignment = .center
-        case "trailing": textAlignment = .trailing
-        default: textAlignment = nil
+        case "start": return .leading
+        case "center": return .center
+        case "end": return .trailing
+        default: return nil
         }
-        
-        return textAlignment
     }
 }

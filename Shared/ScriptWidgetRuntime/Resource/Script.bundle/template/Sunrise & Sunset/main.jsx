@@ -33,11 +33,11 @@ const formatTime = (date) => {
 };
 
 $render(
-  <vstack frame="max" backgroundColor="#1e293b">
+  <col size="max" backgroundColor="#1e293b">
     <text font="caption" color="#94a3b8">Sunrise & Sunset</text>
-    <hstack spacing="12">
+    <row spacing="12">
       <label title={formatTime(sunrise)} systemName="sunrise.fill" color="#f59e0b" />
       <label title={formatTime(sunset)} systemName="sunset.fill" color="#f97316" />
-    </hstack>
-  </vstack>
+    </row>
+  </col>
 );

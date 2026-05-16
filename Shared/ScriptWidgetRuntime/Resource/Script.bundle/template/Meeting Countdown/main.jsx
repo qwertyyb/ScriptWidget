@@ -19,11 +19,11 @@ if (param) {
 
 if (!target) {
   $render(
-    <vstack frame="max" backgroundColor="#0f172a">
+    <col size="max" backgroundColor="#0f172a">
       <text font="caption" color="#94a3b8">Meeting Countdown</text>
       <text font="title3" color="#e2e8f0">Set widget-param</text>
       <text font="caption2" color="#64748b">Example: 2026-02-01 09:30</text>
-    </vstack>
+    </col>
   );
 } else {
   const now = new Date();
@@ -35,10 +35,10 @@ if (!target) {
   const minutes = diffMin % 60;
 
   $render(
-    <vstack frame="max" backgroundColor="#1e293b">
+    <col size="max" backgroundColor="#1e293b">
       <text font="caption" color="#94a3b8">Next Meeting</text>
       <text font="title2" color="#e2e8f0">{diffDay}d {hours}h {minutes}m</text>
       <text font="caption2" color="#64748b">Target: {target.toLocaleString()}</text>
-    </vstack>
+    </col>
   );
 }

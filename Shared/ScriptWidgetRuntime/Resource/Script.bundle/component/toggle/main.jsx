@@ -14,10 +14,10 @@ const widget_size = $getenv("widget-size");
 const value = Math.random() >= 0.5;
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <toggle on={value} onClick="onToggleClick">
       <image systemName="mosaic.fill" />
       <text>{widget_size}</text>
     </toggle>
-  </vstack>
+  </col>
 );

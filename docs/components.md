@@ -6,7 +6,7 @@
 
 ## 布局容器
 
-### VStack (垂直堆叠)
+### Col (垂直堆叠)
 
 垂直排列子元素。
 
@@ -14,41 +14,58 @@
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `alignment` | String | 子元素水平对齐方式 |
+| `align` | String | 子元素**水平**对齐（交叉轴） |
+| `justify` | String | 子元素组在**垂直**方向的分布（主轴，需父级有剩余高度） |
 | `spacing` | number | 子元素垂直间距 |
 
-**`alignment` 可选值**：`leading` | `trailing` | `center`（默认）
+**`align` 可选值**：`start` | `end` | `center`（默认）
+
+**`justify` 可选值**：`start`（默认）| `center` | `end`
 
 ```jsx
-<VStack alignment="center" spacing={10}>
-    <Text>Hello</Text>
-    <Text>World</Text>
-</VStack>
+<col align="center" spacing={10}>
+  <text>Hello</text>
+  <text>World</text>
+</col>
+
+<col justify="center" size={{height: "fill"}}>
+  <text>Vertically centered group</text>
+</col>
 ```
 
 ---
 
-### HStack (水平堆叠)
+### Row (水平堆叠)
 
 水平排列子元素。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `alignment` | String | 子元素垂直对齐方式 |
+| `align` | String | 子元素**垂直**对齐（交叉轴） |
+| `justify` | String | 子元素组在**水平**方向的分布（主轴，需父级有剩余宽度） |
 | `spacing` | number | 子元素水平间距 |
 
-**`alignment` 可选值**：`top` | `bottom` | `center`（默认）| `firstTextBaseline` | `lastTextBaseline`
+**`align` 可选值**：`start` | `end` | `center`（默认）| `firstBaseline` | `lastBaseline`
+
+**`justify` 可选值**：`start`（默认）| `center` | `end`
 
 ```jsx
-<HStack alignment="top" spacing={8}>
-    <Text>Left</Text>
-    <Text>Right</Text>
-</HStack>
+<row align="center" spacing={8}>
+  <text>Left</text>
+  <text>Right</text>
+</row>
+
+{/* 横向居中：子元素作为一组在可用宽度内居中 */}
+<row justify="center" size={{width: "fill"}}>
+  <text>Centered group</text>
+</row>
 ```
+
+也可用通用 `size` 配合 `justify` 达到同样效果：`<row size={{width: "fill"}} justify="center">`。
 
 ---
 
-### ZStack (层叠容器)
+### Stack (层叠容器)
 
 按 z 轴顺序层叠子元素，后面的元素覆盖在前面元素之上。
 
@@ -57,22 +74,22 @@
 | 无特殊属性 | - | 支持通用属性 |
 
 ```jsx
-<ZStack>
+<stack>
     <Rectangle backgroundColor="#f00" />
     <Text>覆盖在上面</Text>
-</ZStack>
+</stack>
 ```
 
 ---
 
-### VGrid / HGrid (网格容器)
+### Grid / Grid-Row (网格容器)
 
 网格形式排列子元素。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
 | `columns` | JSON 字符串 | 列/行配置数组 |
-| `alignment` | String | 对齐方式 |
+| `align` | String | 对齐方式 |
 | `spacing` | number | 间距 |
 
 **`columns` 配置格式**：
@@ -88,13 +105,13 @@
 - `flexible`：弹性填充
 
 ```jsx
-<VGrid
+<grid
     columns='[{"type":"adaptive","min":"60"},{"type":"fixed","value":"80"}]'
     spacing={10}
 >
     <Text>Item 1</Text>
     <Text>Item 2</Text>
-</VGrid>
+</grid>
 ```
 
 ---
@@ -110,6 +127,7 @@
 | `font` | String | 字体样式 |
 | `color` | String | 文字颜色 |
 | `gradientForeground` | String | 渐变前景色 |
+| `lineLimit` | number \| string | 最大行数；字符串 `"none"` 表示不限制 |
 
 **`font` 格式**：
 - 预设名称（字符串）：`"largeTitle"` | `"title"` | `"title2"` | `"title3"` | `"headline"` | `"subheadline"` | `"body"` | `"callout"` | `"footnote"` | `"caption"` | `"caption2"`
@@ -119,8 +137,9 @@
 - 自定义字体：`font={{custom: "MyFont", size: 24}}`
 
 ```jsx
-<Text font="title" color="#333">Hello World</Text>
-<Text font={{name: "body", weight: "bold"}}>Large Bold Text</Text>
+<text font="title" color="#333">Hello World</text>
+<text font={{name: "body", weight: "bold"}} lineLimit={1}>Single line title</text>
+<text font="caption" lineLimit={2}>Long text truncated to two lines</text>
 ```
 
 ---
@@ -493,11 +512,20 @@
 
 ### Spacer (间距)
 
-占用空间，用于布局分隔。
+占用空间，用于布局分隔。在 `col` 中沿垂直方向扩展，在 `row` 中沿水平方向扩展。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `frame` | String | 占用空间尺寸 |
+| `length` | number | 最小占用长度（对应 SwiftUI `Spacer(minLength:)`） |
+| `size` | String | 占用空间尺寸 |
+
+```jsx
+<col>
+  <text font="title">Title</text>
+  <spacer length={8} />
+  <text font="caption">Footer</text>
+</col>
+```
 
 ---
 
@@ -505,13 +533,13 @@
 
 这些属性通过 `ScriptWidgetAttributeGeneralModifier` 应用到所有元素。
 
-### frame (尺寸)
+### size (尺寸)
 
 ```jsx
-<Text frame="max" />
-<Text frame={{width: 10, height: 20}} />
-<Text frame={{maxWidth: "infinity", maxHeight: "infinity", alignment: "topLeading"}} />
-<Text frame={{width: 10, maxHeight: "infinity", alignment: "center"}} />
+<text size="max" />
+<text size={{width: 100, height: 50}} />
+<text size={{width: "fill", height: "fill"}} justify="start" align="start" />
+<text size={{width: "fill"}} justify="center" />
 ```
 
 ---
@@ -636,10 +664,10 @@
 
 | 元素 | 分类 | 说明 |
 |------|------|------|
-| `VStack` | 布局容器 | 垂直堆叠 |
-| `HStack` | 布局容器 | 水平堆叠 |
-| `ZStack` | 布局容器 | 层叠容器 |
-| `VGrid` / `HGrid` | 布局容器 | 网格容器 |
+| `Col` | 布局容器 | 垂直堆叠 |
+| `Row` | 布局容器 | 水平堆叠 |
+| `Stack` | 布局容器 | 层叠容器 |
+| `Grid` / `Grid-Row` | 布局容器 | 网格容器 |
 | `Text` | 文本 | 显示文本 |
 | `Date` | 文本 | 显示日期/时间 |
 | `Image` | 图片媒体 | 显示图片 |

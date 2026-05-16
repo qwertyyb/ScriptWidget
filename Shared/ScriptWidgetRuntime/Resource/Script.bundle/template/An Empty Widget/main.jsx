@@ -10,7 +10,7 @@
 var text = "Hello JSWidget :)";
 
 $render(
-  <vstack>
+  <col>
     <text font="caption">{text}</text>
-  </vstack>
+  </col>
 );

@@ -566,21 +566,21 @@ let linearGradient = {
 };
 
 $render(
-    <vstack
+    <col
         backgroundGradient={linearGradient}
-        frame={{maxWidth: "infinity", maxHeight: "infinity", alignment: "center"}}
+        size="max" justify="center" align="center"
     >
-        <hstack>
+        <row>
             <text font="title2">{today.Animal} 年</text>
 
-            <vstack>
+            <col>
                 <text font="title">{today.IMonthCn}</text>
                 <text font="title">{today.IDayCn}</text>
-            </vstack>
-        </hstack>
+            </col>
+        </row>
 
         <text font="caption">{today.festival}</text>
 
-    </vstack>
+    </col>
 );
 

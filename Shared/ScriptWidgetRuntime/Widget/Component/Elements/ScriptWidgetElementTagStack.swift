@@ -19,12 +19,13 @@ class ScriptWidgetElementTagStack {
     }
     
     @ViewBuilder private static func buildVStack(element: ScriptWidgetRuntimeElement, context: ScriptWidgetElementContext) -> some View {
-        VStack (alignment: Self.getHorizontalAlignment(element) , spacing: Self.getSpacing(element)) {
+        let stack = VStack(alignment: Self.getHorizontalAlignment(element), spacing: Self.getSpacing(element)) {
             ForEach(element.childrenAsElements()) { item -> AnyView in
                 return ScriptWidgetElementView.buildView(element: item, context: context)
             }
         }
-        .modifier(ScriptWidgetAttributeGeneralModifier(element, context))
+        Self.applyMainAxisJustify(stack, justify: Self.getJustify(element), isHorizontal: false)
+            .modifier(ScriptWidgetAttributeGeneralModifier(element, context))
     }
     ///--------------------------------------------------------------------------------------------------------
 
@@ -33,34 +34,35 @@ class ScriptWidgetElementTagStack {
     }
     
     @ViewBuilder private static func buildHStack(element: ScriptWidgetRuntimeElement, context: ScriptWidgetElementContext) -> some View {
-        HStack (alignment: Self.getVerticalAlignment(element), spacing: Self.getSpacing(element)) {
+        let stack = HStack(alignment: Self.getVerticalAlignment(element), spacing: Self.getSpacing(element)) {
             ForEach(element.childrenAsElements()) { item -> AnyView in
                 return ScriptWidgetElementView.buildView(element: item, context: context)
             }
         }
-        .modifier(ScriptWidgetAttributeGeneralModifier(element, context))
+        Self.applyMainAxisJustify(stack, justify: Self.getJustify(element), isHorizontal: true)
+            .modifier(ScriptWidgetAttributeGeneralModifier(element, context))
     }
     ///--------------------------------------------------------------------------------------------------------
 
     static func getVerticalAlignment(_ element: ScriptWidgetRuntimeElement) -> VerticalAlignment {
-        guard let alignment = element.getPropString("alignment") else { return .center }
+        guard let align = element.getPropString("align") else { return .center }
         
-        switch alignment {
-        case "top": return .top
-        case "bottom": return .bottom
+        switch align {
+        case "start": return .top
+        case "end": return .bottom
         case "center": return .center
-        case "firstTextBaseline": return .firstTextBaseline
-        case "lastTextBaseline": return .lastTextBaseline
+        case "firstBaseline": return .firstTextBaseline
+        case "lastBaseline": return .lastTextBaseline
         default: return .center
         }
     }
     
     static func getHorizontalAlignment(_ element: ScriptWidgetRuntimeElement) -> HorizontalAlignment {
-        guard let alignment = element.getPropString("alignment") else { return .center }
+        guard let align = element.getPropString("align") else { return .center }
         
-        switch alignment {
-        case "leading": return .leading
-        case "trailing": return .trailing
+        switch align {
+        case "start": return .leading
+        case "end": return .trailing
         case "center": return .center
         default: return .center
         }
@@ -69,5 +71,45 @@ class ScriptWidgetElementTagStack {
     static func getSpacing(_ element: ScriptWidgetRuntimeElement) -> CGFloat? {
         guard let spacing = element.getPropDouble("spacing") else { return nil }
         return CGFloat(spacing)
+    }
+    
+    enum StackJustify {
+        case start
+        case center
+        case end
+    }
+    
+    static func getJustify(_ element: ScriptWidgetRuntimeElement) -> StackJustify? {
+        guard let justify = element.getPropString("justify") else { return nil }
+        switch justify {
+        case "center": return .center
+        case "start": return .start
+        case "end": return .end
+        default: return nil
+        }
+    }
+    
+    @ViewBuilder
+    static func applyMainAxisJustify<Content: View>(
+        _ content: Content,
+        justify: StackJustify?,
+        isHorizontal: Bool
+    ) -> some View {
+        switch justify {
+        case nil, .start:
+            content
+        case .center:
+            if isHorizontal {
+                content.frame(maxWidth: .infinity, alignment: .center)
+            } else {
+                content.frame(maxHeight: .infinity, alignment: .center)
+            }
+        case .end:
+            if isHorizontal {
+                content.frame(maxWidth: .infinity, alignment: .trailing)
+            } else {
+                content.frame(maxHeight: .infinity, alignment: .bottom)
+            }
+        }
     }
 }

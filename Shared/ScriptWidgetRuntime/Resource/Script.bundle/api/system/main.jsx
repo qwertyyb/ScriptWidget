@@ -14,7 +14,7 @@ const cpuCount = $system.processorCount();
 const activeCpuCount = $system.activeProcessorCount();
 
 $render(
-  <vstack frame="max" backgroundColor="#0f172a">
+  <col size="max" backgroundColor="#0f172a">
     <text font="caption" color="#94a3b8">System</text>
     <text font="title3" color="#e2e8f0">{app.name}</text>
     <text font="caption" color="#94a3b8">Bundle: {app.bundleId}</text>
@@ -32,5 +32,5 @@ $render(
     <text font="caption" color="#94a3b8">CPU: {cpuCount} ({activeCpuCount} active)</text>
     <text font="caption" color="#94a3b8">Memory: {(memory.physical / 1024 / 1024 / 1024).toFixed(1)} GB</text>
     <text font="caption" color="#94a3b8">Low Power: {$system.lowPowerMode() ? "On" : "Off"}</text>
-  </vstack>
+  </col>
 );

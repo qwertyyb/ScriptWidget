@@ -8,9 +8,9 @@ $import("util.jsx");
 $import("define.js");
 
 $render(
-  <vstack>
+  <col>
     <text font="title">test</text>
     {textItems}
     <text font="title">{sum(1, 2)}</text>
-  </vstack>
+  </col>
 );

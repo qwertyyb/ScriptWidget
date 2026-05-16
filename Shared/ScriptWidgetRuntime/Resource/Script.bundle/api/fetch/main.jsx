@@ -15,7 +15,7 @@ console.log(result);
 const model = JSON.parse(result);
 
 $render(
-  <vstack>
+  <col>
     <text font="title">receive title: {model.title}</text>
-  </vstack>
+  </col>
 );

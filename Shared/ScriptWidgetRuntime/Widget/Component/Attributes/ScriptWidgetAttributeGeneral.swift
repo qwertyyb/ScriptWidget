@@ -20,10 +20,10 @@ struct ScriptWidgetAttributeGeneralModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .modifier(ScriptWidgetAttributePaddingModifier(element))
             .modifier(ScriptWidgetAttributeFrameModifier(element))
             .modifier(ScriptWidgetAttributeCornerRadiusModifier(element))
             .modifier(ScriptWidgetAttributeClippedModifier(element))
-            .modifier(ScriptWidgetAttributePaddingModifier(element))
             .modifier(ScriptWidgetAttributeBackgroundModifier(element))
             .modifier(ScriptWidgetAttributeOpacityModifier(element))
             .modifier(ScriptWidgetAttributeAnimationModifier(element))

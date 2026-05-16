@@ -13,6 +13,7 @@ import SwiftUI
  font={17}
  font={{name: "body", weight: "bold"}}
  font={{name: "body", weight: "bold", design: "rounded"}}
+ font={{name: "body", weight: "bold", size: 14}}
  font={{custom: "Helvetica-Bold", size: 14}}
  */
 struct ScriptWidgetAttributeFontModifier: ViewModifier {
@@ -46,6 +47,7 @@ struct ScriptWidgetAttributeFontModifier: ViewModifier {
     }
     
     // { name: "body", weight: "bold", design: "rounded" }
+    // { name: "body", weight: "bold", size: 14 }
     // { custom: "Helvetica-Bold", size: 14 }
     static func getFontFromDict(_ dict: [String: Any]) -> Font? {
         if let customName = dict["custom"] as? String {
@@ -55,10 +57,22 @@ struct ScriptWidgetAttributeFontModifier: ViewModifier {
         
         guard let name = dict["name"] as? String else { return nil }
         let designName = dict["design"] as? String
+        let weight = (dict["weight"] as? String).flatMap { getFontWeightFromStringName($0) }
+        
+        if let size = (dict["size"] as? NSNumber)?.doubleValue {
+            let design = designName.flatMap { getFontDesignFromStringName($0) }
+            if let design = design {
+                return .system(size: CGFloat(size), weight: weight ?? .regular, design: design)
+            }
+            if let weight = weight {
+                return .system(size: CGFloat(size), weight: weight)
+            }
+            return .system(size: CGFloat(size))
+        }
+        
         var font = getFontFromStringName(name, designName)
         
-        if let weightName = dict["weight"] as? String,
-           let weight = getFontWeightFromStringName(weightName) {
+        if let weight = weight {
             font = font?.weight(weight)
         }
         

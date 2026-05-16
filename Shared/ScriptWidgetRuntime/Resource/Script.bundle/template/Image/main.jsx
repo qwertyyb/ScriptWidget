@@ -4,7 +4,7 @@
 // 
 
 $render(
-  <vstack>
+  <col>
     <image id="image" />
-  </vstack>
+  </col>
 );

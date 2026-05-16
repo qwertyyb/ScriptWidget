@@ -27,18 +27,18 @@ const data = JSON.parse(result);
 const current = data.current || {};
 
 $render(
-  <vstack frame="max" backgroundColor="#0f172a">
+  <col size="max" backgroundColor="#0f172a">
     <text font="caption" color="#94a3b8">Air Quality</text>
     <text font="title2" color="#e2e8f0">AQI {current.us_aqi ?? "-"}</text>
-    <hstack spacing="12">
-      <vstack alignment="leading">
+    <row spacing="12">
+      <col align="start">
         <text font="caption2" color="#94a3b8">PM2.5</text>
         <text font="caption" color="#e2e8f0">{current.pm2_5 ?? "-"}</text>
-      </vstack>
-      <vstack alignment="leading">
+      </col>
+      <col align="start">
         <text font="caption2" color="#94a3b8">PM10</text>
         <text font="caption" color="#e2e8f0">{current.pm10 ?? "-"}</text>
-      </vstack>
-    </hstack>
-  </vstack>
+      </col>
+    </row>
+  </col>
 );

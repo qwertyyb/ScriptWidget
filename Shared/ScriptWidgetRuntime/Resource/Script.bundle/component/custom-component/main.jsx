@@ -28,26 +28,26 @@
 
 const LeftAlign = ({ message, children }) => {
     return (
-        <hstack>
+        <row>
             {children}
             <text> ({message}) </text>
             <spacer />
-        </hstack>
+        </row>
     )
 }
 const RightAlign = ({ message, children }) => {
     return (
-        <hstack>
+        <row>
             <spacer />
             <text> ({message}) </text>
             {children}
-        </hstack>
+        </row>
     )
 }
 $render(
-    <vstack
+    <col
         backgroundColor="blue"
-        frame={{maxWidth: "infinity", maxHeight: "infinity", alignment: "center"}}
+        size="max" justify="center" align="center"
     >
         <LeftAlign message="L">
             <text> this text left aligned</text>
@@ -55,6 +55,6 @@ $render(
         <RightAlign message="R">
             <text> text right aligned</text>
         </RightAlign>
-    </vstack>
+    </col>
 );
 

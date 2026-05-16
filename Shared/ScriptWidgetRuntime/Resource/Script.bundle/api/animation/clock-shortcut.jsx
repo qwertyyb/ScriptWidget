@@ -8,21 +8,21 @@
 
 
 $render(
-  <vstack frame={{maxWidth: "infinity", maxHeight: "infinity", alignment: "center"}}>
-      <zstack>
-          <vstack animation="clockHour">
-              <circle frame={{width: 15, height: 15}} color="red"></circle>
+  <col size="max" justify="center" align="center">
+      <stack>
+          <col animation="clockHour">
+              <circle size={{width: 15, height: 15}} color="red"></circle>
               <spacer/>
-          </vstack>
-          <vstack animation="clockMinute">
-              <circle frame={{width: 10, height: 10}} color="blue"></circle>
+          </col>
+          <col animation="clockMinute">
+              <circle size={{width: 10, height: 10}} color="blue"></circle>
               <spacer/>
-          </vstack>
-          <vstack animation="clockSecond">
-              <circle frame={{width: 5, height: 5}} color="yellow"></circle>
+          </col>
+          <col animation="clockSecond">
+              <circle size={{width: 5, height: 5}} color="yellow"></circle>
               <spacer/>
-          </vstack>
-      </zstack>
-  </vstack>
+          </col>
+      </stack>
+  </col>
 );
 

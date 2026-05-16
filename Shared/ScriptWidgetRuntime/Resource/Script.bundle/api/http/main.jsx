@@ -55,7 +55,7 @@ console.log(post_string_with_header_result);
 // $http.delete (same to post)
 
 $render(
-  <vstack>
+  <col>
     <text>$http example</text>
-  </vstack>
+  </col>
 );

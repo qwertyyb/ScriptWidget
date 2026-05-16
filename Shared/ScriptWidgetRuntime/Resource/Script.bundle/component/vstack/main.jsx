@@ -6,8 +6,8 @@
 //
 
 $render(
-  <vstack>
+  <col>
     <text>First</text>
     <text>Second</text>
-  </vstack>
+  </col>
 );

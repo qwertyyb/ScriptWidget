@@ -214,6 +214,8 @@
 		F29119632793035E00B860B0 /* ScriptWidgetAttributeFontModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F291191D2793035E00B860B0 /* ScriptWidgetAttributeFontModifier.swift */; };
 		F29119642793035E00B860B0 /* ScriptWidgetAttributeTextAlignmentModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F291191E2793035E00B860B0 /* ScriptWidgetAttributeTextAlignmentModifier.swift */; };
 		F29119652793035E00B860B0 /* ScriptWidgetAttributeTextAlignmentModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F291191E2793035E00B860B0 /* ScriptWidgetAttributeTextAlignmentModifier.swift */; };
+		F29119B02793035E00B860B0 /* ScriptWidgetAttributeLineLimitModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29119B12793035E00B860B0 /* ScriptWidgetAttributeLineLimitModifier.swift */; };
+		F29119B22793035E00B860B0 /* ScriptWidgetAttributeLineLimitModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29119B12793035E00B860B0 /* ScriptWidgetAttributeLineLimitModifier.swift */; };
 		F29119662793035E00B860B0 /* ScriptWidgetAttributeDebugModeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29119202793035E00B860B0 /* ScriptWidgetAttributeDebugModeModifier.swift */; };
 		F29119672793035E00B860B0 /* ScriptWidgetAttributeDebugModeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29119202793035E00B860B0 /* ScriptWidgetAttributeDebugModeModifier.swift */; };
 		F29119682793035E00B860B0 /* ScriptWidgetElementTagLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29119222793035E00B860B0 /* ScriptWidgetElementTagLink.swift */; };
@@ -520,6 +522,7 @@
 		F291191C2793035E00B860B0 /* ScriptWidgetAttributeForegroundModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetAttributeForegroundModifier.swift; sourceTree = "<group>"; };
 		F291191D2793035E00B860B0 /* ScriptWidgetAttributeFontModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetAttributeFontModifier.swift; sourceTree = "<group>"; };
 		F291191E2793035E00B860B0 /* ScriptWidgetAttributeTextAlignmentModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetAttributeTextAlignmentModifier.swift; sourceTree = "<group>"; };
+		F29119B12793035E00B860B0 /* ScriptWidgetAttributeLineLimitModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetAttributeLineLimitModifier.swift; sourceTree = "<group>"; };
 		F29119202793035E00B860B0 /* ScriptWidgetAttributeDebugModeModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetAttributeDebugModeModifier.swift; sourceTree = "<group>"; };
 		F29119222793035E00B860B0 /* ScriptWidgetElementTagLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetElementTagLink.swift; sourceTree = "<group>"; };
 		F29119232793035E00B860B0 /* ScriptWidgetElementTagSpacer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScriptWidgetElementTagSpacer.swift; sourceTree = "<group>"; };
@@ -1101,6 +1104,7 @@
 				F291191C2793035E00B860B0 /* ScriptWidgetAttributeForegroundModifier.swift */,
 				F291191D2793035E00B860B0 /* ScriptWidgetAttributeFontModifier.swift */,
 				F291191E2793035E00B860B0 /* ScriptWidgetAttributeTextAlignmentModifier.swift */,
+				F29119B12793035E00B860B0 /* ScriptWidgetAttributeLineLimitModifier.swift */,
 			);
 			path = Text;
 			sourceTree = "<group>";
@@ -1668,6 +1672,7 @@
 				F291193C2793035E00B860B0 /* ScriptWidgetElementPoint.swift in Sources */,
 				F2BE767325DC0806000AD28E /* KeyboardHelper.swift in Sources */,
 				F29119642793035E00B860B0 /* ScriptWidgetAttributeTextAlignmentModifier.swift in Sources */,
+				F29119B02793035E00B860B0 /* ScriptWidgetAttributeLineLimitModifier.swift in Sources */,
 				F291194C2793035E00B860B0 /* ScriptWidgetRuntimeElement.swift in Sources */,
 				D1BD329728DF0D9600F217ED /* ScriptCodePreviewDataObject.swift in Sources */,
 				5AC386D42CDA0CB10027B976 /* ImportExportManager.swift in Sources */,
@@ -1753,6 +1758,7 @@
 				F29119672793035E00B860B0 /* ScriptWidgetAttributeDebugModeModifier.swift in Sources */,
 				F29119532793035E00B860B0 /* ScriptWidgetAttributeFrameModifier.swift in Sources */,
 				F29119652793035E00B860B0 /* ScriptWidgetAttributeTextAlignmentModifier.swift in Sources */,
+				F29119B22793035E00B860B0 /* ScriptWidgetAttributeLineLimitModifier.swift in Sources */,
 				F29119942793223300B860B0 /* ScriptWidgetPackage.swift in Sources */,
 				F25ED69027FDF9DD000089D0 /* ScriptWidgetRunningState.swift in Sources */,
 				F29119612793035E00B860B0 /* ScriptWidgetAttributeForegroundModifier.swift in Sources */,

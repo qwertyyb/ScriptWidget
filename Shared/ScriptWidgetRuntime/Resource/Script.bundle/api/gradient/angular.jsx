@@ -12,7 +12,7 @@ let angularGradient = {
 };
 
 $render(
-  <vstack backgroundGradient={angularGradient} frame="max">
+  <col backgroundGradient={angularGradient} size="max">
     <text font="title">AngularGradient</text>
-  </vstack>
+  </col>
 );

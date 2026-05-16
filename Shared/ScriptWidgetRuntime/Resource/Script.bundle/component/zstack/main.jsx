@@ -6,8 +6,8 @@
 //
 
 $render(
-  <zstack>
+  <stack>
     <text>First</text>
     <text>Second</text>
-  </zstack>
+  </stack>
 );

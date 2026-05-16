@@ -15,27 +15,26 @@ let linearGradient = {
 };
 
 $render(
-  <vstack
+  <col
     backgroundGradient={linearGradient}
-    frame={{maxWidth: "infinity", maxHeight: "infinity", alignment: "leading"}}
-    alignment="leading"
+    size="max" justify="start"
   >
-    <hstack padding={10}>
-      <vstack alignment="leading">
+    <row padding={10}>
+      <col align="start">
         <text font="body" color="black">
           {d.getFullYear()}-{d.getMonth() + 1}-{d.getDate()}
         </text>
         <text font="body" color="black">
           Is Working Day Today ?
         </text>
-      </vstack>
+      </col>
       <spacer />
-    </hstack>
+    </row>
     <spacer />
-    <hstack alignment="center">
+    <row align="center">
         <text font="largeTitle" color="black" padding={10}>
         {(n >= 1 && n <= 5) ? "Yes⛽️⛽️⛽️" : "No😄"}
         </text>
-    </hstack>    
-  </vstack>
+    </row>    
+  </col>
 );

@@ -90,7 +90,9 @@ function buildDts() {
   parts.push("    interface IntrinsicElements {");
 
   const common = [
-    "frame?: string;",
+    "size?: string | { width?: number | \"fill\"; height?: number | \"fill\"; minWidth?: number; maxWidth?: number | \"fill\"; minHeight?: number; maxHeight?: number | \"fill\" };",
+    "justify?: \"start\" | \"center\" | \"end\";",
+    "align?: \"start\" | \"center\" | \"end\";",
     "padding?: number | string;",
     "backgroundColor?: string;",
     "foregroundColor?: string;",

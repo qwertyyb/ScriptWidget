@@ -8,10 +8,10 @@
 
 if (!$location.isAvailable()) {
   $render(
-    <vstack frame="max" backgroundColor="#0f172a">
+    <col size="max" backgroundColor="#0f172a">
       <text font="title3" color="#f87171">Location Unavailable</text>
       <text font="caption" color="#94a3b8">Location services are disabled.</text>
-    </vstack>
+    </col>
   );
   return;
 }
@@ -21,10 +21,10 @@ const authorized = status === "authorizedWhenInUse" || status === "authorizedAlw
 
 if (!authorized) {
   $render(
-    <vstack frame="max" backgroundColor="#0f172a">
+    <col size="max" backgroundColor="#0f172a">
       <text font="title3" color="#fbbf24">Permission Needed</text>
       <text font="caption" color="#94a3b8">Enable Location access in the app.</text>
-    </vstack>
+    </col>
   );
   return;
 }
@@ -39,10 +39,10 @@ const data = JSON.parse(result);
 const current = data.current || {};
 
 $render(
-  <vstack frame="max" backgroundColor="#0f172a" spacing="6">
+  <col size="max" backgroundColor="#0f172a" spacing="6">
     <text font="caption" color="#94a3b8">Local Weather</text>
     <text font="title2" color="#e2e8f0">{current.temperature_2m ?? "-"} deg C</text>
     <text font="caption" color="#94a3b8">Feels like {current.apparent_temperature ?? "-"} deg C</text>
     <text font="caption2" color="#64748b">Weather code: {current.weather_code ?? "-"}</text>
-  </vstack>
+  </col>
 );

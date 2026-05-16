@@ -17,7 +17,7 @@ let gaugeSections = [
 
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <gauge 
       angle="260" 
       value={percent/100}
@@ -27,5 +27,5 @@ $render(
       sections={$json(gaugeSections)}
       >
     </gauge>
-  </vstack>
+  </col>
 );

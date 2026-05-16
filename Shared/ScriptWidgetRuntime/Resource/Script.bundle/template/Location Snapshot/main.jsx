@@ -8,10 +8,10 @@
 
 if (!$location.isAvailable()) {
   $render(
-    <vstack frame="max" backgroundColor="#0f172a">
+    <col size="max" backgroundColor="#0f172a">
       <text font="title3" color="#f87171">Location Unavailable</text>
       <text font="caption" color="#94a3b8">Location services are disabled.</text>
-    </vstack>
+    </col>
   );
 } else {
   const status = $location.authorizationStatus();
@@ -19,10 +19,10 @@ if (!$location.isAvailable()) {
 
   if (!authorized) {
     $render(
-      <vstack frame="max" backgroundColor="#0f172a">
+      <col size="max" backgroundColor="#0f172a">
         <text font="title3" color="#fbbf24">Permission Needed</text>
         <text font="caption" color="#94a3b8">Enable Location access in the app.</text>
-      </vstack>
+      </col>
     );
   } else {
     const location = await $location.current();
@@ -31,12 +31,12 @@ if (!$location.isAvailable()) {
     const accuracy = Math.max(0, Math.round(location.accuracy));
 
     $render(
-      <vstack frame="max" backgroundColor="#111827" spacing="6">
+      <col size="max" backgroundColor="#111827" spacing="6">
         <text font="caption" color="#94a3b8">Location Snapshot</text>
         <text font="title3" color="#e2e8f0">{lat}, {lon}</text>
         <text font="caption" color="#94a3b8">Accuracy: {accuracy}m</text>
         <text font="caption2" color="#64748b">{location.timestamp}</text>
-      </vstack>
+      </col>
     );
   }
 }

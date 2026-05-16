@@ -12,7 +12,7 @@ const onButtonClick = () => {
 const widget_size = $getenv("widget-size");
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <button onClick="onButtonClick">
       <image systemName="mosaic.fill" />
       <text>{widget_size}</text>
@@ -20,5 +20,5 @@ $render(
     <button action="reload">
       <text>Refresh Widget</text>
     </button>
-  </vstack>
+  </col>
 );

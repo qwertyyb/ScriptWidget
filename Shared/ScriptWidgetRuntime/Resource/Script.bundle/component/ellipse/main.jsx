@@ -6,7 +6,7 @@
 // 
 
 $render(
-  <vstack frame="max">
-    <ellipse frame={{width: 50, height: 30}} color="blue"></ellipse>
-  </vstack>
+  <col size="max">
+    <ellipse size={{width: 50, height: 30}} color="blue"></ellipse>
+  </col>
 );

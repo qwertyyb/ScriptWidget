@@ -19,7 +19,7 @@ console.log(result);
 const models = JSON.parse(result);
 
 $render(
-  <vstack>
+  <col>
     <text font="caption">Org Description: {models[2].description}</text>
-  </vstack>
+  </col>
 );

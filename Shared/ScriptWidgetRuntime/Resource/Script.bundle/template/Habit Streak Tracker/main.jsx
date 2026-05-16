@@ -27,9 +27,9 @@ if (lastDate !== todayKey) {
 }
 
 $render(
-  <vstack frame="max" backgroundColor="#0f172a">
+  <col size="max" backgroundColor="#0f172a">
     <text font="caption" color="#94a3b8">Habit Streak</text>
     <text font="title2" color="#e2e8f0">{streakValue} days</text>
     <text font="caption2" color="#64748b">Last update: {todayKey}</text>
-  </vstack>
+  </col>
 );

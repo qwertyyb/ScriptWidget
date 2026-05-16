@@ -6,8 +6,8 @@
 //
 
 $render(
-  <hstack>
+  <row>
     <text>First</text>
     <text>Second</text>
-  </hstack>
+  </row>
 );

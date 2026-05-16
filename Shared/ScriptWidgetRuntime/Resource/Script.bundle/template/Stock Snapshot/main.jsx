@@ -33,11 +33,11 @@ if (openValue !== "-" && closeValue !== "-") {
 }
 
 $render(
-  <vstack frame="max" backgroundColor="#0f172a">
+  <col size="max" backgroundColor="#0f172a">
     <text font="caption" color="#94a3b8">Stock Snapshot</text>
     <text font="title3" color="#e2e8f0">{symbol.toUpperCase()}</text>
     <text font="caption" color="#94a3b8">Close: {closeValue}</text>
     <text font="caption" color="#94a3b8">Change: {change}</text>
     <text font="caption2" color="#64748b">Date: {dateValue}</text>
-  </vstack>
+  </col>
 );

@@ -6,7 +6,7 @@
 // 
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <text font="title">Hello JSWidget</text>
     <text font="caption" color="red">
       Hello JSWidget
@@ -14,5 +14,5 @@ $render(
     <text font="caption" backgroundColor="blue" color="white">
       Hello JSWidget
     </text>
-  </vstack>
+  </col>
 );

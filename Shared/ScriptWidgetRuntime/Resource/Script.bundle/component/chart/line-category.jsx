@@ -18,7 +18,7 @@ let data = [
 ]
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <chart 
       type="line" // required
       data={$json(data)} // required
@@ -26,5 +26,5 @@ $render(
       padding={20} // optional , general
       >
     </chart>
-  </vstack>
+  </col>
 );

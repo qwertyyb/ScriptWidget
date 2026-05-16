@@ -56,11 +56,11 @@ struct ScriptWidgetElementView: View {
             print("build tag : \(tag)")
             
             switch tag {
-            case "hstack": return ScriptWidgetElementTagStack.buildViewHStack(element, context)
-            case "vstack": return ScriptWidgetElementTagStack.buildViewVStack(element, context)
-            case "zstack": return ScriptWidgetElementTagZStack.buildView(element, context)
-            case "hgrid": return ScriptWidgetElementTagGrid.buildViewHGrid(element, context)
-            case "vgrid": return ScriptWidgetElementTagGrid.buildViewVGrid(element, context)
+            case "row": return ScriptWidgetElementTagStack.buildViewHStack(element, context)
+            case "col": return ScriptWidgetElementTagStack.buildViewVStack(element, context)
+            case "stack": return ScriptWidgetElementTagZStack.buildView(element, context)
+            case "grid": return ScriptWidgetElementTagGrid.buildViewVGrid(element, context)
+            case "grid-row": return ScriptWidgetElementTagGrid.buildViewHGrid(element, context)
                 
             case "text": return ScriptWidgetElementTagText.buildView(element, context)
             case "date": return ScriptWidgetElementTagDate.buildView(element, context)
@@ -135,6 +135,15 @@ struct ScriptWidgetElementView: View {
                         return ScriptWidgetElementView.buildView(element: item, context: context)
                     }
                 }))
+            }
+            
+            let migrationMap = [
+                "hstack": "row", "vstack": "col", "zstack": "stack",
+                "hgrid": "grid-row", "vgrid": "grid"
+            ]
+            if let newTag = migrationMap[tag] {
+                print("⚠️ Tag <\(tag)> has been renamed to <\(newTag)>. Please update your script.")
+                return AnyView(Text("Tag <\(tag)> renamed to <\(newTag)>"))
             }
         }
         

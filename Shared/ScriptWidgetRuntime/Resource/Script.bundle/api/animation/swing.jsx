@@ -22,8 +22,8 @@ let animationVerticalDefinition = {
 
 
 $render(
-  <vstack frame="max">
-    <circle frame={{width: 30, height: 30}} color="green" animation={animationHorizontalDefinition}></circle>
-    <circle frame={{width: 30, height: 30}} color="orange" animation={animationVerticalDefinition}></circle>
-  </vstack>
+  <col size="max">
+    <circle size={{width: 30, height: 30}} color="green" animation={animationHorizontalDefinition}></circle>
+    <circle size={{width: 30, height: 30}} color="orange" animation={animationVerticalDefinition}></circle>
+  </col>
 );

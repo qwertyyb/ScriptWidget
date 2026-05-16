@@ -61,17 +61,17 @@ const getTimeLeft = airDate => {
 
 const Logo = ({logoPath}) => {
    return (
-    <zstack>
+    <stack>
        <image
          url={logoPath}
-         frame={{width: 40, height: 40, alignment: "trailing"}}
+         size={{width: 40, height: 40}} justify="end"
        />
        <rect
          color={colors.secondary}
          stroke="1"
-         frame={{width: 40, height: 40}}
+         size={{width: 40, height: 40}}
        />
-    </zstack>
+    </stack>
   )
 }
 
@@ -88,29 +88,29 @@ const Entry = ({info}) => {
   }
   
   return (
-    <vstack
-      alignment="top" 
+    <col
+      align="start" 
     >
-      <hstack
-        alignment="top" 
+      <row
+        align="start" 
       >
         <Logo 
           logoPath={info.image_path}
         />
-        <vstack
-          alignment="top"
+        <col
+          align="start"
         >
           <text 
             font={14}
-            frame={{width: 200, height: 15, alignment: "leading"}}
+            size={{width: 200, height: 15}} justify="start"
             color={colors.text.primary}
           >
             {info.name}
           </text>
-          <hstack>
+          <row>
             <text
               font="caption2"
-              frame={{width: 50, height: 15, alignment: "leading"}}
+              size={{width: 50, height: 15}} justify="start"
               color={colors.text.secondary}
             >
               {
@@ -119,7 +119,7 @@ const Entry = ({info}) => {
               }
             </text>
             <text
-              frame={{width: 120, height: 15, alignment: "trailing"}}
+              size={{width: 120, height: 15}} justify="end"
               font="caption2"
               color={colors.text.secondary}
             >
@@ -128,23 +128,23 @@ const Entry = ({info}) => {
                 : nextEpisodeRemaining(info.countdown)
               }
             </text>
-          </hstack>
-        </vstack>
+          </row>
+        </col>
         <spacer/>
-      </hstack>
-    </vstack>
+      </row>
+    </col>
   )
 }
 
 const seriesJson = await fetchSeries(series)
 
 $render(
-  <zstack
+  <stack
     backgroundColor={colors.primary} 
   > 
-    <vstack 
+    <col 
       padding={{top: 10, trailing: 10, bottom: 10, leading: 20}} 
-      frame={{maxWidth: "infinity", maxHeight: "infinity", alignment: "top"}}
+      size="max" align="start"
     >
       {
         seriesJson?.map(series =>
@@ -153,6 +153,6 @@ $render(
           />
         )
       }
-    </vstack>
-  </zstack>
+    </col>
+  </stack>
 );

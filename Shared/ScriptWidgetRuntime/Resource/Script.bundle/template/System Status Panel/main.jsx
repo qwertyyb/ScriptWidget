@@ -19,10 +19,10 @@ const gaugeSections = [
 ];
 
 $render(
-  <vstack frame="max" backgroundColor="#111827">
+  <col size="max" backgroundColor="#111827">
     <text font="caption" color="#9ca3af">System Status</text>
-    <hstack spacing="12">
-      <vstack>
+    <row spacing="12">
+      <col>
         <gauge
           angle="220"
           value={batteryRatio}
@@ -33,8 +33,8 @@ $render(
           titleFont="caption2"
           sections={$json(gaugeSections)}
         />
-      </vstack>
-      <vstack>
+      </col>
+      <col>
         <gauge
           angle="220"
           value={diskRatio}
@@ -45,9 +45,9 @@ $render(
           titleFont="caption2"
           sections={$json(gaugeSections)}
         />
-      </vstack>
-    </hstack>
+      </col>
+    </row>
     <text font="caption2" color="#9ca3af">Low Power: {$system.lowPowerMode() ? "On" : "Off"}</text>
     <text font="caption2" color="#9ca3af">Thermal: {$system.thermalState()}</text>
-  </vstack>
+  </col>
 );

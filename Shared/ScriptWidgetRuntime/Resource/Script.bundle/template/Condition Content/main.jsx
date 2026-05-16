@@ -23,9 +23,9 @@ var c = Math.random() * 10 % 10 > 5 ? a : b;
 const widget_size = $getenv("widget-size");
 
 $render(
-  <vstack>
+  <col>
     <text font="title">{text}</text>
     {c}
     <text font="caption">Widget Size : {widget_size}</text>
-  </vstack>
+  </col>
 );

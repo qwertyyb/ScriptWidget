@@ -224,7 +224,7 @@ const dtre = /\d\d\d\d\-\d\d\-\d\d(T\d\d\:\d\d\:\d\d)?/;
 dt_param = param.match(dtre);
 if (!dt_param) {
   $render(
-    <vstack frame="max">
+    <col size="max">
       <text>No valid widget parameter specified!</text>
 
       <text></text>
@@ -232,7 +232,7 @@ if (!dt_param) {
         Please provide a parameter like '2022-11-26 Vacation' or
         '2022-11-26T12:35:00 Flight'
       </text>
-    </vstack>
+    </col>
   );
   return;
 } else {
@@ -269,25 +269,24 @@ if (countdown_to === "T") {
 }
 
 $render(
-  <vstack
+  <col
     backgroundGradient={linearGradient}
-    frame={{maxWidth: "infinity", maxHeight: "infinity", alignment: "leading"}}
-    alignment="leading"
+    size="max" justify="start"
   >
-    <hstack padding={10}>
-      <vstack alignment="leading">
+    <row padding={10}>
+      <col align="start">
         <text font="body" color="white">
           {event}
         </text>
         <text font="caption" color="white">
           {target.toLocaleDateString(undefined, dateFormat)}
         </text>
-      </vstack>
+      </col>
       <spacer />
-    </hstack>
+    </row>
     <spacer />
     <text font="title" color="white" padding={10}>
       {text}
     </text>
-  </vstack>
+  </col>
 );

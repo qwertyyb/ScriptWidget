@@ -12,13 +12,13 @@ const result = await fetch(url);
 const data = JSON.parse(result);
 
 $render(
-  <vstack frame="max" backgroundColor="#0f172a">
+  <col size="max" backgroundColor="#0f172a">
     <text font="caption" color="#94a3b8">GitHub</text>
     <text font="title3" color="#e2e8f0">{repo}</text>
-    <hstack spacing="12">
+    <row spacing="12">
       <stat title="Stars" value={(data.stargazers_count || 0).toString()} subtitle="" color="#f59e0b" />
       <stat title="Forks" value={(data.forks_count || 0).toString()} subtitle="" color="#38bdf8" />
       <stat title="Issues" value={(data.open_issues_count || 0).toString()} subtitle="" color="#ef4444" />
-    </hstack>
-  </vstack>
+    </row>
+  </col>
 );

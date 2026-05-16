@@ -38,8 +38,8 @@ let columns = [
 ]
 
 $render(
-  <vstack frame="max">
-    <vgrid columns={$json(columns)}>
+  <col size="max">
+    <grid columns={$json(columns)}>
         <circle color="red"/>
         <circle color="red"/>
         <circle color="red"/>
@@ -49,6 +49,6 @@ $render(
         <circle color="red"/>
         <circle color="red"/>
         <circle color="red"/>
-    </vgrid>
-  </vstack>
+    </grid>
+  </col>
 );

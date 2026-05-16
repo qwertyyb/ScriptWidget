@@ -19,6 +19,7 @@ struct ScriptWidgetAttributeTextModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .modifier(ScriptWidgetAttributeTextAlignmentModifier(element))
+            .modifier(ScriptWidgetAttributeLineLimitModifier(element))
             .modifier(ScriptWidgetAttributeFontModifier(element))
             .modifier(ScriptWidgetAttributeForegroundModifier(element))
     }

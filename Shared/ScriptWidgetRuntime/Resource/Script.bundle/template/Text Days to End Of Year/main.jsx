@@ -19,9 +19,9 @@ var b = moment();
 var days = a.diff(b, 'days');
 
 $render(
-  <vstack
+  <col
     backgroundGradient={linearGradient}
-    frame={{maxWidth: "infinity", maxHeight: "infinity", alignment: "center"}}
+    size="max" justify="center" align="center"
   >
     <text font="largeTitle" color="black" padding={10}>
         { days + " Days"}
@@ -30,5 +30,5 @@ $render(
     <text font="caption" color="black" padding={0}>
         Until end of year
     </text>
-  </vstack>
+  </col>
 );

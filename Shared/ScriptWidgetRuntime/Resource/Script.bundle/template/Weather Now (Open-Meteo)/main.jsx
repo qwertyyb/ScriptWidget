@@ -48,11 +48,11 @@ const wind = current.wind_speed_10m ?? "-";
 const time = current.time ?? "";
 
 $render(
-  <vstack frame="max" backgroundColor="#0ea5e9">
+  <col size="max" backgroundColor="#0ea5e9">
     <text font="caption" color="#e0f2fe">Weather Now</text>
     <text font="title2" color="white">{temperature}{units.temperature_2m || ""}</text>
     <text font="caption" color="#e0f2fe">{weatherText}</text>
     <text font="caption2" color="#bae6fd">Wind: {wind}{units.wind_speed_10m || ""}</text>
     <text font="caption2" color="#bae6fd">Updated: {time}</text>
-  </vstack>
+  </col>
 );

@@ -33,8 +33,6 @@ class ScriptCodePreviewDataObject : ObservableObject {
         self.previewQueue = DispatchQueue(label: "preview-queue", qos: .default)
         self.previewStatus = "Initializing"
         self.rootElement = ScriptWidgetRuntimeElement(tagString: "text", props: nil, children: ["#Loading#"])
-        
-        self.layoutElements()
         print("PreviewView data object init :\(Unmanaged.passUnretained(self).toOpaque())")
     }
     

@@ -16,7 +16,7 @@ let data = [
 ]
 
 $render(
-    <vstack frame="max">
+    <col size="max">
       <chart 
         type="bar" // required
         data={$json(data)} // required
@@ -27,6 +27,6 @@ $render(
         hideYAxis="true"
         >
       </chart>
-    </vstack>
+    </col>
   );
   

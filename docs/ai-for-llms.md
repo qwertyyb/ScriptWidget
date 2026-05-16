@@ -18,13 +18,13 @@
 
 - 输出 **顶层脚本**：桌面小组件调用 **`$render(...)`**；灵动岛 / Live Activity 类脚本以 **`$dynamic_island(...)`** 作为输出（见 `docs/api.md`），不要笼统写成「都用 `$render`」。
 - 使用 **`await`** / **`async/await`** 处理网络与异步 API（入口脚本支持顶层 **`await`**）；对 `$http` 返回值按需 **`JSON.parse`**（若接口返回 JSON 字符串）。
-- 根布局常用 **`<vstack frame="max" padding={…}>`** 或 `hstack` / `zstack`，与目标小组件尺寸协调。
+- 根布局常用 **`<col size="max" padding={…}>`** 或 `row` / `stack`，与目标小组件尺寸协调。
 
 ```jsx
 $render(
-  <vstack frame="max" padding={16}>
+  <col size="max" padding={16}>
     <text font="title">Hello</text>
-  </vstack>
+  </col>
 );
 ```
 

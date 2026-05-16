@@ -12,7 +12,7 @@ let data = [
 ]
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <chart 
       type="bar-x" // required
       data={$json(data)} // required
@@ -20,5 +20,5 @@ $render(
       padding={20} // optional , general
       >
     </chart>
-  </vstack>
+  </col>
 );

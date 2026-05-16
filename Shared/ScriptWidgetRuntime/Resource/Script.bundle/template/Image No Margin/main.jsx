@@ -7,18 +7,18 @@
 
 
 $render(
-  <vstack spacing="0">
-    <zstack>
+  <col spacing="0">
+    <stack>
         <image id="image0" padding={0} />
         <text> Hello </text>
-    </zstack>
-    <zstack>
+    </stack>
+    <stack>
         <image id="image1" padding={0} />
         <text> World </text>
-    </zstack>
-    <zstack>
+    </stack>
+    <stack>
         <image id="image2" padding={0} />
         <text> :) </text>
-    </zstack>
-  </vstack>
+    </stack>
+  </col>
 );

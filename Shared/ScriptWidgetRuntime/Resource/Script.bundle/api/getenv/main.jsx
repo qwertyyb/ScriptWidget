@@ -19,8 +19,8 @@ const widget_size = $getenv("widget-size");
 const widget_param = $getenv("widget-param");
 
 $render(
-  <vstack frame="max">
+  <col size="max">
     <text font="title">Widget Size : {widget_size}</text>
     <text font="caption">Widget Parameter : {widget_param}</text>
-  </vstack>
+  </col>
 );
