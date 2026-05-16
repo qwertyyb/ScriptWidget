@@ -13,7 +13,7 @@ struct EmptyListBackgroundView: View {
             Image(systemName: "lessthan")
                 .font(.system(size: 70, weight: .bold, design: .monospaced))
             
-            Text("ScriptWidget")
+            Text("JSWidget")
                 .font(.headline)
                 .fontWeight(.bold)
             

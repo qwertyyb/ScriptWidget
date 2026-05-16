@@ -1,4 +1,4 @@
-# ScriptWidget Store 说明
+# JSWidget Store 说明
 
 本目录存放 **脚本商店** 的静态数据：索引与每个脚本的源码、元数据、截图与可选资源文件。iOS 应用内的 **Store** Tab 通过 GitHub `raw.githubusercontent.com` 拉取 `store/index.json`，再按需下载各脚本目录下的文件（合并到默认分支后线上即可访问）。
 
@@ -24,7 +24,7 @@ store/
 
 ### 与用户设备上脚本包的关系
 
-安装后，应用会在用户脚本目录下创建与 `meta.json` 中 `name` 对应的包目录（重名时自动加后缀），结构需符合运行时 `ScriptWidgetPackage` 约定：
+安装后，应用会在用户脚本目录下创建与 `meta.json` 中 `name` 对应的包目录（重名时自动加后缀），结构需符合运行时 `JSWidgetPackage` 约定：
 
 - `main.jsx`：入口文件。
 - `image/`：小组件引用的图片等资源（与仓库内 `store/scripts/<id>/image/` 中列在 `resources` 里的路径对应）。
@@ -77,7 +77,7 @@ store/
       "id": "hello-store",
       "name": "Hello Store",
       "description": "Minimal sample widget to verify Store install from GitHub.",
-      "author": "ScriptWidget",
+      "author": "JSWidget",
       "category": "utility",
       "platforms": ["ios", "macos"],
       "version": "1.0.0",
@@ -128,7 +128,7 @@ store/
   "id": "hello-store",
   "name": "Hello Store",
   "description": "Minimal sample widget to verify Store install from GitHub.",
-  "author": "ScriptWidget",
+  "author": "JSWidget",
   "category": "utility",
   "platforms": ["ios", "macos"],
   "version": "1.0.0",
@@ -178,4 +178,4 @@ https://raw.githubusercontent.com/<owner>/<repo>/<branch>/store/scripts/<id>/<re
 - `platforms` 使用 `ios` / `macos` 小写字符串数组。  
 - 所有相对路径均相对于 `store/scripts/<id>/`。
 
-应用侧解码类型定义见：`iOS/ScriptWidget/App/Store/StoreModels.swift`（字段与上表一一对应，解码时使用 `convertFromSnakeCase`）。
+应用侧解码类型定义见：`iOS/JSWidget/App/Store/StoreModels.swift`（字段与上表一一对应，解码时使用 `convertFromSnakeCase`）。

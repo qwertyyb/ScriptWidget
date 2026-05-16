@@ -24,7 +24,7 @@ struct ScriptWidgetApp: App {
                     }
                     
                     if let scheme = url.scheme {
-                        if scheme == "scriptwidget" {
+                        if scheme == "jswidget" {
                             dealWithSelfScheme(host: host, url: url)
                             return
                         }

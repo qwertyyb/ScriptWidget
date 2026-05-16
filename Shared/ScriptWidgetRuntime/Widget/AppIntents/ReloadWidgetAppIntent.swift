@@ -10,11 +10,11 @@ import AppIntents
 import WidgetKit
 
 struct ReloadWidgetAppIntent: AppIntent {
-    static var title: LocalizedStringResource = "Refresh ScriptWidget"
-    static var description = IntentDescription("Refresh ScriptWidget timelines.")
+    static var title: LocalizedStringResource = "Refresh JSWidget"
+    static var description = IntentDescription("Refresh JSWidget timelines.")
 
     func perform() async throws -> some IntentResult {
-        WidgetCenter.shared.reloadTimelines(ofKind: "ScriptWidget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "JSWidget")
         return .result()
     }
 }

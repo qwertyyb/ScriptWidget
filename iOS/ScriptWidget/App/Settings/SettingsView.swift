@@ -34,7 +34,7 @@ struct SettingsView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 20) {
                     
-                    GroupBox (label: SettingsLabelView(title: "ScriptWidget", image: "info.circle")) {
+                    GroupBox (label: SettingsLabelView(title: "JSWidget", image: "info.circle")) {
                         NavigationLink(destination: SettingTemplatesView()) {
                             SettingsTextRowView(name: "Templates", content: "")
                         }

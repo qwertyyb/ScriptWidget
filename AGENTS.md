@@ -18,8 +18,8 @@
 - `pnpm run build`: produce static editor assets in `Editor/editorfe/build`.
 - `cd Tools/jsx-compiler && pnpm install`: install JSX compiler dependencies.
 - `node test.mjs`: run JSX compiler tests; `npx tsdown`: rebuild the bundled `jsx-compiler.js`.
-- When running iOS/macOS targets, enable the `iCloud.ScriptWidget` container and `group.qwertyyb.scriptwidget` app group so script storage works.
-- The GitHub repository is at `https://github.com/qwertyyb/ScriptWidget`.
+- When running iOS/macOS targets, enable the `iCloud.JSWidget` container and `group.qwertyyb.jswidget` app group so script storage works.
+- The GitHub repository is at `https://github.com/qwertyyb/JSWidget`.
 
 ## Coding Style & Naming Conventions
 - Swift: 4-space indentation, Xcode defaults, `UpperCamelCase` for types, `lowerCamelCase` for methods/vars. Keep SwiftUI views in `View/` and managers in `Manager/`.
@@ -32,4 +32,4 @@
 
 ## Commit & Pull Request Guidelines
 - History shows short, informal summaries (often lowercase) and merge commits; no strict convention. Use concise, action-oriented summaries and add a short body when context helps.
-- PRs should include: a clear description, linked issue (if applicable), and screenshots for UI changes. Note which schemes/commands you ran (e.g., `ScriptWidgetWidget`, `pnpm test`).
+- PRs should include: a clear description, linked issue (if applicable), and screenshots for UI changes. Note which schemes/commands you ran (e.g., `JSWidgetWidget`, `pnpm test`).

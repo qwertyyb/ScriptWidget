@@ -1,5 +1,5 @@
 // 
-// ScriptWidget 
+// JSWidget 
 // https://xnu.app/scriptwidget
 // 
 // Usage for api $http
@@ -25,7 +25,7 @@ const post_result = await $http.post("https://jsonplaceholder.typicode.com/posts
   body: {
     userId: 1,
     id: 1,
-    title: "Hello ScriptWidget",
+    title: "Hello JSWidget",
   }
 });
 console.log(post_result);
@@ -37,7 +37,7 @@ const post_with_header_result = await $http.post("https://jsonplaceholder.typico
   body: {
     userId: 1,
     id: 1,
-    title: "Hello ScriptWidget",
+    title: "Hello JSWidget",
   }
 });
 console.log(post_with_header_result);

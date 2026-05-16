@@ -1,6 +1,6 @@
 # 快速入门
 
-ScriptWidget 让你可以使用 JavaScript 和 JSX 语法编写 iOS/macOS 小组件。
+JSWidget 让你可以使用 JavaScript 和 JSX 语法编写 iOS/macOS 小组件。
 
 ---
 
@@ -20,7 +20,7 @@ $render(
 
 ## JSX 元素
 
-ScriptWidget 提供了一套类似 SwiftUI 的 JSX 元素，直接对应到原生 SwiftUI 组件。
+JSWidget 提供了一套类似 SwiftUI 的 JSX 元素，直接对应到原生 SwiftUI 组件。
 
 **元素名称使用小写**（与标准 JSX 不同）：
 

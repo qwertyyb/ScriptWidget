@@ -20,10 +20,10 @@ import CoreLocation
 
 @objc public class ScriptWidgetRuntimeLocation: NSObject, ScriptWidgetRuntimeLocationExports {
     private static var activeRequests = [LocationRequest]()
-    private static let locationCacheKey = "ScriptWidget.LocationCache.v1"
+    private static let locationCacheKey = "JSWidget.LocationCache.v1"
 
     private static func defaults() -> UserDefaults {
-        return UserDefaults(suiteName: "group.qwertyyb.scriptwidget") ?? UserDefaults.standard
+        return UserDefaults(suiteName: "group.qwertyyb.jswidget") ?? UserDefaults.standard
     }
 
     static func isAvailable() -> Bool {

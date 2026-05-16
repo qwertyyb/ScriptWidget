@@ -1,5 +1,5 @@
 // 
-// ScriptWidget 
+// JSWidget 
 // https://xnu.app/scriptwidget
 // 
 // Usage for component date

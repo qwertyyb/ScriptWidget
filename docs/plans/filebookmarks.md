@@ -46,7 +46,7 @@ flowchart LR
 在 App Group 共享容器中：
 
 ```
-group.qwertyyb.scriptwidget/
+group.qwertyyb.jswidget/
 ├── Documents/          (existing)
 ├── __Build/            (existing)
 └── __Bookmarks/

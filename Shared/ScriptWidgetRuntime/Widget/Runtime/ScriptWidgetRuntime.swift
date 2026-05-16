@@ -131,7 +131,7 @@ class ScriptWidgetRuntime {
             }
             transformContext.evaluateScript(jsxCompilerContent)
             
-            guard let result = transformContext.objectForKeyedSubscript("ScriptWidgetTransform")?
+            guard let result = transformContext.objectForKeyedSubscript("JSWidgetTransform")?
                     .call(withArguments: [JSX]) else {
                 promise(.failure(.transformError("Transform result is nil")))
                 return

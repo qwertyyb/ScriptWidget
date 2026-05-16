@@ -6,9 +6,9 @@
 import Foundation
 import SwiftUI
 
-private let installedStoreIdsKey = "ScriptWidgetStoreInstalledScriptIds"
-private let indexCacheDataKey = "ScriptWidgetStoreIndexCacheData"
-private let indexCacheDateKey = "ScriptWidgetStoreIndexCacheDate"
+private let installedStoreIdsKey = "JSWidgetStoreInstalledScriptIds"
+private let indexCacheDataKey = "JSWidgetStoreIndexCacheData"
+private let indexCacheDateKey = "JSWidgetStoreIndexCacheDate"
 
 @MainActor
 final class StoreManager: ObservableObject {

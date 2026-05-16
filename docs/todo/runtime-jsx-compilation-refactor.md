@@ -28,7 +28,7 @@ Babel 在这里的作用**不是 ES 语法降级**（JavaScriptCore 已支持大
 ```
 <text font="title">Hello</text>
 ↓ Babel transform (preset: scriptwidget)
-ScriptWidget.createElement("text", { font: "title" }, "Hello")
+JSWidget.createElement("text", { font: "title" }, "Hello")
 ```
 
 `core.js` 是定制版 @babel/standalone，把所有 `React` 引用替换为 `ScriptWidget`。
@@ -40,7 +40,7 @@ ScriptWidget.createElement("text", { font: "title" }, "Hello")
 ### 目标
 
 - Runtime 保持简洁，只负责执行 JS 和渲染组件，不包含编译逻辑
-- 支持用户直接用纯 JS 创建组件（`ScriptWidget.createElement`）
+- 支持用户直接用纯 JS 创建组件（`JSWidget.createElement`）
 - JSX 作为可选的语法糖，在保存时预编译为 JS
 - 不引入整个 Babel，使用轻量方案只编译 JSX 语法
 
@@ -62,10 +62,10 @@ ScriptWidget.createElement("text", { font: "title" }, "Hello")
 
 #### 2. 纯 JS 组件创建支持
 
-用户可以直接使用 `ScriptWidget.createElement` 创建组件，不写 JSX：
+用户可以直接使用 `JSWidget.createElement` 创建组件，不写 JSX：
 
 ```javascript
-const el = ScriptWidget.createElement("text", { font: "title" }, "Hello")
+const el = JSWidget.createElement("text", { font: "title" }, "Hello")
 $render(el)
 ```
 

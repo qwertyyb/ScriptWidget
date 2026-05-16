@@ -2,8 +2,8 @@
 /**
  * Reads completion-source.json and writes:
  * - ../../Editor/editorfe/src/completionData.js
- * - ../../docs/scriptwidget.d.ts
- * - ../../docs-site/public/editor/scriptwidget.d.ts
+ * - ../../docs/jswidget.d.ts
+ * - ../../docs-site/public/editor/jswidget.d.ts
  */
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -14,9 +14,9 @@ const root = join(__dirname, "../..");
 const src = JSON.parse(readFileSync(join(__dirname, "completion-source.json"), "utf8"));
 
 const editorOut = join(root, "Editor/editorfe/src/completionData.js");
-const docsDts = join(root, "docs/scriptwidget.d.ts");
+const docsDts = join(root, "docs/jswidget.d.ts");
 const siteDtsDir = join(root, "docs-site/public/editor");
-const siteDts = join(siteDtsDir, "scriptwidget.d.ts");
+const siteDts = join(siteDtsDir, "jswidget.d.ts");
 
 function escapeJsString(s) {
   return s.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n");
@@ -83,7 +83,7 @@ function buildDts() {
   parts.push("declare const $component: Record<string, unknown>;");
   parts.push("declare const $error: Record<string, unknown>;");
   parts.push("");
-  parts.push("declare namespace ScriptWidget {");
+  parts.push("declare namespace JSWidget {");
   parts.push("  function createElement(tag: unknown, props?: unknown, ...children: unknown[]): unknown;");
   parts.push("  const Fragment: string;");
   parts.push("  namespace JSX {");

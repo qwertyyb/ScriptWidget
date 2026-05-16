@@ -106,7 +106,7 @@ function transformJSX(tree, factoryName, fragmentName) {
 
 function transform(input) {
   const ast = parser.parse(input, { ecmaVersion: 2022, sourceType: "module" });
-  const transformed = transformJSX(ast, "ScriptWidget.createElement", "ScriptWidget.Fragment");
+  const transformed = transformJSX(ast, "JSWidget.createElement", "JSWidget.Fragment");
   return generate(transformed);
 }
 
@@ -114,12 +114,12 @@ const testCases = [
   {
     name: "Basic tag + string prop",
     input: `<text font="title">Hello</text>`,
-    check: (out) => out.includes('ScriptWidget.createElement("text"') && out.includes('"font"'),
+    check: (out) => out.includes('JSWidget.createElement("text"') && out.includes('"font"'),
   },
   {
     name: "Self-closing tag",
     input: `<spacer />`,
-    check: (out) => out.includes('ScriptWidget.createElement("spacer"'),
+    check: (out) => out.includes('JSWidget.createElement("spacer"'),
   },
   {
     name: "Expression prop",
@@ -134,17 +134,17 @@ const testCases = [
   {
     name: "Nested JSX",
     input: `<vstack><text>a</text><text>b</text></vstack>`,
-    check: (out) => (out.match(/ScriptWidget\.createElement/g) || []).length === 3,
+    check: (out) => (out.match(/JSWidget\.createElement/g) || []).length === 3,
   },
   {
     name: "Fragment <>...</>",
     input: `<><text>a</text><text>b</text></>`,
-    check: (out) => out.includes("ScriptWidget.Fragment") && (out.match(/ScriptWidget\.createElement/g) || []).length === 3,
+    check: (out) => out.includes("JSWidget.Fragment") && (out.match(/JSWidget\.createElement/g) || []).length === 3,
   },
   {
     name: "Custom component (uppercase tag)",
     input: `<MyComponent message="hello" />`,
-    check: (out) => out.includes("ScriptWidget.createElement(MyComponent"),
+    check: (out) => out.includes("JSWidget.createElement(MyComponent"),
   },
   {
     name: "Expression children",
@@ -174,12 +174,12 @@ const testCases = [
   {
     name: "Arrow function with JSX in map",
     input: `var items = arr.map(x => <text>{x}</text>);`,
-    check: (out) => out.includes("ScriptWidget.createElement"),
+    check: (out) => out.includes("JSWidget.createElement"),
   },
   {
     name: "Async function wrapping (simulates runtime)",
     input: `async function $main() { try { $render(<text font="title">Hello</text>); } catch(e) { console.error(e); } }`,
-    check: (out) => out.includes("$render") && out.includes("ScriptWidget.createElement"),
+    check: (out) => out.includes("$render") && out.includes("JSWidget.createElement"),
   },
   {
     name: "Template literal in JSX child",
@@ -250,7 +250,7 @@ for (const relPath of fileTests) {
     const content = fs.readFileSync(fullPath, "utf-8");
     const wrappedContent = `async function $main() { try { ${content} } catch(e){ console.error(e); } }`;
     const output = transform(wrappedContent);
-    if (output.includes("ScriptWidget.createElement")) {
+    if (output.includes("JSWidget.createElement")) {
       console.log(`  PASS: ${relPath}`);
       passed++;
     } else {

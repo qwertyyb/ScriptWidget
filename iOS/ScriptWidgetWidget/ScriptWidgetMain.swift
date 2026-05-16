@@ -13,10 +13,10 @@ import Combine
 struct ScriptWidgetMainWidget: Widget {
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: "ScriptWidget", intent: ScriptWidgetAppIntent.self, provider: ScriptWidgetTimelineProvider()) { entry in
+        AppIntentConfiguration(kind: "JSWidget", intent: ScriptWidgetAppIntent.self, provider: ScriptWidgetTimelineProvider()) { entry in
             ScriptWidgetWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("ScriptWidget")
+        .configurationDisplayName("JSWidget")
         .description("Build widgets with JavaScript")
         .supportedFamilies([
             .systemSmall, .systemMedium, .systemLarge,

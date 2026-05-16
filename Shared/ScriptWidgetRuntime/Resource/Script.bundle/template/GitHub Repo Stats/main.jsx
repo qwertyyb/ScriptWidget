@@ -1,12 +1,12 @@
 //
-// ScriptWidget
+// JSWidget
 // https://xnu.app/scriptwidget
 //
 // GitHub Repo Stats
 // widget-param: "owner/repo"
 //
 
-const repo = ($getenv("widget-param") || "qwertyyb/ScriptWidget").trim();
+const repo = ($getenv("widget-param") || "qwertyyb/JSWidget").trim();
 const url = `https://api.github.com/repos/${repo}`;
 const result = await fetch(url);
 const data = JSON.parse(result);

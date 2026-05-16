@@ -19,7 +19,7 @@ struct ScriptWidgetPlaceholderView: View {
             Image(systemName: "lessthan")
                 .font(.system(size: 50, weight: .bold, design: .monospaced))
             
-            Text("ScriptWidget")
+            Text("JSWidget")
                 .font(.headline)
                 .fontWeight(.bold)
         }
@@ -31,7 +31,7 @@ struct ScriptWidgetPlaceholderView: View {
         HStack {
             Image(systemName: "lessthan")
                 .font(.system(size: 15, weight: .bold, design: .monospaced))
-            Text("ScriptWidget")
+            Text("JSWidget")
                 .font(.system(size: 13, weight: .bold, design: .monospaced))
         }
     }
@@ -47,7 +47,7 @@ struct ScriptWidgetPlaceholderView: View {
         Gauge(value: 0.7) {
             Text("<")
         } currentValueLabel: {
-            Text("ScriptWidget")
+            Text("JSWidget")
                 .font(.system(size: 7, weight: .bold, design: .monospaced))
         }
         .gaugeStyle(.accessoryCircular)

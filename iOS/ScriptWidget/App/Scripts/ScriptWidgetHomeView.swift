@@ -84,7 +84,7 @@ struct ScriptWidgetHomeView: View {
                     })
                     
                 })
-                .navigationTitle("ScriptWidget")
+                .navigationTitle("JSWidget")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {

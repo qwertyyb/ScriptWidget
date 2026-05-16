@@ -1,5 +1,5 @@
 /**
- * PeerJS session for ScriptWidget remote editing (single file).
+ * PeerJS session for JSWidget remote editing (single file).
  * Saves go through existing WKWebViewJavascriptBridge `event_editorSave`.
  */
 import Peer from "peerjs";

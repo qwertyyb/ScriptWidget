@@ -1,5 +1,5 @@
 // 
-// ScriptWidget 
+// JSWidget 
 // https://xnu.app/scriptwidget
 // 
 // Usage for component text
@@ -7,12 +7,12 @@
 
 $render(
   <vstack frame="max">
-    <text font="title">Hello ScriptWidget</text>
+    <text font="title">Hello JSWidget</text>
     <text font="caption" color="red">
-      Hello ScriptWidget
+      Hello JSWidget
     </text>
     <text font="caption" backgroundColor="blue" color="white">
-      Hello ScriptWidget
+      Hello JSWidget
     </text>
   </vstack>
 );

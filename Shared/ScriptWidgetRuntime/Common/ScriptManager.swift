@@ -85,21 +85,21 @@ class ScriptManager {
     
     
     static func getICloudRootDirectoryURL() -> URL? {
-        if let url = FileManager.default.url(forUbiquityContainerIdentifier: "iCloud.ScriptWidget") {
+        if let url = FileManager.default.url(forUbiquityContainerIdentifier: "iCloud.JSWidget") {
             return url.appendingPathComponent("Documents")
         }
         return nil
     }
     
     static func getSandboxRootDirectoryURL() -> URL? {
-        if let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.qwertyyb.scriptwidget") {
+        if let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.qwertyyb.jswidget") {
             return url.appendingPathComponent("Documents")
         }
         return nil
     }
     
     static func getSandboxBuildDirectoryURL() -> URL? {
-        if let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.qwertyyb.scriptwidget") {
+        if let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.qwertyyb.jswidget") {
             return url.appendingPathComponent("__Build")
         }
         return nil
@@ -374,7 +374,7 @@ extension ScriptManager {
     
     func importScript(fromPath: URL) -> Bool {
         let tempDir = URL(fileURLWithPath: NSTemporaryDirectory())
-        let tempPath = tempDir.appendingPathComponent("ScriptWidgetTempImport")
+        let tempPath = tempDir.appendingPathComponent("JSWidgetTempImport")
         
         try? FileManager.default.createDirectory(at: tempPath, withIntermediateDirectories: true, attributes: [
             FileAttributeKey.protectionKey : FileProtectionType.none

@@ -1,5 +1,5 @@
 //
-// ScriptWidget
+// JSWidget
 // https://xnu.app/scriptwidget
 //
 // Weather Now - Open-Meteo (no API key required)

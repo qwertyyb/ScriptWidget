@@ -12,8 +12,8 @@ import ZipArchive
 class ExportManager {
     static func exportAllScripts(progressCallback: @escaping (Float, String) -> Void) async throws -> URL {
         // Create a temporary directory for exporting scripts
-        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent("scriptwidget-export-all")
-        let zipFilePath = FileManager.default.temporaryDirectory.appendingPathComponent("scriptwidget-export-all.zip")
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent("jswidget-export-all")
+        let zipFilePath = FileManager.default.temporaryDirectory.appendingPathComponent("jswidget-export-all.zip")
         
         // Remove existing temp directory and zip file if they exist
         try? FileManager.default.removeItem(at: tempDir)
@@ -62,7 +62,7 @@ class ExportManager {
 
 class ImportManager {
     static func importScripts(from fileURL: URL, progressCallback: @escaping (Float, String) -> Void) async throws {
-        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent("scriptwidget-import")
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent("jswidget-import")
         
         // Remove existing temp directory if it exists
         try? FileManager.default.removeItem(at: tempDir)

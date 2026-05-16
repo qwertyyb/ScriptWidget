@@ -1,5 +1,5 @@
 //
-// ScriptWidget
+// JSWidget
 // https://xnu.app/scriptwidget
 //
 // Air Quality Now - Open-Meteo (no API key)

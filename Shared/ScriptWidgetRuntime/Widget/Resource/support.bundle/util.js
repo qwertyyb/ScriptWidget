@@ -1,5 +1,5 @@
 
-class ScriptWidget {
+class JSWidget {
     static createElement(tag, props, ...children) {
         return $element.createElement(tag, props, children);
     }

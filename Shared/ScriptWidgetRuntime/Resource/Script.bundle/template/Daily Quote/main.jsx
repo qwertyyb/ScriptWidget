@@ -1,5 +1,5 @@
 //
-// ScriptWidget
+// JSWidget
 // https://xnu.app/scriptwidget
 //
 // Daily Quote (zenquotes.io)
@@ -8,7 +8,7 @@
 const url = "https://zenquotes.io/api/today";
 const result = await fetch(url);
 const data = JSON.parse(result);
-const quote = data && data.length ? data[0] : { q: "Stay inspired", a: "ScriptWidget" };
+const quote = data && data.length ? data[0] : { q: "Stay inspired", a: "JSWidget" };
 
 $render(
   <vstack frame="max" backgroundColor="#0f172a">

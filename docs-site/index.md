@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: ScriptWidget
+  name: JSWidget
   text: 用 JavaScript 创建原生小组件
   tagline: 无需 Swift，只需 JavaScript、JSX 和创意。为 iOS & macOS 打造属于你的桌面组件。
   actions:

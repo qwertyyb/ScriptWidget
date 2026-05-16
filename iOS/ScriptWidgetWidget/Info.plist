@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>ScriptWidget</string>
+	<string>JSWidget</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -31,15 +31,15 @@
 		<string>com.apple.widgetkit-extension</string>
 	</dict>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Allow ScriptWidget to read Health data for widget templates.</string>
+	<string>Allow JSWidget to read Health data for widget templates.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Allow ScriptWidget to update Health data if you enable it.</string>
+	<string>Allow JSWidget to update Health data if you enable it.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow ScriptWidget to access your location for widget templates.</string>
+	<string>Allow JSWidget to access your location for widget templates.</string>
 	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
 	<dict>
 		<key>ScriptWidgetLocation</key>
-		<string>Allow ScriptWidget to request temporary full-accuracy location for widgets.</string>
+		<string>Allow JSWidget to request temporary full-accuracy location for widgets.</string>
 	</dict>
 	<key>UIAppFonts</key>
 	<array>

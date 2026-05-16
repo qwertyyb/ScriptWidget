@@ -38,7 +38,7 @@ export default defineConfig({
   },
   srcExclude: ['**/plans/**', '**/todo/**'],
 
-  title: 'ScriptWidget',
+  title: 'JSWidget',
   description: 'Create native widgets for iOS & macOS using JavaScript and JSX',
   lang: 'zh-CN',
 
@@ -51,7 +51,7 @@ export default defineConfig({
       { text: 'API', link: '/api/' },
       {
         text: 'GitHub',
-        link: 'https://github.com/qwertyyb/ScriptWidget',
+        link: 'https://github.com/qwertyyb/JSWidget',
       },
     ],
 
@@ -110,7 +110,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/qwertyyb/ScriptWidget' },
+      { icon: 'github', link: 'https://github.com/qwertyyb/JSWidget' },
     ],
 
     footer: {

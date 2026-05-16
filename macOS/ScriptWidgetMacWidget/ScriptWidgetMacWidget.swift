@@ -235,13 +235,13 @@ struct ScriptWidgetMacWidgetEntryView : View {
 
 @main
 struct ScriptWidgetMacWidget: Widget {
-    let kind: String = "ScriptWidgetMacWidget"
+    let kind: String = "JSWidgetMac"
 
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: ScriptWidgetAppIntent.self, provider: ScriptWidgetTimelineProvider()) { entry in
             ScriptWidgetMacWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("ScriptWidget")
+        .configurationDisplayName("JSWidget")
         .description("Build your own widgets")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }

@@ -1228,8 +1228,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 26.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.scriptwidget;
-				PRODUCT_NAME = ScriptWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.jswidget;
+				PRODUCT_NAME = JSWidget;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1265,8 +1265,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 26.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.scriptwidget;
-				PRODUCT_NAME = ScriptWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.jswidget;
+				PRODUCT_NAME = JSWidget;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1298,7 +1298,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 26.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.scriptwidget.macwidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.jswidget.macwidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
@@ -1332,7 +1332,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 26.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.scriptwidget.macwidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qwertyyb.jswidget.macwidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;

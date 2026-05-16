@@ -99,7 +99,7 @@ class ShareViewController: UIViewController {
     
     private func openAppAfterImported() {
         
-        if let appurl = URL(string: "scriptwidget://") {
+        if let appurl = URL(string: "jswidget://") {
             self.openURL(appurl)
         }
     }

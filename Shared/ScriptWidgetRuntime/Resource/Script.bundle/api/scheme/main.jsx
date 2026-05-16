@@ -1,4 +1,4 @@
-// ScriptWidget
+// JSWidget
 // https://xnu.app/scriptwidget
 //
 // app schemes
@@ -6,10 +6,10 @@
 
 /*
 
-# open ScriptWidget app
-scriptwidget://
+# open JSWidget app
+jswidget://
 
-# open ScriptWidget app and refresh all widgets
-scriptwidget://reload-all
+# open JSWidget app and refresh all widgets
+jswidget://reload-all
 
 */

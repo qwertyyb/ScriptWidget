@@ -7,7 +7,7 @@ import Foundation
 
 enum StoreRemoteConfig {
     /// GitHub raw base for the `store/` folder (no trailing slash).
-    static let storeRawBaseURL = "https://raw.githubusercontent.com/qwertyyb/ScriptWidget/main/store"
+    static let storeRawBaseURL = "https://raw.githubusercontent.com/qwertyyb/JSWidget/main/store"
 
     static func indexURL() -> URL {
         URL(string: "\(storeRawBaseURL)/index.json")!

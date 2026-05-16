@@ -47,7 +47,7 @@ struct ButtonActionAppIntent: AppIntent {
         }
         _ = runtime.executeJSXSyncForFunction(JSX, functionName)
         
-        WidgetCenter.shared.reloadTimelines(ofKind: "ScriptWidget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "JSWidget")
         
         return .result()
     }

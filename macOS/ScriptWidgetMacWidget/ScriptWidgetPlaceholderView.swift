@@ -14,7 +14,7 @@ struct ScriptWidgetPlaceholderView: View {
             Image(systemName: "lessthan")
                 .font(.system(size: 50, weight: .bold, design: .monospaced))
             
-            Text("ScriptWidget")
+            Text("JSWidget")
                 .font(.headline)
                 .fontWeight(.bold)
         }

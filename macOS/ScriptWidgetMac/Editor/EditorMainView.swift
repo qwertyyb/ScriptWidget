@@ -19,7 +19,7 @@ struct EditorMainView: View {
     
     var body: some View {
         content
-            .navigationTitle("ScriptWidget - \(scriptModel.name)")
+            .navigationTitle("JSWidget - \(scriptModel.name)")
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button(action: {

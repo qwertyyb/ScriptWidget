@@ -173,15 +173,15 @@ function transformJSX(tree: any, factoryName: string, fragmentName: string) {
   return tree;
 }
 
-(globalThis as any).ScriptWidgetTransform = function (input: string): string {
+(globalThis as any).JSWidgetTransform = function (input: string): string {
   const ast = parser.parse(input, {
     ecmaVersion: 2022,
     sourceType: "module",
   });
   const transformed = transformJSX(
     ast,
-    "ScriptWidget.createElement",
-    "ScriptWidget.Fragment"
+    "JSWidget.createElement",
+    "JSWidget.Fragment"
   );
   return generate(transformed);
 };

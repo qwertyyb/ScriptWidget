@@ -1,4 +1,4 @@
-// ScriptWidget
+// JSWidget
 // https://xnu.app/scriptwidget
 //
 // import other js/jsx files

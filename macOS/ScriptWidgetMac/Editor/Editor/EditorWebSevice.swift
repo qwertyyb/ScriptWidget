@@ -23,7 +23,7 @@ func editorWebServiceUrl() -> String {
 
 func editorWebServiceRoutes(_ app: Application) throws {
     app.get("") { req in
-        return "ScriptWidget Editor Service"
+        return "JSWidget Editor Service"
     }
 }
 

@@ -1,5 +1,5 @@
 //
-// ScriptWidget
+// JSWidget
 // https://xnu.app/scriptwidget
 //
 // Usage for api location
@@ -35,7 +35,7 @@ if (!$location.isAvailable()) {
     const location = await $location.current({
       timeout: 10,
       accuracy: "full",
-      purposeKey: "ScriptWidgetLocation"
+      purposeKey: "JSWidgetLocation"
     });
 
     $render(

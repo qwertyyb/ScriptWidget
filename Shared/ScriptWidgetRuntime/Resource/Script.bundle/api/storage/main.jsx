@@ -1,11 +1,11 @@
 //
-// ScriptWidget
+// JSWidget
 // https://xnu.app/scriptwidget
 //
 // Usage for api storage
 //
 
-$storage.setString("greeting", "Hello ScriptWidget");
+$storage.setString("greeting", "Hello JSWidget");
 const greeting = $storage.getString("greeting");
 
 $storage.setJSON("profile", {

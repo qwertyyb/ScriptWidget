@@ -1,12 +1,12 @@
-# ScriptWidget JavaScript 运行时 API 文档
+# JSWidget JavaScript 运行时 API 文档
 
-本文档描述 ScriptWidget JS 运行时暴露给 JavaScript 的所有 API。
+本文档描述 JSWidget JS 运行时暴露给 JavaScript 的所有 API。
 
 ---
 
 ## 概述
 
-ScriptWidget 使用 JavaScriptCore 框架，在 Swift 端通过 `JSExport` 协议将原生 API 暴露给 JavaScript 环境。
+JSWidget 使用 JavaScriptCore 框架，在 Swift 端通过 `JSExport` 协议将原生 API 暴露给 JavaScript 环境。
 
 **入口脚本**（如 `main.jsx`）：直接编写顶层语句，可使用顶层 **`await`**。**桌面小组件**在脚本中调用 **`$render`** 输出界面；**灵动岛 / Live Activity** 等场景调用 **`$dynamic_island`**（见下文「灵动岛 API」），同一入口脚本只取其一作为输出方式。通过 **`$import`** 加载的其它文件按模块方式编译执行，多用于导出变量、函数或 JSX 片段，与入口脚本的装载方式不同，详见「文件导入 API」章节。
 
@@ -112,7 +112,7 @@ const data = JSON.parse(result);
 | `error(message)` | `message: string` | `void` | 输出错误日志 |
 
 ```jsx
-console.log("Hello ScriptWidget");
+console.log("Hello JSWidget");
 console.log("Value:", someVariable);
 console.error("Something went wrong!");
 ```
@@ -355,7 +355,7 @@ if (!$location.isAvailable()) {
     const location = await $location.current({
       timeout: 10,
       accuracy: "full",
-      purposeKey: "ScriptWidgetLocation"
+      purposeKey: "JSWidgetLocation"
     });
 
     $render(
@@ -392,7 +392,7 @@ if (!$location.isAvailable()) {
 
 ```jsx
 // 存储字符串
-$storage.setString("greeting", "Hello ScriptWidget");
+$storage.setString("greeting", "Hello JSWidget");
 const greeting = $storage.getString("greeting");
 
 // 存储 JSON
@@ -497,7 +497,7 @@ $render(
 ```jsx
 $render(
   <vstack frame="max" backgroundColor="#0f172a">
-    <text font="title" color="#e2e8f0">Hello ScriptWidget</text>
+    <text font="title" color="#e2e8f0">Hello JSWidget</text>
     <spacer />
     <text font="caption" color="#94a3b8">Welcome!</text>
   </vstack>

@@ -16,7 +16,7 @@ struct ScriptWidgetControlWidget: ControlWidget {
       
 
       AppIntentControlConfiguration(
-        kind: "ScriptWidget",
+        kind: "JSWidget",
         provider: ConfigurableProvider()
       ) { timerState in
         ControlWidgetToggle(

@@ -1,6 +1,6 @@
 
 //
-// ScriptWidget
+// JSWidget
 // https://xnu.app/scriptwidget
 //
 // grid component

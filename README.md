@@ -1,12 +1,12 @@
-# ScriptWidget 🎨
+# JSWidget 🎨
 
 <div align="center">
 
-[![GitHub Stars](https://img.shields.io/github/stars/qwertyyb/ScriptWidget?style=flat-square&color=4ECDC4)](https://github.com/qwertyyb/ScriptWidget/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/qwertyyb/ScriptWidget?style=flat-square)](https://github.com/qwertyyb/ScriptWidget/network)
+[![GitHub Stars](https://img.shields.io/github/stars/qwertyyb/JSWidget?style=flat-square&color=4ECDC4)](https://github.com/qwertyyb/JSWidget/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/qwertyyb/JSWidget?style=flat-square)](https://github.com/qwertyyb/JSWidget/network)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20macOS-lightgrey?style=flat-square&logo=apple)](https://developer.apple.com)
-[![Version](https://img.shields.io/badge/Version-3.0-blue?style=flat-square)](https://github.com/qwertyyb/ScriptWidget/releases)
+[![Version](https://img.shields.io/badge/Version-3.0-blue?style=flat-square)](https://github.com/qwertyyb/JSWidget/releases)
 
 **Create native widgets for iOS & macOS using JavaScript and JSX**
 
@@ -18,13 +18,13 @@
 
 ---
 
-## 🎯 What is ScriptWidget?
+## 🎯 What is JSWidget?
 
-ScriptWidget is a powerful widget development platform that lets you create native iOS and macOS widgets using **JavaScript** and **JSX-like syntax**. No Swift required!
+JSWidget is a powerful widget development platform that lets you create native iOS and macOS widgets using **JavaScript** and **JSX-like syntax**. No Swift required!
 
 Think of it as "React Native for Widgets" - but simpler and more flexible.
 
-![ScriptWidget Demo](screenshot.png)
+![JSWidget Demo](screenshot.png)
 
 ---
 
@@ -49,14 +49,14 @@ Think of it as "React Native for Widgets" - but simpler and more flexible.
 
 ```bash
 # Clone the repository
-git clone https://github.com/qwertyyb/ScriptWidget.git
-cd ScriptWidget
+git clone https://github.com/qwertyyb/JSWidget.git
+cd JSWidget
 ```
 
 ### 2. Open in Xcode
 
 ```bash
-open ScriptWidget/ScriptWidget.xcodeproj
+open JSWidget/JSWidget.xcodeproj
 ```
 
 ### 3. Run & Explore
@@ -70,8 +70,8 @@ open ScriptWidget/ScriptWidget.xcodeproj
 ## 📁 Project Structure
 
 ```
-ScriptWidget/
-├── ScriptWidget/          # Main app source
+JSWidget/
+├── JSWidget/          # Main app source
 │   ├── App/               # App entry point
 │   ├── Script/            # JavaScript runtime
 │   ├── Views/             # SwiftUI views
@@ -98,7 +98,7 @@ function render() {
   return (
     <widget type="medium">
       <text style={{ fontSize: 24, color: '#333' }}>
-        Hello, ScriptWidget! 👋
+        Hello, JSWidget! 👋
       </text>
     </widget>
   );
@@ -157,11 +157,11 @@ function TodoList({ todos }) {
 
 ```bash
 # Clone and setup
-git clone https://github.com/qwertyyb/ScriptWidget.git
-cd ScriptWidget
+git clone https://github.com/qwertyyb/JSWidget.git
+cd JSWidget
 
 # Open in Xcode
-open ScriptWidget/ScriptWidget.xcodeproj
+open JSWidget/JSWidget.xcodeproj
 
 # Build and run (Cmd + R)
 ```
@@ -210,7 +210,7 @@ vim script.js  # Write your widget code
 
 ![Widget Gallery](gallery.png)
 
-*Sample widgets created with ScriptWidget*
+*Sample widgets created with JSWidget*
 
 </div>
 
@@ -243,11 +243,18 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 ## 📜 License
 
-ScriptWidget is released under the [MIT License](LICENSE).
+JSWidget is released under the [MIT License](LICENSE).
+
+- **JSWidget** modifications: Copyright (c) 2026 [qwertyyb](https://github.com/qwertyyb)
+- **ScriptWidget** (upstream): Copyright (c) 2021-2022 [everettjf](https://github.com/everettjf)
+
+This project is a fork of [ScriptWidget](https://github.com/everettjf/ScriptWidget). See [NOTICE](NOTICE) for attribution details.
 
 ---
 
 ## 🙏 Acknowledgements
+
+- [ScriptWidget](https://github.com/everettjf/ScriptWidget) by everettjf — original MIT-licensed codebase
 
 Built with:
 - [JavaScriptCore](https://developer.apple.com/documentation/javascriptcore) - Apple's JavaScript engine
@@ -265,7 +272,7 @@ Inspired by:
 
 <div align="center">
 
-[![Star History Chart](https://api.star-history.com/svg?repos=qwertyyb/ScriptWidget&type=Date&theme=dark)](https://star-history.com/#qwertyyb/ScriptWidget&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=qwertyyb/JSWidget&type=Date&theme=dark)](https://star-history.com/#qwertyyb/JSWidget&Date)
 
 </div>
 
@@ -275,11 +282,11 @@ Inspired by:
 
 <div align="center">
 
-[![GitHub Issues](https://img.shields.io/badge/Issues-Bug_Reports-FF6B6B?style=for-the-badge&logo=github)](https://github.com/qwertyyb/ScriptWidget/issues)
-[![GitHub Discussions](https://img.shields.io/badge/Discussions-Q&A-4ECDC4?style=for-the-badge&logo=github)](https://github.com/qwertyyb/ScriptWidget/discussions)
+[![GitHub Issues](https://img.shields.io/badge/Issues-Bug_Reports-FF6B6B?style=for-the-badge&logo=github)](https://github.com/qwertyyb/JSWidget/issues)
+[![GitHub Discussions](https://img.shields.io/badge/Discussions-Q&A-4ECDC4?style=for-the-badge&logo=github)](https://github.com/qwertyyb/JSWidget/discussions)
 [![Discord](https://img.shields.io/badge/Discord-Join_Chat-7289DA?style=for-the-badge&logo=discord)](https://discord.gg/scriptwidget)
 
-**有问题？去 [Issues](https://github.com/qwertyyb/ScriptWidget/issues) 提问！**
+**有问题？去 [Issues](https://github.com/qwertyyb/JSWidget/issues) 提问！**
 
 </div>
 
@@ -289,6 +296,6 @@ Inspired by:
 
 **Made with ❤️ by [qwertyyb](https://github.com/qwertyyb)**
 
-**Project Link:** [https://github.com/qwertyyb/ScriptWidget](https://github.com/qwertyyb/ScriptWidget)
+**Project Link:** [https://github.com/qwertyyb/JSWidget](https://github.com/qwertyyb/JSWidget)
 
 </div>

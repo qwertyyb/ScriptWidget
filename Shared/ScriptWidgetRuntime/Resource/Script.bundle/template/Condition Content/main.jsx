@@ -1,5 +1,5 @@
 // 
-// ScriptWidget 
+// JSWidget 
 // https://xnu.app/scriptwidget
 // 
 // Content Select Template
@@ -7,7 +7,7 @@
 // Description: Choose content at runtime
 // 
 
-var text = "Hello ScriptWidget :)";
+var text = "Hello JSWidget :)";
 
 var a = (
     <text>a text</text>

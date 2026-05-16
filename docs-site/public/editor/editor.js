@@ -184,7 +184,7 @@
   }
 
   function loadMonacoTypes() {
-    return fetch('./scriptwidget.d.ts').then(r => r.text());
+    return fetch('./jswidget.d.ts').then(r => r.text());
   }
 
   function getMonacoTheme() {
@@ -205,12 +205,12 @@
         allowNonTsExtensions: true,
         allowJs: true,
         jsx: monaco.languages.typescript.JsxEmit.React,
-        jsxFactory: 'ScriptWidget.createElement',
+        jsxFactory: 'JSWidget.createElement',
         target: monaco.languages.typescript.ScriptTarget.ES2020,
         moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
       });
       loadMonacoTypes().then(dts => {
-        monaco.languages.typescript.typescriptDefaults.addExtraLib(dts, 'file:///scriptwidget.d.ts');
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(dts, 'file:///jswidget.d.ts');
       }).catch(() => {});
 
       const modelUri = monaco.Uri.parse('file:///main.tsx');

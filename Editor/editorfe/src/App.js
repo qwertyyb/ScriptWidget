@@ -242,7 +242,7 @@ export default function App() {
       );
     }
     if (peerState === 'hosting') {
-      const editorUrl = `https://qwertyyb.github.io/ScriptWidget/editor/index.html?peer=${encodeURIComponent(peerIdText)}`;
+      const editorUrl = `https://qwertyyb.github.io/JSWidget/editor/index.html?peer=${encodeURIComponent(peerIdText)}`;
       return (
         <div className="peer-panel">
           <div className="peer-panel-header">

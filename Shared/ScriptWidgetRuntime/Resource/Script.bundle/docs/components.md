@@ -1,6 +1,6 @@
-# ScriptWidget JSX 元素完整文档
+# JSWidget JSX 元素完整文档
 
-本文档描述 ScriptWidget 支持的所有 JSX 元素、属性及其用法。
+本文档描述 JSWidget 支持的所有 JSX 元素、属性及其用法。
 
 ---
 

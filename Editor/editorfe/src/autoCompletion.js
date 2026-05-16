@@ -47,7 +47,7 @@ function scriptWidgetCompletions(context) {
       const partial = text.slice(1).toLowerCase();
       const opts = apis
         .filter((a) => a.name.toLowerCase().startsWith("$" + partial) || a.name.toLowerCase().startsWith(text.toLowerCase()))
-        .map((a) => ({ label: a.name, type: "variable", detail: "ScriptWidget API" }));
+        .map((a) => ({ label: a.name, type: "variable", detail: "JSWidget API" }));
       if (opts.length) {
         return { from: dollarWord.from, options: opts, validFor: /^\$[\w$]*$/ };
       }

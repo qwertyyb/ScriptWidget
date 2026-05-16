@@ -1,5 +1,5 @@
 // 
-// ScriptWidget 
+// JSWidget 
 // https://xnu.app/scriptwidget
 // 
 // Empty Template
@@ -7,7 +7,7 @@
 // Description: Empty script for starter
 // 
 
-var text = "Hello ScriptWidget :)";
+var text = "Hello JSWidget :)";
 
 $render(
   <vstack>

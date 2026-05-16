@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>ScriptWidget</string>
+	<string>JSWidget</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIcons</key>
@@ -302,10 +302,10 @@
 			<key>CFBundleURLIconFile</key>
 			<string></string>
 			<key>CFBundleURLName</key>
-			<string>com.qwertyyb.scriptwidget</string>
+			<string>com.qwertyyb.jswidget</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>scriptwidget</string>
+				<string>jswidget</string>
 			</array>
 		</dict>
 	</array>
@@ -328,11 +328,11 @@
 		<true/>
 	</dict>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Allow ScriptWidget to read Health data for widget templates.</string>
+	<string>Allow JSWidget to read Health data for widget templates.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Allow ScriptWidget to update Health data if you enable it.</string>
+	<string>Allow JSWidget to update Health data if you enable it.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>ScriptWidget uses your location to provide location-based scripts and widgets.</string>
+	<string>JSWidget uses your location to provide location-based scripts and widgets.</string>
 	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
 	<dict>
 		<key>ScriptWidgetLocation</key>
@@ -341,17 +341,17 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>App could save widget preview snapshot to album</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow ScriptWidget to pick photos for script resources.</string>
+	<string>Allow JSWidget to pick photos for script resources.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.ScriptWidget</key>
+		<key>iCloud.JSWidget</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
 			<key>NSUbiquitousContainerName</key>
-			<string>ScriptWidget</string>
+			<string>JSWidget</string>
 			<key>NSUbiquitousContainerSupportedFolderLevels</key>
 			<string>Any</string>
 		</dict>
