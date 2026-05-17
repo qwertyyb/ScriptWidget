@@ -93,7 +93,8 @@ function scriptWidgetCompletions(context) {
     if (attrEq && tagName) {
       const attrName = attrEq[1].toLowerCase();
       const partial = attrEq[2];
-      const spec = (tagAttributes[tagName] || []).find((a) => a.name.toLowerCase() === attrName);
+      const spec = (tagAttributes[tagName] || []).find((a) => a.name.toLowerCase() === attrName)
+        || commonAttributes.find((a) => a.name.toLowerCase() === attrName);
       if (spec && spec.values) {
         const from = pos - partial.length;
         const opts = spec.values

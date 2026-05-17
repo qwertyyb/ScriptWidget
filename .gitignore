@@ -8,5 +8,3 @@ aa/
 node_modules/
 .vitepress/dist/
 .vitepress/cache/
-docs-site/.vitepress/dist/
-docs-site/.vitepress/cache/

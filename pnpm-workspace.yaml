@@ -1,0 +1,5 @@
+packages:
+  - 'Tools/*'
+
+allowBuilds:
+  esbuild: true

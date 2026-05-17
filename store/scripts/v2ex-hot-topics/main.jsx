@@ -36,7 +36,7 @@ $render(
     {/* 头部 */}
     <row padding={{ leading: 10, trailing: 10 }}>
       <link url="https://v2ex.com">
-        <text font={{ name: 'custom', weight: 'bold', size: 12 }} opacity={0.7}>
+        <text font={{ size: 12, weight: 'bold' }} opacity={0.7}>
           V2EX热帖
         </text>
       </link>

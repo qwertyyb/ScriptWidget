@@ -10,7 +10,7 @@
 - [ ] 创建 SettingsBookmarkView.swift — bookmark 管理界面（添加/删除/同步/状态展示）
 - [ ] 扩展 ScriptWidgetRuntimeFile.swift — 新增 listBookmarks/readBookmark/readBookmarkJSON/listBookmarkFiles 方法
 - [ ] 在 App 生命周期中集成同步触发点（进入前台、Settings 手动触发）
-- [ ] 更新 docs/api.md 文档，添加 FileBookmarks 相关 API 说明
+- [ ] 更新 docs/api/index.md 文档，添加 FileBookmarks 相关 API 说明
 
 ## 架构设计
 

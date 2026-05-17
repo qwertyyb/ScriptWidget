@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { fileURLToPath } from 'node:url'
 
 function env(name: string): string | undefined {
   const proc = (globalThis as unknown as { process?: { env?: Record<string, string | undefined> } })
@@ -20,6 +21,8 @@ function resolveBase(): string {
   return `/${repo}/`
 }
 
+const docsDir = fileURLToPath(new URL('../docs', import.meta.url))
+
 export default defineConfig({
   base: resolveBase(),
   markdown: {
@@ -36,7 +39,8 @@ export default defineConfig({
       }
     },
   },
-  srcExclude: ['**/plans/**', '**/todo/**'],
+  srcDir: docsDir,
+  srcExclude: ['**/plans/**', '**/todo/**', '**/dts/**'],
 
   title: 'JSWidget',
   description: 'Create native widgets for iOS & macOS using JavaScript and JSX',
@@ -47,8 +51,8 @@ export default defineConfig({
       { text: '快速入门', link: '/guide/getting-started' },
       { text: 'AI 指南', link: '/guide/ai' },
       { text: '远程编辑器', link: '/editor/index.html', target: '_self' },
-      { text: '组件', link: '/components/' },
-      { text: 'API', link: '/api/' },
+      { text: '组件', link: '/components' },
+      { text: 'API', link: '/api' },
       {
         text: 'GitHub',
         link: 'https://github.com/qwertyyb/JSWidget',
@@ -61,7 +65,7 @@ export default defineConfig({
           text: '指南',
           items: [
             { text: '快速入门', link: '/guide/getting-started' },
-            { text: 'AI 指南', link: '/guide/ai' },
+            { text: 'AI 使用指南', link: '/guide/ai' },
           ],
         },
       ],
@@ -69,10 +73,10 @@ export default defineConfig({
         {
           text: '组件文档',
           items: [
-            { text: '概览', link: '/components/' },
-            { text: '布局容器', link: '/components/#布局容器' },
-            { text: '文本元素', link: '/components/#文本元素' },
-            { text: '图片与媒体', link: '/components/#图片与媒体' },
+            { text: '概览', link: '/components' },
+            { text: '布局容器', link: '/components#布局容器' },
+            { text: '文本元素', link: '/components#文本元素' },
+            { text: '图片与媒体', link: '/components#图片与媒体' },
             { text: '交互元素', link: '/components/#交互元素' },
             { text: '图表', link: '/components/#图表' },
             { text: '形状', link: '/components/#形状' },

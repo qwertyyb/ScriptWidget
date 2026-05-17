@@ -1,195 +1,216 @@
 #!/usr/bin/env node
 /**
- * Reads completion-source.json and writes:
- * - ../../Editor/editorfe/src/completionData.js
- * - ../../docs/jswidget.d.ts
- * - ../../docs-site/public/editor/jswidget.d.ts
+ * Parses docs/dts/*.d.ts (the split source of truth) and writes:
+ * - ../../Editor/editorfe/src/completionData.js   (CodeMirror autocompletion data)
+ * - ../../docs/public/editor/jswidget.d.ts          (combined .d.ts for Monaco editor)
  */
+import { Project, SyntaxKind } from "ts-morph";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "../..");
-const src = JSON.parse(readFileSync(join(__dirname, "completion-source.json"), "utf8"));
+const dtsDir = join(root, "docs/dts");
 
 const editorOut = join(root, "Editor/editorfe/src/completionData.js");
-const docsDts = join(root, "docs/jswidget.d.ts");
-const siteDtsDir = join(root, "docs-site/public/editor");
+const siteDtsDir = join(root, "docs/public/editor");
 const siteDts = join(siteDtsDir, "jswidget.d.ts");
 
-function escapeJsString(s) {
-  return s.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n");
+const DTS_FILE_ORDER = ["types.d.ts", "api.d.ts", "components.d.ts"];
+
+// ── Parse .d.ts files ──
+
+const project = new Project({ compilerOptions: { strict: true } });
+for (const f of DTS_FILE_ORDER) {
+  project.addSourceFileAtPath(join(dtsDir, f));
 }
+
+// ── Helpers ──
+
+function extractJsDoc(node) {
+  for (const r of node.getLeadingCommentRanges()) {
+    const text = r.getText();
+    const match = text.match(/\/\*\*\s*([\s\S]*?)\s*\*\//);
+    if (match) return match[1].replace(/^\s*\*\s?/gm, "").trim();
+  }
+  return "";
+}
+
+function extractStringLiterals(typeNode) {
+  if (typeNode.getKind() === SyntaxKind.UnionType) {
+    const members = typeNode.getTypeNodes();
+    if (members.every((m) => m.getKind() === SyntaxKind.LiteralType)) {
+      return members
+        .map((m) => m.getText().replace(/^["']|["']$/g, ""))
+        .filter(Boolean);
+    }
+  }
+  return [];
+}
+
+function extractAttr(member) {
+  const name = member.getName();
+  const info = extractJsDoc(member);
+  const typeNode = member.getTypeNode();
+  const values = typeNode ? extractStringLiterals(typeNode) : [];
+  const result = { name };
+  if (info) result.info = info;
+  if (values.length) result.values = values;
+  return result;
+}
+
+function stripQuotes(s) {
+  return s.replace(/^["']|["']$/g, "");
+}
+
+function findTypeLiterals(typeNode) {
+  if (!typeNode) return [];
+  const kind = typeNode.getKind();
+  if (kind === SyntaxKind.TypeLiteral) return [typeNode];
+  if (kind === SyntaxKind.IntersectionType) {
+    return typeNode
+      .getTypeNodes()
+      .filter((t) => t.getKind() === SyntaxKind.TypeLiteral);
+  }
+  return [];
+}
+
+// ── 1. Extract common attributes from JSWidgetCommonAttributes ──
+
+let commonInterface = null;
+for (const sf of project.getSourceFiles()) {
+  commonInterface = sf.getInterface("JSWidgetCommonAttributes");
+  if (commonInterface) break;
+}
+if (!commonInterface) {
+  throw new Error("JSWidgetCommonAttributes interface not found in docs/dts/");
+}
+
+const commonAttributes = [];
+for (const member of commonInterface.getMembers()) {
+  if (member.getKind() !== SyntaxKind.PropertySignature) continue;
+  commonAttributes.push(extractAttr(member));
+}
+
+// ── 2. Extract JSX tags + tag-specific attributes ──
+
+let intrinsic = null;
+for (const sf of project.getSourceFiles()) {
+  const ns = sf.getModule("JSWidget");
+  if (!ns) continue;
+  const jsxNs = ns.getModule("JSX");
+  if (!jsxNs) continue;
+  intrinsic = jsxNs.getInterface("IntrinsicElements");
+  if (intrinsic) break;
+}
+if (!intrinsic) {
+  throw new Error("JSWidget.JSX.IntrinsicElements not found in docs/dts/");
+}
+
+const jsxTags = [];
+const tagAttributes = {};
+
+for (const prop of intrinsic.getMembers()) {
+  if (prop.getKind() !== SyntaxKind.PropertySignature) continue;
+  const tagName = stripQuotes(prop.getName());
+  jsxTags.push(tagName);
+
+  const typeNode = prop.getTypeNode();
+  const typeLiterals = findTypeLiterals(typeNode);
+
+  const attrs = [];
+  for (const tl of typeLiterals) {
+    for (const member of tl.getMembers()) {
+      if (member.getKind() !== SyntaxKind.PropertySignature) continue;
+      attrs.push(extractAttr(member));
+    }
+  }
+  tagAttributes[tagName] = attrs;
+}
+
+// ── 3. Extract global APIs (in source order, across all files) ──
+
+const apis = [];
+const seenApis = new Set();
+
+function addApi(name, methods) {
+  if (seenApis.has(name)) return;
+  seenApis.add(name);
+  apis.push({ name, methods });
+}
+
+for (const sf of project.getSourceFiles()) {
+  for (const stmt of sf.getStatements()) {
+    const kind = stmt.getKind();
+
+    if (kind === SyntaxKind.VariableStatement) {
+      for (const decl of stmt.getDeclarationList().getDeclarations()) {
+        const name = decl.getName();
+        const type = decl.getType();
+        const methods = type
+          .getProperties()
+          .filter((p) =>
+            p.getDeclarations().some(
+              (d) =>
+                d.getKind() === SyntaxKind.MethodSignature ||
+                d.getKind() === SyntaxKind.PropertySignature
+            )
+          )
+          .map((p) => p.getName());
+        addApi(name, methods);
+      }
+    }
+
+    if (kind === SyntaxKind.FunctionDeclaration) {
+      const name = stmt.getName();
+      if (name) addApi(name, []);
+    }
+  }
+}
+
+// ── Write outputs ──
 
 function buildCompletionDataJs() {
   const lines = [];
-  lines.push("/** Auto-generated by Tools/completion-gen/generate.mjs — do not edit by hand */");
+  lines.push(
+    "/** Auto-generated from docs/dts/ by Tools/completion-gen/generate.mjs — do not edit by hand */"
+  );
   lines.push("");
-  lines.push("export const jsxTags = " + JSON.stringify(src.jsxTags, null, 2) + ";");
+  lines.push("export const jsxTags = " + JSON.stringify(jsxTags, null, 2) + ";");
   lines.push("");
-  lines.push("export const commonAttributes = " + JSON.stringify(src.commonAttributes, null, 2) + ";");
+  lines.push(
+    "export const commonAttributes = " +
+      JSON.stringify(commonAttributes, null, 2) +
+      ";"
+  );
   lines.push("");
-  lines.push("export const tagAttributes = " + JSON.stringify(src.tagAttributes, null, 2) + ";");
+  lines.push(
+    "export const tagAttributes = " +
+      JSON.stringify(tagAttributes, null, 2) +
+      ";"
+  );
   lines.push("");
-  lines.push("export const apis = " + JSON.stringify(src.apis, null, 2) + ";");
+  lines.push("export const apis = " + JSON.stringify(apis, null, 2) + ";");
   lines.push("");
   return lines.join("\n");
 }
 
-function unionStringLiterals(values) {
-  if (!values || !values.length) return "string";
-  return values.map((v) => JSON.stringify(v)).join(" | ");
-}
-
-function jsxTagPropertyKey(tag) {
-  return /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(tag) ? tag : JSON.stringify(tag);
-}
-
-const PADDING_TYPE =
-  "number | { horizontal?: number; vertical?: number; top?: number; bottom?: number; leading?: number; trailing?: number; left?: number; right?: number }";
-
-const FONT_TYPE = [
-  'JSWidgetFontName',
-  "number",
-  "{ name?: JSWidgetFontName; weight?: JSWidgetFontWeight; design?: JSWidgetFontDesign; size?: number; custom?: string }",
-].join(" | ");
-
-const FONT_NAME_LITERALS = [
-  "largeTitle", "title", "title2", "title3", "headline", "subheadline",
-  "body", "callout", "footnote", "caption", "caption2",
-];
-
-const FONT_WEIGHT_LITERALS = [
-  "ultraLight", "thin", "light", "regular", "medium",
-  "semibold", "bold", "heavy", "black",
-];
-
-const FONT_DESIGN_LITERALS = ["monospaced", "rounded", "serif", "default"];
-
-function attributeTypeDts(attr) {
-  if (attr.name === "size" && !attr.values) {
-    return 'string | { width?: number | "fill"; height?: number | "fill"; minWidth?: number; maxWidth?: number | "fill"; minHeight?: number; maxHeight?: number | "fill" }';
-  }
-  if (attr.name === "font") return "JSWidgetFont";
-  if (attr.values?.length) return unionStringLiterals(attr.values);
-  if (attr.name === "padding") return "JSWidgetPadding";
-  if (attr.name === "color") return "string";
-  if (
-    [
-      "cornerRadius",
-      "opacity",
-      "rotationEffect",
-      "scaleEffect",
-      "blur",
-      "thickness",
-      "length",
-      "lineLimit",
-      "minimumScaleFactor",
-      "radius",
-      "value",
-      "min",
-      "max",
-    ].includes(attr.name)
-  ) {
-    return "number";
-  }
-  return "string | number | boolean";
-}
-
-function formatAttributeLine(attr) {
-  const comment = attr.info ? `      /** ${attr.info} */\n` : "";
-  return `${comment}      ${attr.name}?: ${attributeTypeDts(attr)};`;
-}
-
-function buildDts() {
-  const parts = [];
-  parts.push("/** Auto-generated by Tools/completion-gen/generate.mjs */");
-  parts.push("");
-  parts.push("type HttpParams = { headers?: Record<string, string>; body?: unknown; timeoutInterval?: number };");
-  parts.push("type JSWidgetConsole = { log(...args: unknown[]): void; warn(...args: unknown[]): void; error(...args: unknown[]): void };");
-  parts.push("type JSWidgetPadding = " + PADDING_TYPE + ";");
-  parts.push("type JSWidgetFontName = " + unionStringLiterals(FONT_NAME_LITERALS) + ";");
-  parts.push("type JSWidgetFontWeight = " + unionStringLiterals(FONT_WEIGHT_LITERALS) + ";");
-  parts.push("type JSWidgetFontDesign = " + unionStringLiterals(FONT_DESIGN_LITERALS) + ";");
-  parts.push("type JSWidgetFont = " + FONT_TYPE + ";");
-  parts.push(
-    'type JSWidgetSize = "small" | "medium" | "large" | "extraLarge" | "accessoryInline" | "accessoryCircular" | "accessoryRectangular" | "live-activity" | "dynamic-island" | "function";'
-  );
-  parts.push("");
-  parts.push("declare const $http: {");
-  parts.push("  get(url: string, params?: HttpParams): Promise<string>;");
-  parts.push("  post(url: string, params?: HttpParams): Promise<string>;");
-  parts.push("  put(url: string, params?: HttpParams): Promise<string>;");
-  parts.push("  patch(url: string, params?: HttpParams): Promise<string>;");
-  parts.push("  delete(url: string, params?: HttpParams): Promise<string>;");
-  parts.push("};");
-  parts.push("");
-  parts.push("declare function $fetch(url: string, params?: HttpParams): Promise<string>;");
-  parts.push("declare function fetch(url: string, params?: HttpParams): Promise<string>;");
-  parts.push("");
-  parts.push("declare const $console: JSWidgetConsole;");
-  parts.push("/** Widget script console (not DOM console). Requires editor lib without DOM. */");
-  parts.push("declare const console: JSWidgetConsole;");
-  parts.push("");
-  parts.push("declare const $device: {");
-  parts.push("  name(): string;");
-  parts.push("  model(): string;");
-  parts.push("  systemVersion(): string;");
-  parts.push("  batteryLevel(): number;");
-  parts.push("  isCharging(): boolean;");
-  parts.push("};");
-  parts.push("");
-  parts.push("declare const $file: { read(path: string): Promise<string>; write(path: string, content: string): Promise<boolean>; list(path: string): Promise<string[]> };");
-  parts.push("declare const $system: Record<string, unknown>;");
-  parts.push("declare const $health: Record<string, unknown>;");
-  parts.push("declare const $location: Record<string, unknown>;");
-  parts.push("declare const $storage: {");
-  parts.push("  getString(key: string): string;");
-  parts.push("  setString(key: string, value: string): boolean;");
-  parts.push("  getJSON(key: string): Record<string, unknown>;");
-  parts.push("  setJSON(key: string, value: Record<string, unknown>): boolean;");
-  parts.push("  remove(key: string): boolean;");
-  parts.push("  keys(): string[];");
-  parts.push("  clear(): boolean;");
-  parts.push("};");
-  parts.push('declare function $getenv(key: "widget-size"): JSWidgetSize | "";');
-  parts.push('declare function $getenv(key: "widget-param" | "script-dir"): string;');
-  parts.push("declare function $getenv(key: string): string;");
-  parts.push("declare function $import(path: string): Promise<unknown>;");
-  parts.push("declare function $render(element: unknown): void;");
-  parts.push("declare const $dynamic_island: Record<string, unknown>;");
-  parts.push("declare const $element: { createElement(tag: unknown, props?: unknown, ...children: unknown[]): unknown };");
-  parts.push("declare const $component: Record<string, unknown>;");
-  parts.push("declare const $error: Record<string, unknown>;");
-  parts.push("");
-  parts.push("declare namespace JSWidget {");
-  parts.push("  function createElement(tag: unknown, props?: unknown, ...children: unknown[]): unknown;");
-  parts.push("  const Fragment: string;");
-  parts.push("  namespace JSX {");
-  parts.push("    interface IntrinsicElements {");
-
-  for (const tag of src.jsxTags) {
-    const tagAttrs = src.tagAttributes[tag] || [];
-    const tagNames = new Set(tagAttrs.map((a) => a.name));
-    const commonLines = (src.commonAttributes || [])
-      .filter((a) => !tagNames.has(a.name))
-      .map(formatAttributeLine)
-      .join("\n");
-    const tagLines = tagAttrs.map(formatAttributeLine).join("\n");
-    const body = [commonLines, tagLines].filter(Boolean).join("\n");
-    parts.push(`      /** ${tag} */\n      ${jsxTagPropertyKey(tag)}: {\n${body}\n      };`);
-  }
-
-  parts.push("    }");
-  parts.push("  }");
-  parts.push("}");
-  parts.push("");
-  return parts.join("\n");
+function buildCombinedDts() {
+  const header =
+    "/** Auto-generated from docs/dts/ by Tools/completion-gen/generate.mjs — do not edit by hand */\n\n";
+  const body = DTS_FILE_ORDER.map((f) => {
+    const content = readFileSync(join(dtsDir, f), "utf8");
+    return content.replace(/^\/\*\*[\s\S]*?\*\/\s*\n/, "");
+  }).join("\n");
+  return header + body;
 }
 
 writeFileSync(editorOut, buildCompletionDataJs(), "utf8");
-writeFileSync(docsDts, buildDts(), "utf8");
+
+const combined = buildCombinedDts();
 mkdirSync(siteDtsDir, { recursive: true });
-writeFileSync(siteDts, buildDts(), "utf8");
-console.log("Wrote:", editorOut, docsDts, siteDts);
+writeFileSync(siteDts, combined, "utf8");
+
+console.log("Wrote:", editorOut);
+console.log("Wrote:", siteDts);

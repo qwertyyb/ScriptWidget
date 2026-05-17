@@ -1,0 +1,36 @@
+# JSWidget
+
+> 使用 JavaScript / JSX 为 iOS 与 macOS 编写小组件；运行时基于 JavaScriptCore，JSX 映射到 SwiftUI。本文件供 AI 与自动化工具快速定位权威文档。
+
+## 生成小组件时必须先遵守的约定
+
+- 入口：在 `main.jsx` 中编写顶层脚本；桌面小组件用 **`$render`** 输出 UI；灵动岛 / Live Activity 用 **`$dynamic_island`**。通过 **`$import`** 引入的从文件为模块管线，与入口脚本不同，见 `docs/api/index.md` 概述与「文件导入 API」章节。
+- JSX 标签名一律小写（如 `<col>`、`<text>`），语义接近 SwiftUI，而非 React DOM。
+- 网络：`$http` / `fetch`；存储：`$storage`；环境：`$getenv`（例如 `widget-size` 为 `small` | `medium` | `large`）。
+- 完整全局 API 列表以仓库内 `docs/api/index.md` 为准；组件与属性以 `docs/components/index.md` 为准。
+- 一键导入：生成脚本后附上 `jswidget://import?name=<名称>&code=<base64编码的脚本>` 链接，用户点击即可导入到 App。
+
+## 仓库内文档路径（克隆后可直接读取）
+
+- 快速入门：`docs/guide/getting-started.md`
+- AI 指南（用户向 prompt 页源文件）：`docs/guide/ai.md`
+- 运行时 API：`docs/api/index.md`
+- 组件参考：`docs/components/index.md`
+- 类型合约（手写源）：`docs/dts/types.d.ts`、`docs/dts/api.d.ts`、`docs/dts/components.d.ts`
+
+## 通过 raw.githubusercontent.com 拉取（将 BRANCH 换为 main 或当前默认分支）
+
+将 `OWNER/REPO` 替换为你的远端（上游示例为 `qwertyyb/JSWidget`）。
+
+- `https://raw.githubusercontent.com/OWNER/REPO/BRANCH/docs/guide/getting-started.md`
+- `https://raw.githubusercontent.com/OWNER/REPO/BRANCH/docs/api/index.md`
+- `https://raw.githubusercontent.com/OWNER/REPO/BRANCH/docs/components/index.md`
+- `https://raw.githubusercontent.com/OWNER/REPO/BRANCH/docs/guide/ai.md`
+
+## 人类可读的文档站
+
+在仓库根目录执行 `pnpm docs:build`（VitePress，配置见 `.vitepress/`）并部署后，站点根路径可访问本文件副本：`/llms.txt`。远程编辑器：`/editor/`。
+
+## 可选：项目仓库
+
+- https://github.com/qwertyyb/JSWidget

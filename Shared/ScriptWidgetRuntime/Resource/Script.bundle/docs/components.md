@@ -129,9 +129,11 @@
 **`font` 格式**：
 - 预设名称（字符串）：`"largeTitle"` | `"title"` | `"title2"` | `"title3"` | `"headline"` | `"subheadline"` | `"body"` | `"callout"` | `"footnote"` | `"caption"` | `"caption2"`
 - 自定义尺寸（数字）：`font={24}`
-- 对象格式：`font={{name: "body", weight: "bold"}}`
-- 带设计：`font={{name: "body", weight: "medium", design: "rounded"}}`
-- 自定义字体：`font={{custom: "MyFont", size: 24}}`
+- 对象格式（`size` 优先；无 `size` 时用语义，默认 `body`）：
+  - `font={{ weight: "bold" }}` — 语义 body + 字重
+  - `font={{ name: "title", weight: "bold" }}` — 语义档位 + 字重
+  - `font={{ name: "body", design: "rounded" }}` — 语义 + 设计
+  - `font={{ size: 14, weight: "bold", design: "rounded" }}` — 固定字号 + 字重 + 设计
 
 ```jsx
 <text font="title" color="#333">Hello World</text>

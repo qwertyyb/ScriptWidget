@@ -1,0 +1,16 @@
+{
+  "name": "jswidget",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview",
+    "build:jsx-compiler": "pnpm --filter jsx-compiler build",
+    "generate:completion": "pnpm --filter completion-gen generate",
+    "build:tools": "pnpm run build:jsx-compiler && pnpm run generate:completion"
+  },
+  "devDependencies": {
+    "vitepress": "next"
+  }
+}

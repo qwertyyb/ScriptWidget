@@ -21,11 +21,9 @@
 
 在写出任何 API 或 JSX 标签之前，请先根据下列官方文档（Markdown 源）作答；不要臆造文档中不存在的 API 或组件名：
 
-1. 快速入门：https://raw.githubusercontent.com/qwertyyb/JSWidget/main/docs/getting-started.md
-2. 运行时 API：https://raw.githubusercontent.com/qwertyyb/JSWidget/main/docs/api.md
-3. 组件与属性：https://raw.githubusercontent.com/qwertyyb/JSWidget/main/docs/components.md
-
-可选补充（面向模型的编写约定）：https://raw.githubusercontent.com/qwertyyb/JSWidget/main/docs/ai-for-llms.md
+1. 快速入门：https://raw.githubusercontent.com/qwertyyb/JSWidget/main/docs/guide/getting-started.md
+2. 运行时 API：https://raw.githubusercontent.com/qwertyyb/JSWidget/main/docs/api/index.md
+3. 组件与属性：https://raw.githubusercontent.com/qwertyyb/JSWidget/main/docs/components/index.md
 
 规则摘要（若与上述文档冲突，以文档为准）：
 - 入口脚本写顶层代码；桌面小组件用 $render；灵动岛相关场景用 $dynamic_island，勿混淆。

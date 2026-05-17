@@ -1,0 +1,12 @@
+{
+  "name": "completion-gen",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "generate": "node generate.mjs"
+  },
+  "dependencies": {
+    "ts-morph": "^24.0.0"
+  }
+}

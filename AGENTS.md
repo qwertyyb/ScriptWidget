@@ -6,7 +6,9 @@
 - `macOS/ScriptWidgetMac*`: macOS app + widget targets reusing the shared runtime.
 - `Editor/editorfe/`: React 17 + CodeMirror 6 editor frontend (CRA).
 - `Resource/`: marketing assets, screenshots, icons.
-- `docs/`: canonical Markdown for API、组件、快速入门及 AI 模型说明（`docs-site` 通过 include 引用部分文件）。
+- `docs/`: VitePress 文档源（`srcDir`），**仅面向应用用户**；含 `guide/`、`api/index.md`、`components/index.md`、`public/editor/` 等。贡献者开发流程见根目录 [`DEVELOPMENT.md`](DEVELOPMENT.md)。
+- `.vitepress/`: 文档站配置（根目录）；`pnpm docs:dev` / `pnpm docs:build` 在仓库根目录执行。
+- `docs/dts/`: **source of truth** for widget/API TypeScript contracts (`types.d.ts`, `api.d.ts`, `components.d.ts`). After edits, run `cd Tools/completion-gen && pnpm generate`. See [`DEVELOPMENT.md`](DEVELOPMENT.md).
 - `Scripts/<PackageName>/main.jsx`: runtime widget packages (synced via iCloud/app group); build artifacts land in `__Build/`.
 
 ## Build, Test, and Development Commands
@@ -16,8 +18,12 @@
 - `pnpm start`: run the editor dev server at `http://localhost:3000`.
 - `pnpm test`: run editor tests (react-scripts).
 - `pnpm run build`: produce static editor assets in `Editor/editorfe/build`.
-- `cd Tools/jsx-compiler && pnpm install`: install JSX compiler dependencies.
-- `node test.mjs`: run JSX compiler tests; `npx tsdown`: rebuild the bundled `jsx-compiler.js`.
+- `pnpm install` (repo root): install workspace dependencies (`Tools/jsx-compiler`, `Tools/completion-gen`, etc.).
+- `pnpm build:jsx-compiler`: bundle JSX compiler and copy to `Shared/ScriptWidgetRuntime/Widget/Resource/support.bundle/jsx-compiler.js`.
+- `pnpm --filter jsx-compiler test`: run JSX compiler tests (`Tools/jsx-compiler/test.mjs`).
+- `pnpm generate:completion`: regenerate `completionData.js` and `docs/public/editor/jswidget.d.ts` from `docs/dts/`.
+- `pnpm build:tools`: run both `build:jsx-compiler` and `generate:completion`.
+- `pnpm docs:dev` / `pnpm docs:build`: build or preview the VitePress site (requires `pnpm install` at repo root).
 - When running iOS/macOS targets, enable the `iCloud.JSWidget` container and `group.qwertyyb.jswidget` app group so script storage works.
 - The GitHub repository is at `https://github.com/qwertyyb/JSWidget`.
 
