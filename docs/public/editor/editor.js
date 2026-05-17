@@ -198,7 +198,7 @@
       setSyncState('synced');
       return;
     }
-    const vsPath = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs';
+    const vsPath = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1/min/vs';
     require.config({ paths: { vs: vsPath } });
     require(['vs/editor/editor.main'], () => {
       const widgetCompilerOptions = {
@@ -227,12 +227,23 @@
         model,
         theme: getMonacoTheme(),
         automaticLayout: true,
+        quickSuggestions: { other: true, comments: false, strings: true },
       });
       monacoEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => sendSave());
 
-      monacoEditor.onDidChangeModelContent(() => {
+      monacoEditor.onDidChangeModelContent((e) => {
         const current = monacoEditor.getValue();
         setSyncState(current === lastSyncedContent ? 'synced' : 'dirty');
+
+        for (const change of e.changes) {
+          const t = change.text;
+          if (t === '"' || t === "'" || t === '""' || t === "''") {
+            setTimeout(() => {
+              monacoEditor.trigger('quote', 'editor.action.triggerSuggest', {});
+            }, 100);
+            break;
+          }
+        }
       });
 
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {

@@ -64,17 +64,6 @@ type JSWidgetFont =
     custom?: string;
   };
 
-type JSWidgetSize =
-  | "small"
-  | "medium"
-  | "large"
-  | "extraLarge"
-  | "accessoryInline"
-  | "accessoryCircular"
-  | "accessoryRectangular"
-  | "live-activity"
-  | "dynamic-island"
-  | "function";
 
 type HttpParams = {
   headers?: Record<string, string>;
