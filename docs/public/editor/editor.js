@@ -204,6 +204,7 @@
       const widgetCompilerOptions = {
         allowNonTsExtensions: true,
         allowJs: true,
+        strict: true,
         jsx: monaco.languages.typescript.JsxEmit.React,
         jsxFactory: 'JSWidget.createElement',
         target: monaco.languages.typescript.ScriptTarget.ES2020,

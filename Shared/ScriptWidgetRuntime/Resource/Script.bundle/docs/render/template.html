@@ -7,11 +7,68 @@
   <script src="marked.min.js"></script>
   <script src="highlight.min.js"></script>
   <script>
-    // Register javascript language for highlight.js
     if (typeof hljs !== 'undefined' && typeof hljsDefineJavascript !== 'undefined') {
       hljs.registerLanguage('javascript', hljsDefineJavascript);
       hljs.registerLanguage('jsx', hljsDefineJavascript);
       hljs.registerLanguage('js', hljsDefineJavascript);
+    }
+
+    function slugify(text) {
+      return text
+        .trim()
+        .toLowerCase()
+        .replace(/`/g, '')
+        .replace(/[^\w\u4e00-\u9fa5]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    function assignHeadingIds(root) {
+      root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(function(h) {
+        if (!h.id) {
+          h.id = slugify(h.textContent);
+        }
+      });
+    }
+
+    function wrapTables(root) {
+      root.querySelectorAll('table').forEach(function(table) {
+        if (table.parentElement && table.parentElement.classList.contains('table-scroll')) {
+          return;
+        }
+        var wrapper = document.createElement('div');
+        wrapper.className = 'table-scroll';
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      });
+    }
+
+    function scrollToAnchor(anchor) {
+      if (!anchor) return;
+
+      var targetId = slugify(anchor);
+      var el = document.getElementById(targetId);
+
+      if (!el) {
+        var headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        for (var i = 0; i < headings.length; i++) {
+          var h = headings[i];
+          var text = h.textContent.trim();
+          var headingSlug = slugify(text);
+          if (
+            headingSlug === targetId ||
+            headingSlug.indexOf(targetId) === 0 ||
+            targetId.indexOf(headingSlug) === 0 ||
+            text.indexOf(anchor) !== -1
+          ) {
+            el = h;
+            break;
+          }
+        }
+      }
+
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
     function renderMarkdown(md, anchor) {
@@ -20,39 +77,26 @@
         return;
       }
 
-      // Configure marked
       marked.setOptions({
         breaks: true,
         gfm: true
       });
 
-      document.getElementById('content').innerHTML = marked.parse(md);
+      var content = document.getElementById('content');
+      content.innerHTML = marked.parse(md);
 
-      // Apply syntax highlighting
+      assignHeadingIds(content);
+      wrapTables(content);
+
       if (typeof hljs !== 'undefined') {
-        document.querySelectorAll('pre code').forEach(function(block) {
+        content.querySelectorAll('pre code').forEach(function(block) {
           hljs.highlightElement(block);
         });
       }
 
-      // Scroll to anchor
       if (anchor) {
         setTimeout(function() {
-          const id = anchor.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-').replace(/^-|-$/g, '');
-          let el = document.getElementById(id);
-          if (!el) {
-            // Try headings by text content
-            const headings = document.querySelectorAll('h1, h2, h3, h4');
-            for (let h of headings) {
-              if (h.textContent.trim().includes(anchor)) {
-                el = h;
-                break;
-              }
-            }
-          }
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
+          scrollToAnchor(anchor);
         }, 100);
       }
     }

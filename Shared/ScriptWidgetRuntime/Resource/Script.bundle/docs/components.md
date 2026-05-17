@@ -1,522 +1,574 @@
 # JSWidget JSX 元素完整文档
 
-本文档描述 JSWidget 支持的所有 JSX 元素、属性及其用法。
+本文档与 JSWidget 类型定义（`components.d.ts`、`types.d.ts`）保持一致，描述 JSWidget 支持的所有 JSX 元素、属性及其用法。
+
+各组件专有属性均与 `JSWidgetCommonAttributes` 交叉组合（`row` 除外，见下文）。除另有说明外，均可使用[通用属性](#通用属性jswidgetcommonattributes)。
 
 ---
 
 ## 布局容器
 
-### Col (垂直排列)
+### `row`（水平堆叠）
 
-垂直排列子元素。
-
-**作用**：垂直排列子元素
+水平排列子元素。继承 `JSWidgetCommonAttributes`，但**不包含** `align`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `align` | String | 子元素**水平**对齐（交叉轴） |
-| `justify` | String | 子元素组在**垂直**方向的分布（主轴，需父级有剩余高度） |
-| `spacing` | number | 子元素垂直间距 |
+| `spacing` | `number` | 子元素水平间距 |
+| `justify` | `"start" \| "center" \| "end"` | 主轴分布（需父级有剩余宽度） |
+| `size` | 见[通用属性](#通用属性jswidgetcommonattributes) | 尺寸 |
+| 其他 | 见[通用属性](#通用属性jswidgetcommonattributes) | 不含 `align` |
 
-**`align` 可选值**：`start` | `end` | `center`（默认）
+```jsx
+<row justify="center" spacing={8} size={{ width: "fill" }}>
+  <text>Left</text>
+  <text>Right</text>
+</row>
+```
 
-**`justify` 可选值**：`start`（默认）| `center` | `end`
+---
+
+### `col`（垂直堆叠）
+
+垂直排列子元素。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `spacing` | `number` | 子元素垂直间距 |
+| `align` | `"start" \| "center" \| "end"` | 子元素水平对齐（交叉轴） |
+| `justify` | `"start" \| "center" \| "end"` | 主轴分布（需父级有剩余高度） |
 
 ```jsx
 <col align="center" spacing={10}>
   <text>Hello</text>
   <text>World</text>
 </col>
-
-<col justify="center" size={{maxHeight: "fill"}}>
-  <text>Vertically centered group</text>
-</col>
 ```
 
 ---
 
-### Row (水平排列)
+### `stack`（层叠容器）
 
-水平排列子元素。
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `align` | String | 子元素**垂直**对齐（交叉轴） |
-| `justify` | String | 子元素组在**水平**方向的分布（主轴，需父级有剩余宽度） |
-| `spacing` | number | 子元素水平间距 |
-
-**`align` 可选值**：`start` | `end` | `center`（默认）| `firstBaseline` | `lastBaseline`
-
-**`justify` 可选值**：`start`（默认）| `center` | `end`
-
-```jsx
-<row align="center" spacing={8}>
-  <text>Left</text>
-  <text>Right</text>
-</row>
-
-<row justify="center" size={{maxWidth: "fill"}}>
-  <text>Centered group</text>
-</row>
-```
-
----
-
-### Stack (层叠容器)
-
-按 z 轴顺序层叠子元素，后面的元素覆盖在前面元素之上。
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| 无特殊属性 | - | 支持通用属性 |
+按 z 轴顺序层叠子元素。仅继承 `JSWidgetCommonAttributes`，无额外专有属性。
 
 ```jsx
 <stack>
-    <Rectangle backgroundColor="#f00" />
-    <Text>覆盖在上面</Text>
+  <roundedrect radius={8} color="#f1f5f9" size={{ width: 100, height: 60 }} />
+  <text>覆盖在上面</text>
 </stack>
 ```
 
 ---
 
-### Grid / Grid-Row (网格容器)
+### `grid`（网格）
 
-网格形式排列子元素。
+网格排列子元素。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `columns` | JSON 字符串 | 列/行配置数组 |
-| `align` | String | 对齐方式（`start`/`center`/`end`） |
-| `spacing` | number | 间距 |
-
-**`columns` 配置格式**：
-```json
-[
-    { "type": "adaptive", "min": "30", "max": "100" },
-    { "type": "fixed", "value": "60" },
-    { "type": "flexible" }
-]
-```
-- `adaptive`：自适应，最小/最大宽度
-- `fixed`：固定宽度
-- `flexible`：弹性填充
+| `rows` | `string \| number \| boolean` | 行配置 JSON 字符串 |
+| `columns` | `string \| number \| boolean` | 列数 / 列配置 |
+| `spacing` | `number` | 间距 |
 
 ```jsx
 <grid
-    columns='[{"type":"adaptive","min":"60"},{"type":"fixed","value":"80"}]'
-    spacing={10}
+  columns='[{"type":"adaptive","min":"60"},{"type":"fixed","value":"80"}]'
+  spacing={10}
 >
-    <Text>Item 1</Text>
-    <Text>Item 2</Text>
+  <text>Item 1</text>
+  <text>Item 2</text>
 </grid>
 ```
 
 ---
 
-## 文本元素
+### `grid-row`（网格行）
 
-### Text (文本)
-
-显示文本内容。
+网格行布局。继承 `JSWidgetCommonAttributes`，但**不包含**通用 `align`（使用下方专用 `align`）。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `font` | String | 字体样式 |
-| `color` | String | 文字颜色 |
-| `gradientForeground` | String | 渐变前景色 |
-| `lineLimit` | number \| string | 最大行数；字符串 `"none"` 表示不限制 |
+| `align` | `"start" \| "end" \| "center" \| "firstBaseline" \| "lastBaseline"` | 垂直对齐 |
+| `rows` | `string \| number \| boolean` | 行数 |
+| `columns` | `string \| number \| boolean` | 列配置 JSON 字符串 |
+| `spacing` | `number` | 间距 |
 
-**`font` 格式**：
-- 预设名称（字符串）：`"largeTitle"` | `"title"` | `"title2"` | `"title3"` | `"headline"` | `"subheadline"` | `"body"` | `"callout"` | `"footnote"` | `"caption"` | `"caption2"`
-- 自定义尺寸（数字）：`font={24}`
-- 对象格式（`size` 优先；无 `size` 时用语义，默认 `body`）：
-  - `font={{ weight: "bold" }}` — 语义 body + 字重
-  - `font={{ name: "title", weight: "bold" }}` — 语义档位 + 字重
-  - `font={{ name: "body", design: "rounded" }}` — 语义 + 设计
-  - `font={{ size: 14, weight: "bold", design: "rounded" }}` — 固定字号 + 字重 + 设计
+---
+
+## 文本
+
+### `text`
+
+显示文本。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `font` | `JSWidgetFont` | 字体：语义名 / 数字字号 / 对象 |
+| `color` | `string` | 文字颜色 |
+| `textAlign` | `"start" \| "center" \| "end"` | 文本对齐 |
+| `lineLimit` | `number` | 行数限制 |
+
+**`JSWidgetFont`**：
+
+- 语义名：`"largeTitle"` \| `"title"` \| `"title2"` \| `"title3"` \| `"headline"` \| `"subheadline"` \| `"body"` \| `"callout"` \| `"footnote"` \| `"caption"` \| `"caption2"`
+- 数字：字号
+- 对象：`{ name?, weight?, design?, size?, custom? }`
 
 ```jsx
 <text font="title" color="#333">Hello World</text>
-<text font={{name: "body", weight: "bold"}} lineLimit={1}>Single line title</text>
-<text font="caption" lineLimit={2}>Long text truncated to two lines</text>
+<text font={{ name: "body", weight: "bold" }} lineLimit={1}>Single line</text>
 ```
 
 ---
 
-### Date (日期/时间)
+### `date`
 
-动态显示日期和时间。
+动态显示日期和时间。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `style` | String | 时间样式 |
-| `date` | String | 日期值 |
-
-**`style` 可选值**：`time` | `date` | `relative` | `offset` | `timer`
-
-**`date` 格式**：
-- 预设：`now` | `tomorrow` | `yesterday` | `start of today`
-- 相对时间：`+1h`（1小时后）| `-1d`（1天前）| `+2h` | `-3d`
+| `style` | `"date" \| "time" \| "relative" \| "offset" \| "timer"` | 显示样式 |
+| `font` | `JSWidgetFont` | 字体 |
+| `color` | `string` | 文字颜色 |
+| `textAlign` | `"start" \| "center" \| "end"` | 文本对齐 |
+| `lineLimit` | `number` | 行数限制 |
 
 ```jsx
-<Date style="time" date="now" />
-<Date style="relative" date="-1d" />
+<date style="time" />
+<date style="relative" color="#64748b" />
 ```
 
 ---
 
 ## 图片与媒体
 
-### Image (图片)
+### `image`
 
-显示图片（SF Symbols、本地资源、网络图片）。
+显示图片。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `systemName` | String | SF Symbols 图标名 |
-| `filePath` | String | 相对于脚本目录的图片路径，支持任意图片格式 |
-| `name` / `id` | String | 本地图片资源名，需将图片放在 `<script-dir>/image/{name}.png` |
-| `url` / `src` | String | 图片 URL 或 Base64 |
-| `ratio` | number | 宽高比 |
-| `mode` | String | 显示模式：`fit` 或 `fill` |
+| `name` | `string` | 包内 `image/` 目录下的图片名（读取 `image/{name}.png`） |
+| `filePath` | `string` | 相对于脚本目录的图片路径，支持任意图片格式 |
+| `url` | `string` | 网络 URL |
+| `ratio` | `number` | 宽高比 |
+| `mode` | `"fit" \| "fill"` | 显示模式 |
+| `font` | `JSWidgetFont` | 仅 `systemName` 时生效（控制 SF Symbol 大小） |
 
 ```jsx
-<Image systemName="star.fill" />
-{/* 读取 <script-dir>/assets/photo.jpg，支持任意路径和格式 */}
-<Image filePath="assets/photo.jpg" />
-{/* 读取 <script-dir>/image/logo.png */}
-<Image name="logo" />
-<Image url="https://example.com/image.png" mode="fit" />
+<image name="logo" />
+<image url="https://example.com/image.png" mode="fit" />
 ```
 
 ---
 
-### Gif (动态图)
+### `gif`
 
-显示 GIF 动画（仅 iOS）。
+显示 GIF 动画。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `file` | String | GIF 文件路径 |
+| `file` | `string` | **必填**。GIF 文件名；可为 `"cat.gif"` 或 `"cat"`（自动补 `.gif`）。文件放在脚本包的 `images` 目录下 |
+| `ratio` | `number` | 宽高比 |
+| `mode` | `"fit" \| "fill"` | 显示模式 |
 
 ```jsx
-<Gif file="animation.gif" />
+<gif file="animation.gif" mode="fit" />
 ```
 
 ---
 
-## 交互元素
+## 交互
 
-### Button (按钮)
+### `button`
 
-可点击的按钮，触发相应动作。
+可点击按钮。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `action` | String | 预定义动作（如 `"reload"`） |
-| `onClick` | String | 点击时调用的 JS 函数名 |
+| `action` | `"reload"` | 预定义动作，目前仅支持 `"reload"`（重载小组件） |
+| `onClick` | `string` | 点击时调用的 JS 函数名（在 `main.jsx` 顶层声明） |
+
+`action` 与 `onClick` 二选一：有 `action="reload"` 时走系统重载；否则按 `onClick` 调用脚本函数。
 
 ```jsx
-<Button action="reload">
-    <Text>重新加载</Text>
-</Button>
+<button action="reload">
+  <text>重新加载</text>
+</button>
 
-<Button onClick="handleClick">
-    <Text>点击我</Text>
-</Button>
+<button onClick="handleClick">
+  <text>点击我</text>
+</button>
 ```
 
 ---
 
-### Toggle (开关)
+### `toggle`
 
-可切换的开关控件。
+开关控件。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `on` | boolean | 开关状态 |
-| `onClick` | String | 点击时调用的函数名 |
+| `on` | `boolean` | 开关是否开启，默认 `false` |
+| `onClick` | `string` | 切换时调用的 JS 函数名 |
 
 ```jsx
-<Toggle on={true} onClick="toggleHandler">
-    <Text>设置选项</Text>
-</Toggle>
+<toggle on={true} onClick="toggleHandler">
+  <text>设置选项</text>
+</toggle>
 ```
 
 ---
 
-### Link (链接)
+### `link`
 
-可点击的链接，跳转到指定 URL。
+可点击链接。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `url` | String | 跳转目标 URL |
+| `url` | `string` | **必填**。跳转目标 URL |
 
 ```jsx
-<Link url="widget-deeplink://action">
-    <Text>点击跳转</Text>
-</Link>
+<link url="widget-deeplink://action">
+  <text>点击跳转</text>
+</link>
 ```
 
 ---
 
 ## 图表
 
-### Chart (图表)
+### `chart`
 
-显示各种类型的图表。
+基于 Swift Charts 的图表。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `type` | String | 图表类型 |
-| `data` | JSON 字符串 | 数据数组 |
-| `category` | boolean | 是否启用分类 |
-| `hideLegend` | boolean | 是否隐藏图例 |
-| `hideXAxis` | boolean | 是否隐藏 X 轴 |
-| `hideYAxis` | boolean | 是否隐藏 Y 轴 |
-| `color` | String | 前景色 |
+| `data` | 见下方 | **必填**。图表数据数组 |
+| `type` | 见下方 | 图表类型，默认 `"bar"` |
+| `category` | `boolean` | 是否按数据项 `category` 字段分色，默认 `false` |
+| `hideLegend` | `boolean` | 是否隐藏图例 |
+| `hideXAxis` | `boolean` | 是否隐藏 X 轴 |
+| `hideYAxis` | `boolean` | 是否隐藏 Y 轴 |
+| `color` | `string` | 前景色 |
 
-**`type` 图表类型**：
+**`type` 可选值**：
 
-| 类型 | 说明 |
-|------|------|
-| `bar` | 柱状图（X 轴为标签） |
-| `bar-x` | 水平柱状图 |
-| `bar-y` | 垂直柱状图 |
-| `bar-gantt` | 甘特图 |
-| `line` | 折线图 |
-| `point` | 点图 |
-| `line-point` | 带点的折线图 |
-| `area` | 面积图 |
-| `rect` | 矩形图 |
-| `rule-x` | X 轴规则线 |
+| 值 | 说明 | `data` 项类型 |
+|----|------|----------------|
+| `bar` | 柱状图（X 轴为标签） | `JSWidgetChartDataItem` |
+| `bar-x` | 水平柱状图 | `JSWidgetChartDataItem` |
+| `bar-y` | 垂直柱状图 | `JSWidgetChartDataItem` |
+| `bar-gantt` | 甘特图 | `JSWidgetChartGanttDataItem` |
+| `line` | 折线图 | `JSWidgetChartDataItem` |
+| `point` | 点图 | `JSWidgetChartDataItem` |
+| `line-point` | 带点折线图 | `JSWidgetChartDataItem` |
+| `area` | 面积图 | `JSWidgetChartDataItem` |
+| `rect` | 矩形图 | `JSWidgetChartDataItem` |
+| `rule-x` | X 轴规则线 | `JSWidgetChartRuleDataItem` |
 
-**`data` 格式**：
-```json
-[
-    { "label": "Jan", "value": 10, "category": "A" },
-    { "label": "Feb", "value": 20, "category": "B" }
-]
+**数据项类型**：
+
+```ts
+// 通用（bar / line / point / area / rect 等）
+interface JSWidgetChartDataItem {
+  label: string;
+  value: number;
+  category?: string;
+}
+
+// bar-gantt
+interface JSWidgetChartGanttDataItem {
+  job: string;
+  start: number;
+  end: number;
+  category?: string;
+}
+
+// rule-x
+interface JSWidgetChartRuleDataItem {
+  xstart: number;
+  xend: number;
+  y: number;
+  category?: string;
+}
 ```
 
 ```jsx
-<Chart
-    type="bar"
-    data='[{"label":"A","value":10},{"label":"B","value":20}]'
-    hideXAxis={true}
-/>
+const data = [
+  { label: "A", value: 10 },
+  { label: "B", value: 20 },
+];
+
+<chart type="bar" data={data} hideXAxis={true} color="red" />
 ```
 
 ---
 
-## 形状
+## 形状与装饰
 
-### Rectangle / RoundedRectangle (矩形)
+### `rect`
 
-显示矩形或圆角矩形。
+矩形。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `corner` | number | 圆角半径（RoundedRectangle 专用） |
-| `trim` | number/string | 裁剪比例（0-1 或 `"from,to"`） |
-| `stroke` | number | 边框宽度 |
-| `color` | String | 填充颜色 |
+| `cornerRadius` | `number` | 圆角半径 |
 
 ```jsx
-<Rectangle stroke={2} color="#3b82f6" />
-<RoundedRectangle corner={12} color="#f1f5f9" />
+<rect size={{ width: 50, height: 30 }} backgroundColor="blue" cornerRadius={5} />
 ```
 
 ---
 
-### Capsule (胶囊形)
+### `capsule`
 
-显示胶囊形状。
+胶囊形。仅继承 `JSWidgetCommonAttributes`，无专有属性。
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `trim` | number/string | 裁剪比例 |
-| `stroke` | number | 边框宽度 |
-| `color` | String | 填充颜色 |
+```jsx
+<capsule size={{ width: 50, height: 30 }} backgroundColor="blue" />
+```
 
 ---
 
-### Ellipse (椭圆)
+### `ellipse`
 
-显示椭圆形状。
+椭圆。仅继承 `JSWidgetCommonAttributes`，无专有属性。
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `trim` | number/string | 裁剪比例 |
-| `stroke` | number | 边框宽度 |
-| `color` | String | 填充颜色 |
+```jsx
+<ellipse size={{ width: 50, height: 30 }} backgroundColor="blue" />
+```
 
 ---
 
-### Circle (圆形)
+### `circle`
 
-显示圆形。
+圆形。仅继承 `JSWidgetCommonAttributes`，无专有属性。
+
+```jsx
+<circle size={{ width: 40, height: 40 }} backgroundColor="blue" />
+```
+
+---
+
+### `roundedrect`
+
+圆角矩形色块，常用于背景或占位。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `trim` | number/string | 裁剪比例 |
-| `stroke` | number | 边框宽度 |
-| `color` | String | 填充颜色 |
+| `radius` | `number` | 圆角半径，默认 `12` |
+| `color` | `string` | 填充颜色 |
+
+```jsx
+<roundedrect radius={12} color="#38bdf8" size={{ width: 140, height: 60 }} />
+```
+
+---
+
+### `line`
+
+固定长度线段。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `thickness` | `number` | 线宽，默认 `2` |
+| `length` | `number` | 长度，默认 `48` |
+| `axis` | `"horizontal" \| "vertical"` | 方向 |
+| `color` | `string` | 颜色 |
+
+```jsx
+<line length={120} thickness={2} color="#94a3b8" />
+<line axis="vertical" length={24} thickness={2} color="#f59e0b" />
+```
+
+---
+
+### `divider`
+
+分隔线。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `thickness` | `number` | 线宽，默认 `1` |
+| `axis` | `"horizontal" \| "vertical"` | 方向 |
+| `color` | `string` | 颜色 |
+
+---
+
+## 图标与标签
+
+### `icon`
+
+SF Symbol 图标。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `systemName` | `string` | **必填**。SF Symbol 名 |
+| `size` | `number` | 图标大小 |
+| `color` | `string` | 颜色 |
+| `font` | `JSWidgetFont` | 字体（语义名 / 数字 / 对象） |
+
+```jsx
+<icon systemName="star.fill" size={24} color="#f59e0b" />
+```
+
+---
+
+### `label`
+
+带图标的文字（也可用 `icon` + `text` 组合实现）。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `title` | `string` | 标题文本 |
+| `systemName` | `string` | 图标名 |
+| `color` | `string` | 颜色 |
+| `font` | `JSWidgetFont` | 字体 |
+
+---
+
+## 进度与数据展示
+
+### `progress`
+
+进度条。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `value` | `number` | 当前值，默认 `0` |
+| `total` | `number` | 总值，默认 `1` |
+| `label` | `string` | 进度条旁/上的说明文字 |
+| `style` | `"linear" \| "circular"` | 样式，默认 `linear` |
+| `color` | `string` | 进度条着色 |
+| `trackColor` | `string` | 轨道/背景色（设置后使用自定义绘制，默认 `#e2e8f0`） |
+| `font` | `JSWidgetFont` | `label` 的字体 |
+
+```jsx
+<progress value={0.6} total={1} label="Loading" style="circular" />
+```
+
+---
+
+### `ring`
+
+0–1 的环形进度条（轻量，类似 `progress` 的 `circular`）。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `value` | `number` | 当前值（0–1） |
+| `thickness` | `number` | 圆环粗细，默认 `8` |
+| `color` | `string` | 进度颜色，默认 `#3b82f6` |
+| `trackColor` | `string` | 轨道颜色，默认 `#e2e8f0` |
+
+```jsx
+<ring value={0.68} thickness={10} color="#22c55e" trackColor="#e2e8f0" size={72} />
+```
+
+---
+
+### `badge`
+
+小号圆角标签，适合 `PRO`、`NEW` 等。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `text` | `string` | 徽章文本 |
+| `radius` | `number` | 圆角半径，默认 `6` |
+| `backgroundColor` | `string` | 背景色，默认 `#0f172a` |
+| `color` | `string` | 文字颜色，默认 `#e2e8f0` |
+
+```jsx
+<badge text="PRO" backgroundColor="#22c55e" color="#ffffff" />
+```
+
+---
+
+### `chip`
+
+带边框的胶囊标签。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `text` | `string` | 标签文本 |
+| `radius` | `number` | 圆角半径，默认 `14` |
+| `backgroundColor` | `string` | 背景色（未设置则用默认） |
+| `borderColor` | `string` | 边框颜色，默认 `#cbd5f5` |
+| `color` | `string` | 文字颜色，默认 `#0f172a` |
+
+```jsx
+<chip text="Today" />
+<chip text="Focus" borderColor="#38bdf8" color="#0f172a" />
+```
+
+---
+
+### `stat`
+
+标题 + 大数字 + 可选副标题，适合仪表盘。继承 `JSWidgetCommonAttributes`。
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `title` | `string` | 标题，默认 `"Title"` |
+| `value` | `string` | 数值，默认 `"0"` |
+| `subtitle` | `string` | 副标题 |
+| `color` | `string` | 数值颜色，默认 `#0f172a` |
+| `mutedColor` | `string` | 辅助文字颜色，默认 `#64748b` |
+
+```jsx
+<stat title="Downloads" value="12.4k" subtitle="Today" color="#0f172a" />
+```
 
 ---
 
 ## 仪表
 
-### Gauge (仪表盘)
+### `gauge`
 
-显示进度仪表。
+仪表盘。继承 `JSWidgetCommonAttributes`。按 `type` 分为两种属性集。
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `type` | String | 类型：`original` 或 `system` |
-| `value` | number/string | 当前值（0-1） |
-| `style` | String | 样式：`circular`（默认）| `linear` | `automatic` |
-| `text` | String | 标题文本 |
-| `current` | String | 当前值标签 |
-| `min` / `max` | String | 最小/最大值标签 |
-
-**Original 类型额外属性**：
+#### `type` 省略或 `"original"`（默认）
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `angle` | number | 弧度（默认 260） |
-| `thickness` | number | 厚度（默认 10） |
-| `needleColor` | String | 指针颜色 |
-| `label` | String | 标签文本 |
-| `title` | String | 标题 |
-| `sections` | JSON 字符串 | 分段配置 |
+| `type` | `"original"` | 内部自定义仪表 |
+| `value` | `number` | 当前值（0–1） |
+| `angle` | `number` | 弧度 |
+| `thickness` | `number` | 厚度 |
+| `needleColor` | `string` | 指针颜色 |
+| `label` | `string` | 中心标签 |
+| `title` | `string` | 副标题 |
+| `sections` | `string` | 分段配置 JSON 字符串 |
 
-**`sections` 格式**：
-```json
-[
-    { "color": "#22c55e", "value": 0.3 },
-    { "color": "#eab308", "value": 0.2 }
-]
-```
+#### `type="system"`
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `type` | `"system"` | SwiftUI 系统 `Gauge` |
+| `value` | `number` | 当前值（0–1） |
+| `style` | `"circular" \| "linear" \| "automatic"` | 样式 |
+| `text` | `string` | 标题文本 |
+| `current` | `string` | 当前值标签文字 |
+| `min` | `string` | 最小值端**标签**文字（非数值范围） |
+| `max` | `string` | 最大值端**标签**文字（非数值范围） |
 
 ```jsx
-<Gauge type="system" value="0.7" style="circular" text="Battery" current="70%" min="0%" max="100%" />
+<gauge type="system" value={0.6} style="circular" text="Battery" current="60%" />
+
+<gauge value={0.72} label="72%" title="CPU" needleColor="#ef4444" />
 ```
 
 ---
 
-## 扩展组件 (Extras)
+## 布局辅助
 
-### Divider (分隔线)
+### `spacer`
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `thickness` | number | 线条粗细（默认 1） |
-| `axis` | String | 方向：`horizontal`（默认）| `vertical` |
-| `color` | String | 颜色 |
-
----
-
-### Line (线条)
+占用空间，用于布局分隔；在 `col` 中沿垂直方向扩展，在 `row` 中沿水平方向扩展。**不**继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `thickness` | number | 线条粗细（默认 2） |
-| `length` | number | 线条长度（默认 48） |
-| `axis` | String | 方向：`horizontal`（默认）| `vertical` |
-| `color` | String | 颜色 |
-
----
-
-### Icon (图标)
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `systemName` | String | SF Symbols 名称（默认 `questionmark.circle`） |
-| `size` | number | 图标大小 |
-| `color` | String | 颜色 |
-| `font` | String | 字体样式 |
-
----
-
-### Label (标签)
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `title` | String | 标题文本 |
-| `systemName` | String | 图标名（默认 `circle.fill`） |
-| `color` | String | 颜色 |
-| `font` | String | 字体样式 |
-
----
-
-### Progress (进度条)
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `value` | number | 当前值 |
-| `total` | number | 总值（默认 1） |
-| `label` | String | 标签文本 |
-| `style` | String | 样式：`linear`（默认）| `circular` |
-| `color` | String | 进度条颜色 |
-
----
-
-### Ring (圆环)
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `value` | number | 值 0-1 |
-| `thickness` | number | 圆环粗细（默认 8） |
-| `color` | String | 进度颜色（默认 `#3b82f6`） |
-| `trackColor` | String | 轨道颜色（默认 `#e2e8f0`） |
-
----
-
-### Badge (徽章)
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `text` | String | 徽章文本 |
-| `radius` | number | 圆角半径（默认 6） |
-| `backgroundColor` | String | 背景色（默认 `#0f172a`） |
-| `color` | String | 文字颜色（默认 `#e2e8f0`） |
-
----
-
-### Chip (标签卡)
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `text` | String | 标签文本 |
-| `radius` | number | 圆角半径（默认 14） |
-| `backgroundColor` | String | 背景色（无则使用默认） |
-| `borderColor` | String | 边框颜色（默认 `#cbd5f5`） |
-| `color` | String | 文字颜色（默认 `#0f172a`） |
-
----
-
-### Stat (统计卡片)
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `title` | String | 标题（默认 `Title`） |
-| `value` | String | 数值（默认 `0`） |
-| `subtitle` | String | 副标题 |
-| `color` | String | 数值颜色（默认 `#0f172a`） |
-| `mutedColor` | String | 辅助文字颜色（默认 `#64748b`） |
-
----
-
-### Spacer (间距)
-
-占用空间，用于布局分隔。在 `col` 中沿垂直方向扩展，在 `row` 中沿水平方向扩展。
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `length` | number | 最小占用长度（对应 SwiftUI `Spacer(minLength:)`） |
-| `size` | String | 占用空间尺寸 |
+| `length` | `number` | 最小占用长度 |
 
 ```jsx
 <col>
@@ -528,124 +580,35 @@
 
 ---
 
-## 通用属性（所有元素可用）
+## 通用属性（`JSWidgetCommonAttributes`）
 
-这些属性通过 `ScriptWidgetAttributeGeneralModifier` 应用到所有元素。
+多数标签通过交叉类型继承 `JSWidgetCommonAttributes`。
 
-### size (尺寸)
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `size` | `string \| { width?, height?, minWidth?, maxWidth?, minHeight?, maxHeight? }` | `"max"` 或尺寸对象；`width` / `height` 等为 `number \| "fill"` |
+| `justify` | `"start" \| "center" \| "end"` | 水平对齐 / 主轴分布 |
+| `align` | `"start" \| "center" \| "end"` | 垂直对齐（`row` 无此项；`grid-row` 使用专用 `align`） |
+| `padding` | `JSWidgetPadding` | 内边距 |
+| `backgroundColor` | `string` | 背景色 |
+| `foregroundColor` | `string` | 前景色 |
+| `cornerRadius` | `number` | 圆角 |
+| `opacity` | `number` | 透明度 0–1 |
+| `rotationEffect` | `number` | 旋转角度 |
+| `scaleEffect` | `number` | 缩放 |
+| `offset` | `string` | 偏移 |
+| `shadow` | `string` | 阴影 |
+| `blur` | `number` | 模糊 |
+| `animation` | `string` | 动画名 |
 
-```jsx
-<text size="max" />
-<text size={{width: 10, height: 20}} />
-<text size={{width: "fill", height: "fill"}} justify="start" align="start" />
-<text size={{width: "fill"}} justify="center" />
-```
+#### `JSWidgetPadding`
 
-`size="max"` 等价于 `size={{width: "fill", height: "fill"}}`，`justify`/`align` 默认为 `start`。
-`"fill"` 表示占满可用空间。
-
----
-
-### cornerRadius (圆角)
-
-```jsx
-<Rectangle cornerRadius={16} />
-```
-
----
-
-### clip (裁剪)
+`number` 或对象：`{ horizontal?, vertical?, top?, bottom?, leading?, trailing?, left?, right? }`。
 
 ```jsx
-<Image url="..." clip="circle" />
-<Image url="..." clip={{shape: "rect"}} />
-```
-
-**可选形状**：`circle` | `rect` | `capsule` | `ellipse`
-
----
-
-### backgroundColor (背景色)
-
-```jsx
-<Text backgroundColor="#f00" />
-<Text backgroundColor={{value: "red", opacity: 0.5}} />
-```
-
----
-
-### backgroundGradient (渐变背景)
-
-```jsx
-<Text backgroundGradient={{type: "linear", colors: ["#f00", "#00f"], startPoint: "leading", endPoint: "trailing"}} />
-<Text backgroundGradient={{type: "radial", colors: ["orange", "red"], center: "center", startRadius: 10, endRadius: 100}} />
-<Text backgroundGradient={{type: "angular", colors: ["green", "blue", "black"], center: "center"}} />
-```
-
----
-
-### padding (内边距)
-
-```jsx
-<Text padding={10} />
-<Text padding={{top: 10}} />
-<Text padding={{horizontal: 10, vertical: 20}} />
-<Text padding={{top: 10, trailing: 20, bottom: 30, leading: 40}} />
-<Text padding={{left: 10, right: 20}} />
-```
-
----
-
-### opacity (透明度)
-
-```jsx
-<Image url="..." opacity={0.5} />
-```
-
----
-
-### animation (动画)
-
-```jsx
-<Text animation="clockSecond" />
-
-<Text animation={{type: "clock", timezone: "current", anchor: "center", interval: 30}} />
-
-<Text animation={{type: "swing", duration: 2, direction: "horizontal", distance: 100}} />
-```
-
-**动画类型**：
-
-| 类型 | 说明 |
-|------|------|
-| `clockSecond` | 时钟秒针 |
-| `clockMinute` | 时钟分针 |
-| `clockHour` | 时钟时针 |
-| `clock` | 自定义间隔时钟（对象格式） |
-| `swing` | 摆动动画（对象格式） |
-
----
-
-### rotation (2D 旋转)
-
-```jsx
-<Circle rotation={45} />
-```
-
----
-
-### rotation3d (3D 旋转)
-
-```jsx
-<Circle rotation3d={{degrees: 180, x: 1, y: 0, z: 0}} />
-```
-
----
-
-### shadow (阴影)
-
-```jsx
-<Text shadow={{color: "#000", radius: 3, x: 0, y: 3}} />
+<text size="max" padding={10} backgroundColor="#1e293b" />
+<text size={{ width: "fill", height: 48 }} justify="center" align="center" />
+<rect cornerRadius={12} opacity={0.9} rotationEffect={15} />
 ```
 
 ---
@@ -658,39 +621,39 @@
 - **十六进制**：`"#ff0000"`, `"#f00"`, `"#ff000080"`（RGBA 顺序）
 - **RGB 函数**：`"rgb(255, 0, 0)"`
 - **RGBA 函数**：`"rgba(255, 0, 0, 0.5)"`
-- **对象格式**：`{{value: "red", opacity: 0.5}}`
 
 ---
 
 ## 元素汇总表
 
-| 元素 | 分类 | 说明 |
+| 标签 | 分类 | 说明 |
 |------|------|------|
-| `col` | 布局容器 | 垂直排列 |
-| `row` | 布局容器 | 水平排列 |
-| `stack` | 布局容器 | 层叠容器 |
-| `grid` / `grid-row` | 布局容器 | 网格容器 |
-| `Text` | 文本 | 显示文本 |
-| `Date` | 文本 | 显示日期/时间 |
-| `Image` | 图片媒体 | 显示图片 |
-| `Gif` | 图片媒体 | 显示 GIF（仅 iOS） |
-| `Button` | 交互 | 可点击按钮 |
-| `Toggle` | 交互 | 开关控件 |
-| `Link` | 交互 | 可点击链接 |
-| `Chart` | 图表 | 显示各种图表 |
-| `Rectangle` | 形状 | 矩形 |
-| `RoundedRectangle` | 形状 | 圆角矩形 |
-| `Capsule` | 形状 | 胶囊形 |
-| `Ellipse` | 形状 | 椭圆 |
-| `Circle` | 形状 | 圆形 |
-| `Gauge` | 仪表 | 进度仪表盘 |
-| `Divider` | 扩展组件 | 分隔线 |
-| `Line` | 扩展组件 | 线条 |
-| `Icon` | 扩展组件 | 图标 |
-| `Label` | 扩展组件 | 标签 |
-| `Progress` | 扩展组件 | 进度条 |
-| `Ring` | 扩展组件 | 圆环 |
-| `Badge` | 扩展组件 | 徽章 |
-| `Chip` | 扩展组件 | 标签卡 |
-| `Stat` | 扩展组件 | 统计卡片 |
-| `Spacer` | 扩展组件 | 间距 |
+| `row` | 布局 | 水平堆叠（无 `align`） |
+| `col` | 布局 | 垂直堆叠 |
+| `stack` | 布局 | 层叠 |
+| `grid` | 布局 | 网格 |
+| `grid-row` | 布局 | 网格行 |
+| `text` | 文本 | 文本 |
+| `date` | 文本 | 日期/时间 |
+| `image` | 媒体 | 图片 |
+| `gif` | 媒体 | GIF |
+| `button` | 交互 | 按钮 |
+| `toggle` | 交互 | 开关 |
+| `link` | 交互 | 链接 |
+| `chart` | 图表 | 图表 |
+| `rect` | 形状 | 矩形 |
+| `capsule` | 形状 | 胶囊 |
+| `ellipse` | 形状 | 椭圆 |
+| `circle` | 形状 | 圆 |
+| `roundedrect` | 形状 | 圆角矩形色块 |
+| `line` | 形状 | 线段 |
+| `divider` | 形状 | 分隔线 |
+| `gauge` | 仪表 | 仪表盘 |
+| `icon` | 展示 | SF Symbol |
+| `label` | 展示 | 图标+文字 |
+| `progress` | 展示 | 进度条 |
+| `ring` | 展示 | 圆环进度 |
+| `badge` | 展示 | 徽章 |
+| `chip` | 展示 | 标签 chip |
+| `stat` | 展示 | 统计块 |
+| `spacer` | 布局 | 间距（仅 `length`） |

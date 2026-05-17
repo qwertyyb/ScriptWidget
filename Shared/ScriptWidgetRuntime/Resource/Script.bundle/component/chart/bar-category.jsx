@@ -21,7 +21,7 @@ $render(
   <col size="max">
     <chart 
       type="bar" // required
-      data={$json(data)} // required
+      data={data}
       category={true}
       padding={20} // optional , general
       >

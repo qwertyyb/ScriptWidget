@@ -101,15 +101,17 @@ class ScriptWidgetElementTagChart {
         )
     }
     
+    static private func getChartData(_ element: ScriptWidgetRuntimeElement) -> Data? {
+        guard let props = element.props, let raw = props["data"] else { return nil }
+        guard let array = raw as? [Any], JSONSerialization.isValidJSONObject(array) else { return nil }
+        return try? JSONSerialization.data(withJSONObject: array)
+    }
+
     static private func buildChart(_ element: ScriptWidgetRuntimeElement, _ context: ScriptWidgetElementContext) -> AnyView {
         let type = element.getPropString("type") ?? "bar"
-        let data = element.getPropString("data") ?? ""
-        if data.count == 0 {
+
+        guard let jsonData = Self.getChartData(element) else {
             return AnyView(Text("#chart no data#"))
-        }
-        
-        guard let jsonData = data.data(using: .utf8) else {
-            return AnyView(Text("#chart data invalid#"))
         }
         
         let sharedAttribute = ScriptWidgetChartSharedAttribute(

@@ -19,7 +19,7 @@ $render(
   <col size="max">
     <chart 
       type="point" // required
-      data={$json(data)} // required
+      data={data}
       color="red" // optional , default black
       padding={20} // optional , general
       >

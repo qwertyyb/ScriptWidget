@@ -129,6 +129,49 @@ class ScriptWidgetElementTagLabel {
     }
 }
 
+private struct ScriptWidgetLinearProgressViewStyle: ProgressViewStyle {
+    var fillColor: Color
+    var trackColor: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        GeometryReader { geometry in
+            let fraction = CGFloat(configuration.fractionCompleted ?? 0)
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(trackColor)
+                Capsule()
+                    .fill(fillColor)
+                    .frame(width: max(0, geometry.size.width * fraction))
+            }
+        }
+        .frame(height: 4)
+    }
+}
+
+private struct ScriptWidgetCircularProgressViewStyle: ProgressViewStyle {
+    var fillColor: Color
+    var trackColor: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        GeometryReader { geometry in
+            let fraction = configuration.fractionCompleted ?? 0
+            let lineWidth = min(geometry.size.width, geometry.size.height) * 0.12
+            ZStack {
+                Circle()
+                    .stroke(trackColor, lineWidth: lineWidth)
+                Circle()
+                    .trim(from: 0, to: fraction)
+                    .stroke(
+                        fillColor,
+                        style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+            }
+        }
+        .aspectRatio(1, contentMode: .fit)
+    }
+}
+
 class ScriptWidgetElementTagProgress {
     static func buildView(_ element: ScriptWidgetRuntimeElement, _ context: ScriptWidgetElementContext) -> AnyView {
         let value = element.getPropDouble("value") ?? 0
@@ -137,6 +180,12 @@ class ScriptWidgetElementTagProgress {
         let style = element.getPropString("style") ?? "linear"
         let tintValue = element.getPropString("color")
         let tintColor = tintValue != nil ? ScriptWidgetAttributeColor(tintValue!).color : nil
+        let trackValue = element.getPropString("trackColor")
+        let trackColor: Color? = trackValue.map {
+            ScriptWidgetAttributeColor($0).color
+                ?? ScriptWidgetAttributeColor("#e2e8f0").color
+                ?? Color.gray.opacity(0.2)
+        }
 
         let progressView: AnyView
         if label.isEmpty {
@@ -146,17 +195,32 @@ class ScriptWidgetElementTagProgress {
         }
 
         let styledView: AnyView
-        if style == "circular" {
+        if let trackColor = trackColor {
+            let fillColor = tintColor ?? ScriptWidgetAttributeColor("#3b82f6").color ?? Color.blue
+            if style == "circular" {
+                styledView = AnyView(
+                    progressView.progressViewStyle(
+                        ScriptWidgetCircularProgressViewStyle(fillColor: fillColor, trackColor: trackColor)
+                    )
+                )
+            } else {
+                styledView = AnyView(
+                    progressView.progressViewStyle(
+                        ScriptWidgetLinearProgressViewStyle(fillColor: fillColor, trackColor: trackColor)
+                    )
+                )
+            }
+        } else if style == "circular" {
             styledView = AnyView(progressView.progressViewStyle(CircularProgressViewStyle()))
         } else {
             styledView = AnyView(progressView.progressViewStyle(LinearProgressViewStyle()))
         }
 
         let tintedView: AnyView
-        if let tintColor = tintColor {
+        if trackColor == nil, let tintColor = tintColor {
             tintedView = AnyView(styledView.tint(tintColor))
         } else {
-            tintedView = AnyView(styledView)
+            tintedView = styledView
         }
 
         return AnyView(

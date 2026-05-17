@@ -31,6 +31,15 @@ html, body {
   margin: 0;
   padding: 0;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+#content {
+  overflow-x: hidden;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
 body {
@@ -112,6 +121,7 @@ pre {
   padding: 14px 16px;
   overflow-x: auto;
   margin: 12px 0;
+  max-width: 100%;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -125,11 +135,18 @@ pre code {
 }
 
 /* Tables */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 12px 0;
+  max-width: 100%;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 12px 0;
   font-size: 14px;
+  table-layout: fixed;
 }
 
 th {
@@ -146,6 +163,8 @@ td {
   border-bottom: 1px solid var(--border);
   color: var(--text-primary);
   vertical-align: top;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 tr:last-child td {

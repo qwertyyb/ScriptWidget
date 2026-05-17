@@ -71,7 +71,7 @@ class ScriptWidgetElementTagRectangle {
     static func buildView(_ element: ScriptWidgetRuntimeElement, _ context: ScriptWidgetElementContext) -> AnyView {
         
         var cornerRadius: CGFloat?
-        if let cornerValue = element.getPropString("corner") {
+        if let cornerValue = element.getPropString("cornerRadius") {
             if let cornerDouble = Double(cornerValue) {
                 cornerRadius = CGFloat(cornerDouble)
             }

@@ -13,7 +13,7 @@ struct ScriptWidgetAttributeCornerRadiusModifier: ViewModifier {
     
     init(_ element: ScriptWidgetRuntimeElement) {
         var cornerRadius: Double? = nil
-        if let value = element.getPropDouble("corner") {
+        if let value = element.getPropDouble("cornerRadius") {
             cornerRadius = value
         }
         self.cornerRadius = cornerRadius

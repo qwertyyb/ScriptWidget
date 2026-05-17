@@ -65,7 +65,15 @@ class MacDocWebViewInternal: WKWebView, WKNavigationDelegate {
             .replacingOccurrences(of: "`", with: "\\`")
             .replacingOccurrences(of: "$", with: "\\$")
 
-        let anchorJS = anchor.map { "'\($0)'" } ?? "null"
+        let anchorJS: String
+        if let anchor = anchor {
+            let escapedAnchor = anchor
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "'", with: "\\'")
+            anchorJS = "'\(escapedAnchor)'"
+        } else {
+            anchorJS = "null"
+        }
         let js = "renderMarkdown(`\(escaped)`, \(anchorJS));"
 
         self.evaluateJavaScript(js) { _, error in

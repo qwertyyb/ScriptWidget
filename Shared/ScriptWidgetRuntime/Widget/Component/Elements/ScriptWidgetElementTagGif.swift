@@ -82,14 +82,12 @@ class ScriptWidgetElementTagGif {
                 return AnyView(
                     DynamicGifView(gifPath: path)
                         .modifier(ScriptWidgetAttributeImageModifier(element, context))
-                        .modifier(ScriptWidgetAttributeFontModifier(element))
                         .modifier(ScriptWidgetAttributeGeneralModifier(element, context))
                 )
             } else {
                 return AnyView(
                     Text("file not found")
                         .modifier(ScriptWidgetAttributeImageModifier(element, context))
-                        .modifier(ScriptWidgetAttributeFontModifier(element))
                         .modifier(ScriptWidgetAttributeGeneralModifier(element, context))
                 )
             }

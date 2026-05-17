@@ -18,7 +18,7 @@ $render(
   <col size="max">
     <chart 
       type="bar-gantt" // required
-      data={$json(data)} // required
+      data={data}
       color="blue" // optional , default black
       padding={20} // optional , general
       >
