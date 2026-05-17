@@ -10,70 +10,83 @@ import Combine
 
 
 
-struct ScriptCodePreviewConsoleOutput : Identifiable {
+struct ScriptCodePreviewConsoleOutput: Identifiable {
     let id = UUID()
-    let data: String
+    let level: ScriptWidgetConsoleLevel
+    let message: String
 }
 
-class ScriptCodePreviewConsoleDataObject : ObservableObject {
-    public static let addLogNotification = Notification.Name("ScriptCodePreviewConsoleDataObject_addLog")
-    public static let clearLogNotification = Notification.Name("ScriptCodePreviewConsoleDataObject_clearLog")
-    
-    @Published var consoleOutputs : [ScriptCodePreviewConsoleOutput] = []
+class ScriptCodePreviewConsoleDataObject: ObservableObject {
+    @Published var consoleOutputs: [ScriptCodePreviewConsoleOutput] = []
     var cancellables = [Cancellable]()
-    
+
     init() {
-        let cancellableAddLog = NotificationCenter.default.publisher(for: Self.addLogNotification)
-            .sink { (notification) in
-                guard let log = notification.object as? String else {
+        let cancellableAddLog = NotificationCenter.default.publisher(for: .scriptWidgetConsoleLogAdded)
+            .sink { [weak self] notification in
+                guard let self else { return }
+                guard let entry = notification.object as? ScriptWidgetConsoleEntry else {
                     return
                 }
-                
-                self.consoleOutputs.append(ScriptCodePreviewConsoleOutput(data: log))
+                self.consoleOutputs.append(
+                    ScriptCodePreviewConsoleOutput(level: entry.level, message: entry.message)
+                )
             }
-        self.cancellables.append(cancellableAddLog)
-        
-        
-        let cancellableClearLog = NotificationCenter.default.publisher(for: Self.clearLogNotification)
-            .sink { (notification) in
-                self.consoleOutputs.removeAll()
+        cancellables.append(cancellableAddLog)
+
+        let cancellableClearLog = NotificationCenter.default.publisher(for: .scriptWidgetConsoleLogClear)
+            .sink { [weak self] _ in
+                self?.consoleOutputs.removeAll()
             }
-        self.cancellables.append(cancellableClearLog)
+        cancellables.append(cancellableClearLog)
     }
-    
+
     deinit {
-        for cancellable in self.cancellables {
+        for cancellable in cancellables {
             cancellable.cancel()
         }
     }
-    
-    static func addLog(_ log: String) {
-        NotificationCenter.default.post(name: Self.addLogNotification, object: log)
+
+    static func addLog(_ entry: ScriptWidgetConsoleEntry) {
+        NotificationCenter.default.post(name: .scriptWidgetConsoleLogAdded, object: entry)
     }
 
     static func clearLog() {
-        NotificationCenter.default.post(name: Self.clearLogNotification, object: nil)
+        NotificationCenter.default.post(name: .scriptWidgetConsoleLogClear, object: nil)
     }
 }
 
-struct ScriptCodePreviewConsoleView : View {
+private func consoleForegroundColor(for level: ScriptWidgetConsoleLevel) -> Color {
+    switch level {
+    case .log:
+        return .primary
+    case .info:
+        return .blue
+    case .warn:
+        return .orange
+    case .error:
+        return .red
+    case .system:
+        return .secondary
+    }
+}
+
+struct ScriptCodePreviewConsoleView: View {
     @ObservedObject var data = ScriptCodePreviewConsoleDataObject()
-    
+
     var body: some View {
-        List {
-            ForEach(data.consoleOutputs) { item in
-                Text(item.data)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .multilineTextAlignment(.leading)
-                    .font(.footnote)
-                    .onTapGesture(count: 2) {
-                        let pasteboard = NSPasteboard.general
-                        pasteboard.declareTypes([.string], owner: nil)
-                        pasteboard.setString(item.data, forType: .string)
-                        
-                        MacKitUtil.alertInfo(title: "Tip", message: "Copied")
-                    }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 6) {
+                ForEach(data.consoleOutputs) { item in
+                    Text(verbatim: item.message)
+                        .foregroundColor(consoleForegroundColor(for: item.level))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .font(.footnote)
+                        .textSelection(.enabled)
+                }
             }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
         }
     }
 }
@@ -89,8 +102,9 @@ class ScriptCodeRunnerDataObject : ObservableObject {
     
     @Published var rootElement : ScriptWidgetRuntimeElement
     var runtime: ScriptWidgetRuntime?
-    
-    
+
+    private let previewQueue = DispatchQueue(label: "mac-preview-queue", qos: .userInitiated)
+
     init(file: ScriptWidgetPackage, widgetSizeType: Int, scriptParameter: String) {
         self.widgetSizeType = widgetSizeType
         self.scriptParameter = scriptParameter
@@ -128,25 +142,34 @@ class ScriptCodeRunnerDataObject : ObservableObject {
     }
     
     func layoutElements() {
-        if !self.runScript() {
-            self.rootElement = ScriptWidgetRuntimeElement(tagString: "text", props: nil, children: ["#Failed#"])
+        previewQueue.async { [weak self] in
+            guard let self else { return }
+            let ok = self.runScript()
+            DispatchQueue.main.async {
+                if !ok {
+                    self.rootElement = ScriptWidgetRuntimeElement(tagString: "text", props: nil, children: ["#Failed#"])
+                }
+                self.systemLog("FINISH")
+            }
         }
     }
-    
+
     func runScript() -> Bool {
         sharedRunningState = ScriptWidgetRunningState(package: self.package)
-        self.clearLogs()
-        
-        self.systemLog("START")
-        
+
+        DispatchQueue.main.async {
+            ScriptCodePreviewConsoleDataObject.clearLog()
+            self.systemLog("START")
+        }
+
         let JSXResult = self.package.readMainFile()
         guard let JSX = JSXResult.0 else {
             self.systemLog("Can not open file : \(JSXResult.1)")
             return false
         }
-        
+
         var returnValue = false
-        
+
         var widgetSizeString = ""
         switch widgetSizeType {
         case 0: widgetSizeString = "small"
@@ -154,22 +177,24 @@ class ScriptCodeRunnerDataObject : ObservableObject {
         case 2: widgetSizeString = "large"
         default: widgetSizeString = "small"
         }
-        
+
         let runtime = ScriptWidgetRuntime(package: self.package, environments: [
             "widget-size": widgetSizeString,
             "widget-param": self.scriptParameter,
         ])
-        
+
         let result = runtime.executeJSXSyncForWidget(JSX)
-        
+
         if let element = result.0 {
-            // succeed
-            self.rootElement = element
-            self.runtime = runtime
+            DispatchQueue.main.async {
+                self.rootElement = element
+                self.runtime = runtime
+            }
             returnValue = true
         } else {
-            // error
-            self.runtime = nil
+            DispatchQueue.main.async {
+                self.runtime = nil
+            }
             returnValue = false
             if let error = result.1 {
                 switch error {
@@ -186,39 +211,15 @@ class ScriptCodeRunnerDataObject : ObservableObject {
                 }
             }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
-            self.loadScriptConsoleLogs()
-            self.systemLog("FINISH")
-        }
-        
+
         return returnValue
     }
-    
-    func loadScriptConsoleLogs() {
-        print("console log (list logs)");
-        if let runningState = sharedRunningState {
-            let logs = runningState.logger.logs
-            for log in logs {
-                self.scriptLog(log)
-            }
-        }
-        
-    }
-    
-    func clearLogs() {
-        print("console log (clear logs)")
-        ScriptCodePreviewConsoleDataObject.clearLog()
-    }
-    
-    func scriptLog(_ str: String) {
-        DispatchQueue.main.async {
-            ScriptCodePreviewConsoleDataObject.addLog(str)
-        }
-    }
-    
+
     func systemLog(_ str: String) {
         DispatchQueue.main.async {
-            ScriptCodePreviewConsoleDataObject.addLog("$" + str)
+            ScriptCodePreviewConsoleDataObject.addLog(
+                ScriptWidgetConsoleEntry(level: .system, message: "$" + str)
+            )
         }
     }
 }

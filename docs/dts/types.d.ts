@@ -3,19 +3,6 @@
  * Run `pnpm generate` in Tools/completion-gen/ after editing.
  */
 
-type HttpParams = {
-  headers?: Record<string, string>;
-  body?: string | Record<string, any>;
-  timeoutInterval?: number;
-};
-
-// TODO: 1. console 需要实现更多方法，log、info、warn、error。2. 目前只支持第一个参数，其它参数会被过滤，不会自动 json 化
-type JSWidgetConsole = {
-  log(...args: unknown[]): void;
-  warn(...args: unknown[]): void;
-  error(...args: unknown[]): void;
-};
-
 type JSWidgetPadding = number | {
   /** 左右内边距 */
   horizontal?: number;

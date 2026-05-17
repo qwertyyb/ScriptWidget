@@ -76,6 +76,9 @@ struct ScriptCodeEditorView: View {
     
     var codeeditor: some View {
         ScriptPackageEditorView(model: dataObject.scriptModel, filePath: $dataObject.filePath)
+            .onAppear {
+                dataObject.filePath = dataObject.scriptModel.package.jsxPath
+            }
             .onDisappear {
                 NotificationCenter.default.post(name: MirrorEditorService.saveNotification, object: nil)
             }
@@ -119,7 +122,7 @@ struct ScriptCodeEditorView: View {
     }
     
     var previewView: some View {
-        ScriptCodePreviewView(model: dataObject.scriptModel, filePath: $dataObject.filePath)
+        ScriptCodePreviewView(model: dataObject.scriptModel)
     }
     
     var trailingButtons: some View {

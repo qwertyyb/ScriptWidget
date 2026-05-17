@@ -8,7 +8,7 @@
 
 - [ ] 创建 BookmarkManager.swift — bookmark 元数据管理、security-scoped bookmark 创建/解析、文件同步逻辑
 - [ ] 创建 SettingsBookmarkView.swift — bookmark 管理界面（添加/删除/同步/状态展示）
-- [ ] 扩展 ScriptWidgetRuntimeFile.swift — 新增 listBookmarks/readBookmark/readBookmarkJSON/listBookmarkFiles 方法
+- [ ] 扩展运行时（独立 API 或新全局对象）— 新增 listBookmarks/readBookmark/readBookmarkJSON/listBookmarkFiles；**与包内 `$file.readString` 等无关**
 - [ ] 在 App 生命周期中集成同步触发点（进入前台、Settings 手动触发）
 - [ ] 更新 docs/api/index.md 文档，添加 FileBookmarks 相关 API 说明
 
@@ -74,7 +74,7 @@ group.qwertyyb.jswidget/
 
 ## JS API 设计
 
-扩展现有的 `$file` API，新增 bookmark 相关方法：
+在 bookmark 功能落地时新增专用 API（不必挂在包内 `$file` 上），例如：
 
 ```javascript
 // 列出所有 bookmarks

@@ -13,7 +13,7 @@ struct ScriptPackageEditorView: View {
 
     var body: some View {
         VStack {
-            ScriptPackageHorizontalFileView(model: model, currentFilePath: filePath) { file in
+            ScriptPackageHorizontalFileView(model: model, currentFilePath: $filePath) { file in
                 changeFile(fileModel: file)
             }
             MirrorEditorScriptView(model: model, filePath: filePath)

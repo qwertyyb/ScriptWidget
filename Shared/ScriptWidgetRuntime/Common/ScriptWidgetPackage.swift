@@ -26,11 +26,42 @@ struct FileModel: Identifiable, Hashable {
 }
 
 struct ScriptWidgetPackage {
+    static let filesDidChangeNotification = Notification.Name("ScriptWidgetPackageFilesDidChange")
+    static let filesDidChangePackagePathKey = "packagePath"
+
+    /// Root-level files shown in the editor file bar.
+    private static let listedRootFileExtensions: Set<String> = [
+        "jsx", "js", "mjs", "cjs", "ts", "tsx",
+        "json", "txt", "md", "markdown", "csv",
+        "xml", "html", "htm", "css", "yaml", "yml",
+    ]
+
     let path: URL
     let name: String
     let jsxPath: URL
     let imagePath: URL
     let readonly: Bool
+
+    static func isListedRootFileName(_ fileName: String) -> Bool {
+        let ext = (fileName as NSString).pathExtension.lowercased()
+        guard !ext.isEmpty else { return false }
+        return listedRootFileExtensions.contains(ext)
+    }
+
+    func postFilesDidChangeNotification() {
+        NotificationCenter.default.post(
+            name: Self.filesDidChangeNotification,
+            object: nil,
+            userInfo: [Self.filesDidChangePackagePathKey: self.path.standardizedFileURL.path]
+        )
+    }
+
+    private func postFilesDidChangeIfRootFile(at fullPath: URL) {
+        let packageRoot = self.path.standardizedFileURL
+        if fullPath.deletingLastPathComponent().standardizedFileURL == packageRoot {
+            postFilesDidChangeNotification()
+        }
+    }
     
     init(path: URL, readonly: Bool) {
         self.readonly = readonly
@@ -89,7 +120,110 @@ struct ScriptWidgetPackage {
     func readMainFile() -> (String?, String) {
         return readFile(fullPath: self.jsxPath)
     }
-    
+
+    // MARK: - $file API (package-scoped)
+
+    func resolvePackageURL(relativePath: String, mustBeDirectory: Bool = false) -> URL? {
+        let trimmed = relativePath.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.contains("..") || trimmed.hasPrefix("/") {
+            return nil
+        }
+
+        let packageRoot = self.path.standardizedFileURL
+        let resolved: URL
+        if trimmed.isEmpty || trimmed == "." {
+            resolved = packageRoot
+        } else {
+            resolved = packageRoot.appendingPathComponent(trimmed).standardizedFileURL
+        }
+
+        guard isURLWithinPackageRoot(resolved, packageRoot: packageRoot) else {
+            return nil
+        }
+
+        var isDir: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: resolved.path, isDirectory: &isDir)
+        if mustBeDirectory {
+            if !exists || !isDir.boolValue {
+                return nil
+            }
+        }
+        return resolved
+    }
+
+    private func isURLWithinPackageRoot(_ url: URL, packageRoot: URL) -> Bool {
+        let urlPath = url.path
+        let rootPath = packageRoot.path
+        if urlPath == rootPath {
+            return true
+        }
+        let prefix = rootPath.hasSuffix("/") ? rootPath : rootPath + "/"
+        return urlPath.hasPrefix(prefix)
+    }
+
+    func readString(relativePath: String) -> String {
+        guard let fileURL = resolvePackageURL(relativePath: relativePath) else {
+            return ""
+        }
+        var isDir: ObjCBool = false
+        if FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDir), isDir.boolValue {
+            return ""
+        }
+        return readFile(fullPath: fileURL).0 ?? ""
+    }
+
+    func writeString(relativePath: String, content: String) -> Bool {
+        if self.readonly {
+            return false
+        }
+        guard let fileURL = resolvePackageURL(relativePath: relativePath) else {
+            return false
+        }
+        var isDir: ObjCBool = false
+        if FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDir), isDir.boolValue {
+            return false
+        }
+        return writeFile(fullPath: fileURL, content: content).0
+    }
+
+    func remove(relativePath: String) -> Bool {
+        if self.readonly {
+            return false
+        }
+        guard let fileURL = resolvePackageURL(relativePath: relativePath) else {
+            return false
+        }
+        if fileURL.standardizedFileURL == self.jsxPath.standardizedFileURL {
+            return false
+        }
+        var isDir: ObjCBool = false
+        if !FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDir) {
+            return false
+        }
+        if isDir.boolValue {
+            return false
+        }
+        do {
+            try FileManager.default.removeItem(at: fileURL)
+            postFilesDidChangeIfRootFile(at: fileURL)
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    func listDirectory(relativePath: String) -> [String] {
+        guard let dirURL = resolvePackageURL(relativePath: relativePath, mustBeDirectory: true) else {
+            return []
+        }
+        guard let entries = try? FileManager.default.contentsOfDirectory(atPath: dirURL.path) else {
+            return []
+        }
+        return entries
+            .filter { $0 != "." && $0 != ".." }
+            .sorted()
+    }
+
     func readFile(relativePath: String) -> (String?, String) {
         // make sure icloud download status
         let filePath = self.path.appendingPathComponent(relativePath)
@@ -185,10 +319,16 @@ struct ScriptWidgetPackage {
         
         guard let data = content.data(using: .utf8) else { return (false, "Failed to convert code to utf8 encoding") }
         do {
-            if !FileManager.default.fileExists(atPath: fullPath.path) {
+            let parent = fullPath.deletingLastPathComponent()
+            if !FileManager.default.fileExists(atPath: parent.path) {
+                try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true, attributes: [
+                    FileAttributeKey.protectionKey: FileProtectionType.none
+                ])
+            }
+            if !FileManager.default.fileExists(atPath: self.path.path) {
                 try self.makePackageDirectory()
             }
-            
+
             try data.write(to: fullPath)
             
             try FileManager.default.setAttributes([FileAttributeKey.protectionKey: FileProtectionType.none], ofItemAtPath: fullPath.path)
@@ -196,6 +336,7 @@ struct ScriptWidgetPackage {
         } catch {
             return (false, "Failed write code to path :\(fullPath) error: \(error)")
         }
+        postFilesDidChangeIfRootFile(at: fullPath.standardizedFileURL)
         return (true, "")
     }
     
@@ -229,7 +370,12 @@ struct ScriptWidgetPackage {
     
     func deleteFile(relativePath: String) {
         let fullPath = self.path.appendingPathComponent(relativePath)
-        try? FileManager.default.removeItem(at: fullPath)
+        do {
+            try FileManager.default.removeItem(at: fullPath)
+            postFilesDidChangeIfRootFile(at: fullPath.standardizedFileURL)
+        } catch {
+            // ignore
+        }
     }
     
     func rename(destPath: URL) -> (Bool, String) {
@@ -478,10 +624,7 @@ struct ScriptWidgetPackage {
             if isDir.boolValue {
                 continue
             }
-            if file.suffix(4).lowercased() == ".jsx"
-                || file.suffix(3).lowercased() == ".js"
-                || file.suffix(5).lowercased() == ".json"
-            {
+            if Self.isListedRootFileName(file) {
                 items.append(FileModel(name: file, relativePath: file, path: fullPath))
             }
         }

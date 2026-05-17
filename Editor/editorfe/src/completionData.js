@@ -395,6 +395,7 @@ export const apis = [
     "name": "$console",
     "methods": [
       "log",
+      "info",
       "warn",
       "error"
     ]
@@ -403,6 +404,7 @@ export const apis = [
     "name": "console",
     "methods": [
       "log",
+      "info",
       "warn",
       "error"
     ]
@@ -412,30 +414,65 @@ export const apis = [
     "methods": [
       "name",
       "model",
+      "language",
       "systemVersion",
-      "batteryLevel",
-      "isCharging"
+      "screen",
+      "battery",
+      "isdarkmode",
+      "totalDiskSpace",
+      "freeDiskSpace"
     ]
   },
   {
     "name": "$file",
     "methods": [
-      "read",
-      "write",
+      "readString",
+      "writeString",
+      "remove",
       "list"
     ]
   },
   {
     "name": "$system",
-    "methods": []
+    "methods": [
+      "appInfo",
+      "locale",
+      "preferredLanguages",
+      "timeZone",
+      "is24HourClock",
+      "calendarInfo",
+      "systemUptime",
+      "memory",
+      "thermalState",
+      "lowPowerMode",
+      "brightness",
+      "reduceMotionEnabled",
+      "platform",
+      "hostName",
+      "processName",
+      "osVersionString",
+      "processorCount",
+      "activeProcessorCount"
+    ]
   },
   {
     "name": "$health",
-    "methods": []
+    "methods": [
+      "isAvailable",
+      "requestAuthorization",
+      "stepCountToday",
+      "activeEnergyToday",
+      "heartRateLatest"
+    ]
   },
   {
     "name": "$location",
-    "methods": []
+    "methods": [
+      "isAvailable",
+      "authorizationStatus",
+      "requestAuthorization",
+      "current"
+    ]
   },
   {
     "name": "$storage",

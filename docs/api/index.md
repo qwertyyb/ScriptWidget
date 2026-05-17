@@ -1,6 +1,6 @@
 # JSWidget JavaScript 运行时 API 文档
 
-本文档描述 JSWidget JS 运行时暴露给 JavaScript 的所有 API。
+本文档与 [`docs/dts/api.d.ts`](../dts/api.d.ts)（及 [`docs/dts/types.d.ts`](../dts/types.d.ts) 中的共用类型）保持一致，描述 JSWidget JS 运行时暴露给 JavaScript 的所有 API。
 
 ---
 
@@ -15,7 +15,7 @@ JSWidget 使用 JavaScriptCore 框架，在 Swift 端通过 `JSExport` 协议将
 - `$fetch` / `fetch` - 简化的 GET 请求
 - `$console` / `console` - 日志输出
 - `$device` - 设备信息
-- `$file` - 文件读取
+- `$file` - 脚本包内文件读写
 - `$system` - 系统信息
 - `$health` - HealthKit 健康数据
 - `$location` - 位置服务
@@ -41,17 +41,13 @@ JSWidget 使用 JavaScriptCore 框架，在 Swift 端通过 `JSExport` 协议将
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `get(url, params?)` | `url: string`, `params?: { headers?, timeoutInterval? }` | `Promise<string>` | 发送 GET 请求 |
-| `post(url, params?)` | `url: string`, `params?: { headers?, body?, timeoutInterval? }` | `Promise<string>` | 发送 POST 请求 |
-| `put(url, params?)` | `url: string`, `params?: { headers?, body?, timeoutInterval? }` | `Promise<string>` | 发送 PUT 请求 |
-| `patch(url, params?)` | `url: string`, `params?: { headers?, body?, timeoutInterval? }` | `Promise<string>` | 发送 PATCH 请求 |
-| `delete(url, params?)` | `url: string`, `params?: { headers?, timeoutInterval? }` | `Promise<string>` | 发送 DELETE 请求 |
+| `get(url, params?)` | `url: string`, `params?: HttpParams` | `Promise<string>` | 发送 GET 请求 |
+| `post(url, params?)` | `url: string`, `params?: HttpParams` | `Promise<string>` | 发送 POST 请求 |
+| `put(url, params?)` | `url: string`, `params?: HttpParams` | `Promise<string>` | 发送 PUT 请求 |
+| `patch(url, params?)` | `url: string`, `params?: HttpParams` | `Promise<string>` | 发送 PATCH 请求 |
+| `delete(url, params?)` | `url: string`, `params?: HttpParams` | `Promise<string>` | 发送 DELETE 请求 |
 
-#### params 参数说明
-
-- `headers`: `{ [key: string]: string }` - HTTP 请求头
-- `body`: `object | string` - 请求体，object 会序列化为 JSON
-- `timeoutInterval`: `number` - 超时时间（秒）
+`HttpParams` 字段见下文「`$fetch` / `fetch`」章节。
 
 #### 使用示例
 
@@ -87,15 +83,29 @@ const response = await $http.post("https://api.example.com/login", {
 
 ### `$fetch` / `fetch`
 
-与 `$http.get` 等效的 fetch API 封装。
+与 `$http.get` 等效的 fetch API 封装（`params` 类型同 `HttpParams`）。
 
-| 方法 | 参数 | 返回值 | 说明 |
+| 函数 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `fetch(url)` | `url: string` | `Promise<string>` | 发送 GET 请求 |
+| `$fetch(url, params?)` | `url: string`, `params?: HttpParams` | `Promise<string>` | 发送 GET 请求 |
+| `fetch(url, params?)` | `url: string`, `params?: HttpParams` | `Promise<string>` | 与 `$fetch` 相同 |
+
+#### HttpParams
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `headers` | `Record<string, string>` | 可选，HTTP 请求头 |
+| `body` | `string \| Record<string, any>` | 可选，请求体（对象会序列化为 JSON） |
+| `timeoutInterval` | `number` | 可选，超时时间（秒） |
 
 ```jsx
 const result = await fetch("https://jsonplaceholder.typicode.com/todos/1");
 const data = JSON.parse(result);
+
+const withHeaders = await $fetch("https://api.example.com/data", {
+  headers: { Accept: "application/json" },
+  timeoutInterval: 30,
+});
 ```
 
 ---
@@ -104,16 +114,22 @@ const data = JSON.parse(result);
 
 ### `$console` / `console`
 
-用于输出日志和错误信息。
+用于输出日志和错误信息。`$console` 与 `console` 等价。
+
+支持**多个参数**，会格式化为单行文本（对象自动 `JSON.stringify`）。在 App 预览控制台中，`log` / `info` / `warn` / `error` 会以不同颜色显示。
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `log(message)` | `message: string` | `void` | 输出普通日志 |
-| `error(message)` | `message: string` | `void` | 输出错误日志 |
+| `log(...args)` | 任意参数 | `void` | 普通日志 |
+| `info(...args)` | 任意参数 | `void` | 信息日志 |
+| `warn(...args)` | 任意参数 | `void` | 警告日志 |
+| `error(...args)` | 任意参数 | `void` | 错误日志 |
 
 ```jsx
 console.log("Hello JSWidget");
 console.log("Value:", someVariable);
+console.info("Fetched", { count: 3 });
+console.warn("Rate limited");
 console.error("Something went wrong!");
 ```
 
@@ -134,8 +150,8 @@ console.error("Something went wrong!");
 | `screen()` | - | `{ scale: number, width: number, height: number }` | 屏幕信息 |
 | `battery()` | - | `{ level: number, state: string }` | 电池信息 |
 | `isdarkmode()` | - | `boolean` | 是否深色模式 |
-| `totalDiskSpace()` | - | `int64` | 磁盘总空间（字节） |
-| `freeDiskSpace()` | - | `int64` | 磁盘可用空间（字节） |
+| `totalDiskSpace()` | - | `number` | 磁盘总空间（字节） |
+| `freeDiskSpace()` | - | `number` | 磁盘可用空间（字节） |
 
 #### battery() 返回值说明
 
@@ -167,20 +183,23 @@ console.log($device.isdarkmode());      // true
 
 ### `$file`
 
-读取包内文件。
+操作**当前脚本包根目录**内的文件（与 `main.jsx` 同级或其子路径）。路径为包内相对路径；`list("")` 表示列出包根目录。不支持 `..` 或绝对路径越出包外。
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `read(relativePath)` | `relativePath: string` | `string` | 读取文件内容为字符串 |
-| `readJSON(relativePath)` | `relativePath: string` | `object` | 读取文件内容为 JSON 对象 |
+| `readString(path)` | `path: string` | `string` | 读取文件为 UTF-8 字符串；失败返回 `""` |
+| `writeString(path, content)` | `path: string`, `content: string` | `boolean` | 写入文件（自动创建父目录）；只读包返回 `false` |
+| `remove(path)` | `path: string` | `boolean` | 删除文件；不可删除 `main.jsx` |
+| `list(path)` | `path: string` | `string[]` | 列出目录下一层条目（文件名与子目录名，非递归） |
 
 ```jsx
-// 读取为字符串
-const content = $file.read("data.txt");
-
-// 读取为 JSON
-const json = $file.readJSON("data.json");
+const raw = $file.readString("data.json");
+const json = JSON.parse(raw);
 console.log(json.name);
+
+$file.writeString("notes.txt", "hello");
+console.log($file.list("")); // 包根目录
+console.log($file.remove("notes.txt"));
 ```
 
 ---
@@ -200,17 +219,17 @@ console.log(json.name);
 | `is24HourClock()` | - | `boolean` | 是否为 24 小时制 |
 | `calendarInfo()` | - | `{ identifier, firstWeekday, minimumDaysInFirstWeek }` | 日历信息 |
 | `systemUptime()` | - | `double` | 系统运行时间（秒） |
-| `memory()` | - | `{ physical: int64 }` | 物理内存（字节） |
-| `thermalState()` | - | `string` | 热状态 |
+| `memory()` | - | `{ physical: number }` | 物理内存（字节） |
+| `thermalState()` | - | `"nominal" \| "fair" \| "serious" \| "critical" \| "unknown"` | 热状态 |
 | `lowPowerMode()` | - | `boolean` | 低电量模式 |
-| `brightness()` | - | `double` | 屏幕亮度（仅 iOS，0-1） |
+| `brightness()` | - | `number` | 屏幕亮度：iOS 为 `0`–`1`；macOS 为 `-1` |
 | `reduceMotionEnabled()` | - | `boolean` | 减弱动态效果 |
-| `platform()` | - | `string` | 平台类型（"ios" / "macos"） |
+| `platform()` | - | `"ios" \| "macos"` | 平台类型 |
 | `hostName()` | - | `string` | 主机名 |
 | `processName()` | - | `string` | 进程名 |
 | `osVersionString()` | - | `string` | OS 版本字符串 |
-| `processorCount()` | - | `int` | 处理器数量 |
-| `activeProcessorCount()` | - | `int` | 活跃处理器数量 |
+| `processorCount()` | - | `number` | 处理器数量 |
+| `activeProcessorCount()` | - | `number` | 活跃处理器数量 |
 
 #### thermalState 返回值
 
@@ -250,9 +269,18 @@ $render(
 |------|------|--------|------|
 | `isAvailable()` | - | `boolean` | HealthKit 是否可用 |
 | `requestAuthorization()` | - | `Promise<boolean>` | 请求健康数据授权 |
-| `stepCountToday()` | - | `Promise<[{ value, unit, start, end }]>` | 今日步数 |
-| `activeEnergyToday()` | - | `Promise<[{ value, unit, start, end }]>` | 今日活动能量 |
-| `heartRateLatest()` | - | `Promise<[{ value, unit, start, end }]>` | 最新心率 |
+| `stepCountToday()` | - | `Promise<HealthSample>` | 今日步数 |
+| `activeEnergyToday()` | - | `Promise<HealthSample>` | 今日活动能量 |
+| `heartRateLatest()` | - | `Promise<HealthSample>` | 最新心率 |
+
+#### HealthSample
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `value` | `number` | 数值 |
+| `unit` | `string` | 单位 |
+| `start` | `string` | 区间开始时间 |
+| `end` | `string` | 区间结束时间 |
 
 ```jsx
 if (!$health.isAvailable()) {
@@ -297,11 +325,11 @@ if (!$health.isAvailable()) {
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
 | `isAvailable()` | - | `boolean` | 位置服务是否可用 |
-| `authorizationStatus()` | - | `string` | 授权状态 |
-| `requestAuthorization(options?)` | `options?: { timeout?, timeoutMs? }` | `Promise<boolean>` | 请求位置授权 |
-| `current(options?)` | `options?: { timeout?, timeoutMs?, maxAge?, maxAgeMs?, accuracy?, purposeKey? }` | `Promise<object>` | 获取当前位置 |
+| `authorizationStatus()` | - | `LocationAuthorizationStatus` | 授权状态 |
+| `requestAuthorization(options?)` | `options?: LocationRequestOptions` | `Promise<boolean>` | 请求位置授权 |
+| `current(options?)` | `options?: LocationCurrentOptions` | `Promise<LocationPayload>` | 获取当前位置 |
 
-#### authorizationStatus() 返回值
+#### LocationAuthorizationStatus
 
 | 值 | 说明 |
 |----|------|
@@ -310,25 +338,43 @@ if (!$health.isAvailable()) {
 | `denied` | 被拒绝 |
 | `authorizedAlways` | 始终授权 |
 | `authorizedWhenInUse` | 使用时授权 |
-| `unavailable` | 不可用 |
+| `disabled` | 定位服务关闭（iOS） |
+| `unknown` | 未知 |
+| `unavailable` | 不可用（非 iOS stub） |
 
-#### current() 返回值结构
+#### LocationRequestOptions
 
-```typescript
-{
-  latitude: number,
-  longitude: number,
-  altitude: number,
-  accuracy: number,           // 水平精度（米）
-  verticalAccuracy: number,
-  speed: number,
-  course: number,
-  timestamp: string,          // ISO8601 格式
-  accuracyAuthorization: "full" | "reduced" | "unknown",
-  age: number,                // 缓存年龄（秒）
-  isStale: boolean            // 是否过期
-}
-```
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `timeout` | `number` | 可选，超时（秒） |
+| `timeoutMs` | `number` | 可选，超时（毫秒） |
+
+#### LocationCurrentOptions
+
+继承 `LocationRequestOptions`，并额外支持：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `maxAge` | `number` | 可选，可接受缓存位置的最大年龄（秒） |
+| `maxAgeMs` | `number` | 可选，同上（毫秒） |
+| `accuracy` | `"full" \| "reduced"` | 可选，精度 |
+| `purposeKey` | `string` | 可选，用途键（iOS） |
+
+#### LocationPayload
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `latitude` | `number` | 纬度 |
+| `longitude` | `number` | 经度 |
+| `altitude` | `number` | 海拔 |
+| `accuracy` | `number` | 水平精度（米） |
+| `verticalAccuracy` | `number` | 垂直精度 |
+| `speed` | `number` | 速度 |
+| `course` | `number` | 航向 |
+| `timestamp` | `string` | ISO8601 时间戳 |
+| `accuracyAuthorization` | `"full" \| "reduced" \| "unknown"` | 精度授权 |
+| `age` | `number` | 缓存年龄（秒） |
+| `isStale` | `boolean` | 是否过期 |
 
 ```jsx
 if (!$location.isAvailable()) {
@@ -384,8 +430,8 @@ if (!$location.isAvailable()) {
 |------|------|--------|------|
 | `getString(key)` | `key: string` | `string` | 获取字符串值 |
 | `setString(key, value)` | `key: string`, `value: string` | `boolean` | 存储字符串 |
-| `getJSON(key)` | `key: string` | `object` | 获取 JSON 对象 |
-| `setJSON(key, value)` | `key: string`, `value: object` | `boolean` | 存储 JSON 对象 |
+| `getJSON(key)` | `key: string` | `Record<string, unknown>` | 获取 JSON 对象 |
+| `setJSON(key, value)` | `key: string`, `value: Record<string, unknown>` | `boolean` | 存储 JSON 对象 |
 | `remove(key)` | `key: string` | `boolean` | 删除指定键 |
 | `keys()` | - | `[string]` | 获取所有键 |
 | `clear()` | - | `boolean` | 清空所有数据 |
@@ -421,19 +467,23 @@ $render(
 
 ### `$getenv`
 
-获取运行时的环境变量。
+获取运行时的环境变量（按 `key` 重载返回值类型）。
 
-| 方法 | 参数 | 返回值 | 说明 |
-|------|------|--------|------|
-| `getenv(key)` | `key: string` | `string` | 获取环境变量值 |
+| 调用 | 参数 | 返回值 |
+|------|------|--------|
+| `$getenv("widget-size")` | 字面量 `"widget-size"` | `JSWidgetSize \| ""` |
+| `$getenv("widget-param")` | 字面量 `"widget-param"` | `string` |
+| `$getenv("script-dir")` | 字面量 `"script-dir"` | `string` |
+| `$getenv(key)` | 其它 `string` | `string` |
 
-#### 常用环境变量
+#### JSWidgetSize（`widget-size` 的可能值）
 
-| 变量名 | 说明 | 示例值 |
-|--------|------|--------|
-| `widget-size` | 小组件尺寸 | `large` / `medium` / `small` |
-| `widget-param` | 用户配置的参数 | 用户自定义字符串 |
-| `script-dir` | 当前脚本所在目录的绝对路径 | `/var/mobile/.../MyScript` |
+`"small"` | `"medium"` | `"large"` | `"extraLarge"` | `"accessoryInline"` | `"accessoryCircular"` | `"accessoryRectangular"` | `"live-activity"` | `"dynamic-island"` | `"function"`
+
+| 变量名 | 说明 |
+|--------|------|
+| `widget-param` | 用户配置的参数字符串 |
+| `script-dir` | 当前脚本包目录的绝对路径 |
 
 ```jsx
 const widget_size = $getenv("widget-size");
@@ -453,22 +503,16 @@ $render(
 
 ### `$import`
 
-导入同一包内的其他 JS/JSX 文件。
+导入并执行**同包内**的 `.js` / `.jsx` 文件（包内相对路径）。被导入文件的顶层变量/函数会进入当前 JS 上下文的**全局作用域**。
 
-| 方法 | 参数 | 返回值 | 说明 |
+| 函数 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `import(relativePath)` | `relativePath: string` | `boolean` | 导入并执行文件 |
-
-导入后，文件中定义的变量和函数可以在当前文件中使用。
+| `$import(relativePath)` | `relativePath: string` | `boolean` | 文件是否存在；执行是否成功需自行保证（调用为同步，编译/执行为异步调度） |
 
 ```jsx
-// util.jsx
-export const textItems = [
-  <text>Item 1</text>,
-  <text>Item 2</text>
-];
-
-export const sum = (a, b) => a + b;
+// util.jsx — 顶层定义
+const textItems = [<text>Item 1</text>, <text>Item 2</text>];
+const sum = (a, b) => a + b;
 
 // main.jsx
 $import("util.jsx");
@@ -492,7 +536,7 @@ $render(
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `render(element)` | `element: JSX` | `void` | 渲染 JSX 元素树 |
+| `$render(element)` | `element: unknown` | `void` | 渲染 JSX 元素树 |
 
 ```jsx
 $render(
@@ -510,14 +554,29 @@ $render(
 
 ### `$dynamic_island`
 
-灵动岛入口脚本的写法与桌面小组件相同：在文件中编写顶层代码即可。使用本 API 声明岛面布局与状态；该模式下 **`$render` 不会作为输出手段**（调用会被忽略）。各参数含义如下表。
+灵动岛入口脚本使用 `$dynamic_island(config)` 输出布局（与桌面小组件的 `$render` 互斥）。
 
-| 参数 | 类型 | 说明 |
+| 函数 | 参数 | 返回值 |
+|------|------|--------|
+| `$dynamic_island(config)` | `config: DynamicIslandConfig` | `void` |
+
+#### DynamicIslandConfig
+
+| 字段 | 类型 | 说明 |
 |------|------|------|
-| expanded | `{ leading?, trailing?, center?, bottom? }` | 展开状态的内容 |
-| compactLeading | `JSX element` | 紧凑状态左侧内容 |
-| compactTrailing | `JSX element` | 紧凑状态右侧内容 |
-| minimal | `JSX element` | 最小化状态内容 |
+| `expanded` | `DynamicIslandExpandedConfig` | 展开态（必填） |
+| `compactLeading` | `unknown` | 紧凑态左侧 |
+| `compactTrailing` | `unknown` | 紧凑态右侧 |
+| `minimal` | `unknown` | 最小态 |
+
+#### DynamicIslandExpandedConfig
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `leading` | `unknown` | 可选 |
+| `trailing` | `unknown` | 可选 |
+| `center` | `unknown` | 可选 |
+| `bottom` | `unknown` | 可选 |
 
 ```jsx
 $dynamic_island({
@@ -541,9 +600,9 @@ $dynamic_island({
 
 定义可复用的组件。
 
-| 方法 | 参数 | 返回值 | 说明 |
+| 函数 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `define(name, builder)` | `name: string`, `builder: function` | `void` | 定义组件 |
+| `$component(name, builder)` | `name: string`, `builder: (...args: unknown[]) => unknown` | `void` | 注册命名组件 |
 
 ```jsx
 $component("MyCard", (title, content) => {
@@ -562,10 +621,14 @@ $component("MyCard", (title, content) => {
 
 ### `$element`
 
-创建 JSX 元素。
+创建 JSX 元素（与 `JSWidget.createElement` 等价）。
+
+| 属性 / 方法 | 类型 | 说明 |
+|-------------|------|------|
+| `createElement(tag, props?, ...children)` | `tag: string \| ((...args: unknown[]) => unknown)`, `props?: Record<string, unknown> \| null`, `...children: unknown[]` | `unknown` |
 
 ```jsx
-const textElement = $element("text", { font: "title" }, ["Hello"]);
+const textElement = $element.createElement("text", { font: "title" }, ["Hello"]);
 ```
 
 ---
@@ -578,7 +641,7 @@ const textElement = $element("text", { font: "title" }, ["Hello"]);
 
 | 方法 | 参数 | 返回值 | 说明 |
 |------|------|--------|------|
-| `error(message)` | `message: string` | `void` | 报告错误 |
+| `$error(message)` | `message: string` | `void` | 报告错误 |
 
 ```jsx
 try {
@@ -619,7 +682,7 @@ $render(
 | `$fetch` / `fetch` | 简化的 GET 请求 | iOS / macOS |
 | `$console` / `console` | 日志输出 | iOS / macOS |
 | `$device` | 设备信息 | iOS / macOS |
-| `$file` | 文件读取 | iOS / macOS |
+| `$file` | 脚本包内文件读写 | iOS / macOS |
 | `$system` | 系统信息 | iOS / macOS |
 | `$health` | HealthKit 健康数据 | iOS |
 | `$location` | 位置服务 | iOS |

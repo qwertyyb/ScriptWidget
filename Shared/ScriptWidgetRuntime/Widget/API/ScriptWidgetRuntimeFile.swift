@@ -8,41 +8,40 @@
 import Foundation
 import JavaScriptCore
 
-
 @objc protocol ScriptWidgetRuntimeFileExports: JSExport {
-    static func read(_ relativePath: String) -> String
-    static func readJSON(_ relativePath: String) -> [AnyHashable: Any]!
+    static func readString(_ path: String) -> String
+    /// Exported as `writeStringFile` to avoid clashing with NSObject selectors when bridged to JS.
+    static func writeStringFile(_ path: String, _ content: String) -> Bool
+    static func remove(_ path: String) -> Bool
+    static func list(_ path: String) -> [String]
 }
 
 @objc public class ScriptWidgetRuntimeFile: NSObject, ScriptWidgetRuntimeFileExports {
-    static func read(_ relativePath: String) -> String {
+    static func readString(_ path: String) -> String {
         guard let runningState = sharedRunningState else {
             return ""
         }
-        guard let content = runningState.package.readFile(relativePath: relativePath).0 else {
-            return ""
-        }
-        return content
+        return runningState.package.readString(relativePath: path)
     }
-    
-    static func readJSON(_ relativePath: String) -> [AnyHashable: Any]! {
+
+    static func writeStringFile(_ path: String, _ content: String) -> Bool {
         guard let runningState = sharedRunningState else {
-            return [:]
+            return false
         }
-        guard let content = runningState.package.readFile(relativePath: relativePath).0 else {
-            return [:]
-        }
-        
-        guard let data = content.data(using: .utf8) else {
-            return [:]
-        }
-        do {
-            let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [AnyHashable:Any]
-            return json
-        } catch {
-            print("Something went wrong : \(error)")
-        }
-        return [:]
+        return runningState.package.writeString(relativePath: path, content: content)
     }
-    
+
+    static func remove(_ path: String) -> Bool {
+        guard let runningState = sharedRunningState else {
+            return false
+        }
+        return runningState.package.remove(relativePath: path)
+    }
+
+    static func list(_ path: String) -> [String] {
+        guard let runningState = sharedRunningState else {
+            return []
+        }
+        return runningState.package.listDirectory(relativePath: path)
+    }
 }

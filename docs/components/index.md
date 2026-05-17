@@ -1,6 +1,6 @@
 # JSWidget JSX 元素完整文档
 
-本文档描述 JSWidget 支持的所有 JSX 元素、属性及其用法。
+本文档与 [`docs/dts/components.d.ts`](../dts/components.d.ts)、[`docs/dts/types.d.ts`](../dts/types.d.ts) 保持一致，描述 JSWidget 支持的所有 JSX 元素、属性及其用法。
 
 ---
 
@@ -14,13 +14,9 @@
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `align` | String | 子元素**水平**对齐（交叉轴） |
-| `justify` | String | 子元素组在**垂直**方向的分布（主轴，需父级有剩余高度） |
-| `spacing` | number | 子元素垂直间距 |
-
-**`align` 可选值**：`start` | `end` | `center`（默认）
-
-**`justify` 可选值**：`start`（默认）| `center` | `end`
+| `align` | `"start" \| "center" \| "end"` | 子元素水平对齐（交叉轴） |
+| `justify` | `"start" \| "center" \| "end"` | 主轴分布（需父级有剩余高度） |
+| `spacing` | `string \| number \| boolean` | 子元素垂直间距 |
 
 ```jsx
 <col align="center" spacing={10}>
@@ -41,11 +37,9 @@
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `align` | String | 子元素**垂直**对齐（交叉轴） |
-| `justify` | String | 子元素组在**水平**方向的分布（主轴，需父级有剩余宽度） |
-| `spacing` | number | 子元素水平间距 |
-
-**`align` 可选值**：`start` | `end` | `center`（默认）| `firstBaseline` | `lastBaseline`
+| `align` | `"start" \| "end" \| "center" \| "firstBaseline" \| "lastBaseline"` | 子元素垂直对齐（交叉轴） |
+| `justify` | `"start" \| "center" \| "end"` | 主轴分布（需父级有剩余宽度） |
+| `spacing` | `string \| number \| boolean` | 子元素水平间距 |
 
 **`justify` 可选值**：`start`（默认）| `center` | `end`
 
@@ -118,92 +112,80 @@
 
 ## 文本元素
 
-### Text (文本)
+### Text (`<text>`)
 
-显示文本内容。
+显示文本内容。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `font` | String | 字体样式 |
-| `color` | String | 文字颜色 |
-| `gradientForeground` | String | 渐变前景色 |
-| `lineLimit` | number \| string | 最大行数；字符串 `"none"` 表示不限制 |
+| `font` | `JSWidgetFont` | 字体：语义名 / 数字字号 / 对象 |
+| `bold` | `string \| number \| boolean` | 粗体 |
+| `italic` | `string \| number \| boolean` | 斜体 |
+| `color` | `string` | 文字颜色 |
+| `textAlign` | `"start" \| "center" \| "end"` | 文本对齐 |
+| `lineLimit` | `number` | 行数限制 |
+| `minimumScaleFactor` | `number` | 最小缩放因子 |
 
-**`font` 格式**：
-- 预设名称（字符串）：`"largeTitle"` | `"title"` | `"title2"` | `"title3"` | `"headline"` | `"subheadline"` | `"body"` | `"callout"` | `"footnote"` | `"caption"` | `"caption2"`
-- 自定义尺寸（数字）：`font={24}`
-- 对象格式（`size` 优先；无 `size` 时用语义，默认 `body`）：
-  - `font={{ weight: "bold" }}` — 语义 body + 字重
-  - `font={{ name: "title", weight: "bold" }}` — 语义档位 + 字重
-  - `font={{ name: "body", design: "rounded" }}` — 语义 + 设计
-  - `font={{ size: 14, weight: "bold", design: "rounded" }}` — 固定字号 + 字重 + 设计
+**`JSWidgetFont`**（见 `types.d.ts`）：
+- 语义名：`"largeTitle"` \| `"title"` \| `"title2"` \| `"title3"` \| `"headline"` \| `"subheadline"` \| `"body"` \| `"callout"` \| `"footnote"` \| `"caption"` \| `"caption2"`
+- 数字：字号
+- 对象：`{ name?, weight?, design?, size?, custom? }`（`weight`: `JSWidgetFontWeight`；`design`: `JSWidgetFontDesign`）
 
 ```jsx
 <text font="title" color="#333">Hello World</text>
-<text font={{name: "body", weight: "bold"}} lineLimit={1}>Single line title</text>
-<text font="caption" lineLimit={2}>Long text truncated to two lines</text>
+<text font={{ name: "body", weight: "bold" }} lineLimit={1}>Single line</text>
+<text font="caption" lineLimit={2} minimumScaleFactor={0.8}>Long text</text>
 ```
 
 ---
 
-### Date (日期/时间)
+### Date (`<date>`)
 
-动态显示日期和时间。
+动态显示日期和时间。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `style` | String | 时间样式 |
-| `date` | String | 日期值 |
-
-**`style` 可选值**：`time` | `date` | `relative` | `offset` | `timer`
-
-**`date` 格式**：
-- 预设：`now` | `tomorrow` | `yesterday` | `start of today`
-- 相对时间：`+1h`（1小时后）| `-1d`（1天前）| `+2h` | `-3d`
+| `format` | `string \| number \| boolean` | 日期格式 |
+| `style` | `"date" \| "time" \| "relative"` | 显示样式 |
 
 ```jsx
-<Date style="time" date="now" />
-<Date style="relative" date="-1d" />
+<date style="time" />
+<date style="relative" format="yyyy-MM-dd" />
 ```
 
 ---
 
 ## 图片与媒体
 
-### Image (图片)
+### Image (`<image>`)
 
-显示图片（SF Symbols、本地资源、网络图片）。
+显示图片。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `systemName` | String | SF Symbols 图标名 |
-| `filePath` | String | 相对于脚本目录的图片路径，支持任意图片格式 |
-| `name` / `id` | String | 本地图片资源名，需将图片放在 `<script-dir>/image/{name}.png` |
-| `url` / `src` | String | 图片 URL 或 Base64 |
-| `ratio` | number | 宽高比 |
-| `mode` | String | 显示模式：`fit` 或 `fill` |
+| `name` | `string \| number \| boolean` | 包内 `image/` 目录下的图片名 |
+| `url` | `string \| number \| boolean` | 网络 URL |
+| `resizable` | `string \| number \| boolean` | 可拉伸 |
+| `scaledToFit` | `string \| number \| boolean` | 适应缩放 |
+| `scaledToFill` | `string \| number \| boolean` | 填充缩放 |
 
 ```jsx
-<Image systemName="star.fill" />
-{/* 读取 <script-dir>/assets/photo.jpg，支持任意路径和格式 */}
-<Image filePath="assets/photo.jpg" />
-{/* 读取 <script-dir>/image/logo.png */}
-<Image name="logo" />
-<Image url="https://example.com/image.png" mode="fit" />
+<image name="logo" />
+<image url="https://example.com/image.png" scaledToFit />
 ```
 
 ---
 
-### Gif (动态图)
+### Gif (`<gif>`)
 
-显示 GIF 动画（仅 iOS）。
+显示 GIF 动画。继承 `JSWidgetCommonAttributes`。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
-| `file` | String | GIF 文件路径 |
+| `name` | `string \| number \| boolean` | GIF 资源名 |
 
 ```jsx
-<Gif file="animation.gif" />
+<gif name="animation" />
 ```
 
 ---
@@ -531,121 +513,35 @@
 
 ---
 
-## 通用属性（所有元素可用）
+## 通用属性（`JSWidgetCommonAttributes`）
 
-这些属性通过 `ScriptWidgetAttributeGeneralModifier` 应用到所有元素。
+以下属性在 `components.d.ts` 的 `JSWidgetCommonAttributes` 中定义，各标签通过交叉类型继承（部分标签会 `Omit` 或覆盖个别字段）。
 
-### size (尺寸)
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `size` | `string \| { width?, height?, minWidth?, maxWidth?, minHeight?, maxHeight? }` | `"max"` 或尺寸对象；`width`/`height` 等为 `number \| "fill"` |
+| `justify` | `"start" \| "center" \| "end"` | 水平对齐 |
+| `align` | `"start" \| "center" \| "end"` | 垂直对齐（`row` / `grid-row` 的 `align` 另见各标签） |
+| `padding` | `JSWidgetPadding` | 内边距 |
+| `backgroundColor` | `string` | 背景色 |
+| `foregroundColor` | `string` | 前景色 |
+| `cornerRadius` | `number` | 圆角 |
+| `opacity` | `number` | 透明度 0–1 |
+| `rotationEffect` | `number` | 旋转角度 |
+| `scaleEffect` | `number` | 缩放 |
+| `offset` | `string` | 偏移 |
+| `shadow` | `string` | 阴影 |
+| `blur` | `number` | 模糊 |
+| `animation` | `string` | 动画名 |
 
-```jsx
-<text size="max" />
-<text size={{width: 100, height: 50}} />
-<text size={{width: "fill", height: "fill"}} justify="start" align="start" />
-<text size={{width: "fill"}} justify="center" />
-```
+#### JSWidgetPadding
 
----
-
-### cornerRadius (圆角)
-
-```jsx
-<Rectangle cornerRadius={16} />
-```
-
----
-
-### clip (裁剪)
-
-```jsx
-<Image url="..." clip="circle" />
-<Image url="..." clip={{shape: "rect"}} />
-```
-
-**可选形状**：`circle` | `rect` | `capsule` | `ellipse`
-
----
-
-### backgroundColor (背景色)
+`number` 或对象：`{ horizontal?, vertical?, top?, bottom?, leading?, trailing?, left?, right? }`
 
 ```jsx
-<Text backgroundColor="#f00" />
-<Text backgroundColor={{value: "red", opacity: 0.5}} />
-```
-
----
-
-### backgroundGradient (渐变背景)
-
-```jsx
-<Text backgroundGradient={{type: "linear", colors: ["#f00", "#00f"], startPoint: "leading", endPoint: "trailing"}} />
-<Text backgroundGradient={{type: "radial", colors: ["orange", "red"], center: "center", startRadius: 10, endRadius: 100}} />
-<Text backgroundGradient={{type: "angular", colors: ["green", "blue", "black"], center: "center"}} />
-```
-
----
-
-### padding (内边距)
-
-```jsx
-<Text padding={10} />
-<Text padding={{top: 10}} />
-<Text padding={{horizontal: 10, vertical: 20}} />
-<Text padding={{top: 10, trailing: 20, bottom: 30, leading: 40}} />
-<Text padding={{left: 10, right: 20}} />
-```
-
----
-
-### opacity (透明度)
-
-```jsx
-<Image url="..." opacity={0.5} />
-```
-
----
-
-### animation (动画)
-
-```jsx
-<Text animation="clockSecond" />
-
-<Text animation={{type: "clock", timezone: "current", anchor: "center", interval: 30}} />
-
-<Text animation={{type: "swing", duration: 2, direction: "horizontal", distance: 100}} />
-```
-
-**动画类型**：
-
-| 类型 | 说明 |
-|------|------|
-| `clockSecond` | 时钟秒针 |
-| `clockMinute` | 时钟分针 |
-| `clockHour` | 时钟时针 |
-| `clock` | 自定义间隔时钟（对象格式） |
-| `swing` | 摆动动画（对象格式） |
-
----
-
-### rotation (2D 旋转)
-
-```jsx
-<Circle rotation={45} />
-```
-
----
-
-### rotation3d (3D 旋转)
-
-```jsx
-<Circle rotation3d={{degrees: 180, x: 1, y: 0, z: 0}} />
-```
-
----
-
-### shadow (阴影)
-
-```jsx
-<Text shadow={{color: "#000", radius: 3, x: 0, y: 3}} />
+<text size="max" padding={10} backgroundColor="#1e293b" />
+<text size={{ width: "fill", height: 48 }} justify="center" align="center" />
+<rect cornerRadius={12} opacity={0.9} rotationEffect={15} />
 ```
 
 ---

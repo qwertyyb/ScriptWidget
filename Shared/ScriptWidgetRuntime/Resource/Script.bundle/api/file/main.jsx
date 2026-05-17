@@ -5,10 +5,15 @@
 // Usage for api file
 //
 
-// read as string
-console.log($file.read("data.json"));
+const raw = $file.readString("data.json");
+const json = JSON.parse(raw);
+console.log("readString:", raw);
+console.log("parsed name:", json.name);
 
-// read as json
-let json = $file.readJSON("data.json");
-console.log(json);
-console.log(json.name);
+console.log("list root:", $file.list(""));
+
+const wrote = $file.writeString("notes.txt", "hello from $file");
+console.log("writeString notes.txt:", wrote);
+
+const removed = $file.remove("notes.txt");
+console.log("remove notes.txt:", removed);

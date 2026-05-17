@@ -101,7 +101,17 @@ class ScriptWidgetRuntime {
     private func readSupportScript(_ fileName: String) -> String? {
         return ScriptManager.readBundleFile(bundle: "support", fileName: fileName)
     }
-    
+
+    /// Exposes native console methods as `_consoleNative`; `util.js` assigns `$console` / `console`.
+    private func injectConsoleAPI() {
+        self.runtimeContext["_consoleNative"] = ScriptWidgetRuntimeConsole.self
+    }
+
+    /// Exposes native file methods as `_fileNative`; `util.js` assigns `$file`.
+    private func injectFileAPI() {
+        self.runtimeContext["_fileNative"] = ScriptWidgetRuntimeFile.self
+    }
+
     private func transform(_ paramJSX: String, wrapMain: Bool, callAsynFunctionName: String = "") -> AnyPublisher<String, ScriptWidgetError> {
         // async/await support
         var JSX = ""
@@ -237,13 +247,12 @@ extension ScriptWidgetRuntime {
             self.runtimeContext["fetch"] = unsafeBitCast(custom_fetch, to: JSValue.self)
             self.runtimeContext["$fetch"] = unsafeBitCast(custom_fetch, to: JSValue.self)
 
-            self.runtimeContext["$console"] = ScriptWidgetRuntimeConsole.self
-            self.runtimeContext["console"] = ScriptWidgetRuntimeConsole.self
-            
+            self.injectConsoleAPI()
+            self.injectFileAPI()
+
             self.runtimeContext["$element"] = ScriptWidgetRuntimeElement.self
             self.runtimeContext["$device"] = ScriptWidgetRuntimeDevice.self
             self.runtimeContext["$http"] = ScriptWidgetRuntimeHttp.self
-            self.runtimeContext["$file"] = ScriptWidgetRuntimeFile.self
             self.runtimeContext["$system"] = ScriptWidgetRuntimeSystem.self
             self.runtimeContext["$health"] = ScriptWidgetRuntimeHealth.self
             self.runtimeContext["$location"] = ScriptWidgetRuntimeLocation.self
@@ -452,13 +461,12 @@ extension ScriptWidgetRuntime {
             self.runtimeContext["fetch"] = unsafeBitCast(custom_fetch, to: JSValue.self)
             self.runtimeContext["$fetch"] = unsafeBitCast(custom_fetch, to: JSValue.self)
 
-            self.runtimeContext["$console"] = ScriptWidgetRuntimeConsole.self
-            self.runtimeContext["console"] = ScriptWidgetRuntimeConsole.self
-            
+            self.injectConsoleAPI()
+            self.injectFileAPI()
+
             self.runtimeContext["$element"] = ScriptWidgetRuntimeElement.self
             self.runtimeContext["$device"] = ScriptWidgetRuntimeDevice.self
             self.runtimeContext["$http"] = ScriptWidgetRuntimeHttp.self
-            self.runtimeContext["$file"] = ScriptWidgetRuntimeFile.self
             self.runtimeContext["$system"] = ScriptWidgetRuntimeSystem.self
             self.runtimeContext["$health"] = ScriptWidgetRuntimeHealth.self
             self.runtimeContext["$location"] = ScriptWidgetRuntimeLocation.self
@@ -685,13 +693,12 @@ extension ScriptWidgetRuntime {
             self.runtimeContext["fetch"] = unsafeBitCast(custom_fetch, to: JSValue.self)
             self.runtimeContext["$fetch"] = unsafeBitCast(custom_fetch, to: JSValue.self)
 
-            self.runtimeContext["$console"] = ScriptWidgetRuntimeConsole.self
-            self.runtimeContext["console"] = ScriptWidgetRuntimeConsole.self
-            
+            self.injectConsoleAPI()
+            self.injectFileAPI()
+
             self.runtimeContext["$element"] = ScriptWidgetRuntimeElement.self
             self.runtimeContext["$device"] = ScriptWidgetRuntimeDevice.self
             self.runtimeContext["$http"] = ScriptWidgetRuntimeHttp.self
-            self.runtimeContext["$file"] = ScriptWidgetRuntimeFile.self
             self.runtimeContext["$system"] = ScriptWidgetRuntimeSystem.self
             self.runtimeContext["$health"] = ScriptWidgetRuntimeHealth.self
             self.runtimeContext["$location"] = ScriptWidgetRuntimeLocation.self

@@ -16,17 +16,15 @@ class ScriptCodePreviewDataObject : ObservableObject {
     
     @Published var rootElement : ScriptWidgetRuntimeElement
     @Published var previewStatus : String
-    @Published var filePath: URL
-    
+
     var runtime: ScriptWidgetRuntime?
     
     let previewQueue: DispatchQueue
     
     var cancelledByDeinit = false
     
-    init(model: ScriptModel, filePath: URL, widgetSizeType: Int, scriptParameter: String) {
+    init(model: ScriptModel, widgetSizeType: Int, scriptParameter: String) {
         self.model = model
-        self.filePath = filePath
         self.widgetSizeType = widgetSizeType
         self.scriptParameter = scriptParameter
         
@@ -52,14 +50,6 @@ class ScriptCodePreviewDataObject : ObservableObject {
         
         self.layoutElements()
     }
-    func changeFile(_ filePath: URL) {
-        self.filePath = filePath
-        
-        // DO NOT Re-Layout
-        // self.layoutElements()
-    }
-    
-    
     func layoutElements() {
         if self.cancelledByDeinit {
             print("PreviewView data layout elements cancelled by deinit :\(Unmanaged.passUnretained(self).toOpaque())")
@@ -81,8 +71,7 @@ class ScriptCodePreviewDataObject : ObservableObject {
     func internalLayoutElements() {
         print("PreviewView data internal layout element :\(Unmanaged.passUnretained(self).toOpaque())")
         self.runScript { [weak self] result in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self?.loadScriptConsoleLogs()
+            DispatchQueue.main.async {
                 self?.systemLog("FINISH")
             }
             if result {
@@ -109,13 +98,20 @@ class ScriptCodePreviewDataObject : ObservableObject {
         self.previewQueue.async {
             self.setPreviewStatus("Running...")
             print("start preview")
+
+            DispatchQueue.main.async {
+                ScriptCodePreviewConsoleDataObject.clearLog()
+            }
+
             // new running state
             sharedRunningState = ScriptWidgetRunningState(package: self.model.package)
+
+            DispatchQueue.main.async {
+                self.systemLog("START")
+            }
             
-            self.systemLog("START")
-            
-            guard let JSX = self.model.package.readFile(fullPath: self.filePath).0 else {
-                self.systemLog("Can not open file")
+            guard let JSX = self.model.package.readMainFile().0 else {
+                self.systemLog("Can not open main.jsx")
                 DispatchQueue.main.async {
                     completion(false)
                 }
@@ -175,24 +171,11 @@ class ScriptCodePreviewDataObject : ObservableObject {
         
     }
     
-    func loadScriptConsoleLogs() {
-        if let runningState = sharedRunningState {
-            let logs = runningState.logger.logs
-            for log in logs {
-                self.scriptLog(log)
-            }
-        }
-    }
-    
-    func scriptLog(_ str: String) {
-        DispatchQueue.main.async {
-            ScriptCodePreviewConsoleDataObject.addLog(str)
-        }
-    }
-    
     func systemLog(_ str: String) {
         DispatchQueue.main.async {
-            ScriptCodePreviewConsoleDataObject.addLog("$" + str)
+            ScriptCodePreviewConsoleDataObject.addLog(
+                ScriptWidgetConsoleEntry(level: .system, message: "$" + str)
+            )
         }
     }
 }
