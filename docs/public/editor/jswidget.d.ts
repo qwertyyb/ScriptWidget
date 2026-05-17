@@ -21,48 +21,25 @@ type JSWidgetPadding = number | {
 
 /** 字体名称 */
 type JSWidgetFontName =
-  | "largeTitle"
-  | "title"
-  | "title2"
-  | "title3"
-  | "headline"
-  | "subheadline"
-  | "body"
-  | "callout"
-  | "footnote"
-  | "caption"
-  | "caption2";
+  "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2";
 
 /** 字体粗细 */
 type JSWidgetFontWeight =
-  | "ultraLight"
-  | "thin"
-  | "light"
-  | "regular"
-  | "medium"
-  | "semibold"
-  | "bold"
-  | "heavy"
-  | "black";
+  "ultraLight" | "thin" | "light" | "regular" | "medium" | "semibold" | "bold" | "heavy" | "black";
 
 /** 字体设计 */
 type JSWidgetFontDesign =
-  | "monospaced"
-  | "rounded"
-  | "serif"
-  | "default";
+  "monospaced" | "rounded" | "serif" | "default";
 
 /** 字体 */
 type JSWidgetFont =
-  | JSWidgetFontName
-  | number
-  | {
-    name?: JSWidgetFontName;
-    weight?: JSWidgetFontWeight;
-    design?: JSWidgetFontDesign;
-    size?: number;
-    custom?: string;
-  };
+  "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2" | number | {
+        name?: "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2";
+        weight?: "ultraLight" | "thin" | "light" | "regular" | "medium" | "semibold" | "bold" | "heavy" | "black";
+        design?: "monospaced" | "rounded" | "serif" | "default";
+        size?: number;
+        custom?: string;
+      };
 
 
 type HttpParams = {
@@ -72,15 +49,43 @@ type HttpParams = {
 };
 
 declare const $http: {
-  get(url: string, params?: HttpParams): Promise<string>;
-  post(url: string, params?: HttpParams): Promise<string>;
-  put(url: string, params?: HttpParams): Promise<string>;
-  patch(url: string, params?: HttpParams): Promise<string>;
-  delete(url: string, params?: HttpParams): Promise<string>;
+  get(url: string, params?: {
+    headers?: Record<string, string>;
+    body?: string | Record<string, any>;
+    timeoutInterval?: number;
+  }): Promise<string>;
+  post(url: string, params?: {
+    headers?: Record<string, string>;
+    body?: string | Record<string, any>;
+    timeoutInterval?: number;
+  }): Promise<string>;
+  put(url: string, params?: {
+    headers?: Record<string, string>;
+    body?: string | Record<string, any>;
+    timeoutInterval?: number;
+  }): Promise<string>;
+  patch(url: string, params?: {
+    headers?: Record<string, string>;
+    body?: string | Record<string, any>;
+    timeoutInterval?: number;
+  }): Promise<string>;
+  delete(url: string, params?: {
+    headers?: Record<string, string>;
+    body?: string | Record<string, any>;
+    timeoutInterval?: number;
+  }): Promise<string>;
 };
 
-declare function $fetch(url: string, params?: HttpParams): Promise<string>;
-declare function fetch(url: string, params?: HttpParams): Promise<string>;
+declare function $fetch(url: string, params?: {
+  headers?: Record<string, string>;
+  body?: string | Record<string, any>;
+  timeoutInterval?: number;
+}): Promise<string>;
+declare function fetch(url: string, params?: {
+  headers?: Record<string, string>;
+  body?: string | Record<string, any>;
+  timeoutInterval?: number;
+}): Promise<string>;
 
 type JSWidgetConsole = {
   /** 普通日志 */
@@ -92,8 +97,26 @@ type JSWidgetConsole = {
   /** 错误日志 */
   error(...args: any[]): void;
 };
-declare const $console: JSWidgetConsole;
-declare const console: JSWidgetConsole;
+declare const $console: {
+  /** 普通日志 */
+  log(...args: any[]): void;
+  /** 信息日志 */
+  info(...args: any[]): void;
+  /** 警告日志 */
+  warn(...args: any[]): void;
+  /** 错误日志 */
+  error(...args: any[]): void;
+};
+declare const console: {
+  /** 普通日志 */
+  log(...args: any[]): void;
+  /** 信息日志 */
+  info(...args: any[]): void;
+  /** 警告日志 */
+  warn(...args: any[]): void;
+  /** 错误日志 */
+  error(...args: any[]): void;
+};
 
 declare const $device: {
   name(): string;
@@ -151,32 +174,43 @@ type HealthSample = {
 declare const $health: {
   isAvailable(): boolean;
   requestAuthorization(): Promise<boolean>;
-  stepCountToday(): Promise<HealthSample>;
-  activeEnergyToday(): Promise<HealthSample>;
-  heartRateLatest(): Promise<HealthSample>;
+  stepCountToday(): Promise<{
+        value: number;
+        unit: string;
+        start: string;
+        end: string;
+      }>;
+  activeEnergyToday(): Promise<{
+        value: number;
+        unit: string;
+        start: string;
+        end: string;
+      }>;
+  heartRateLatest(): Promise<{
+        value: number;
+        unit: string;
+        start: string;
+        end: string;
+      }>;
 };
 
 type LocationAuthorizationStatus =
-  | "notDetermined"
-  | "restricted"
-  | "denied"
-  | "authorizedAlways"
-  | "authorizedWhenInUse"
-  | "disabled"      // iOS：定位服务关闭
-  | "unknown"
-  | "unavailable";  // 非 iOS stub
+  "notDetermined" | "restricted" | "denied" | "authorizedAlways" | "authorizedWhenInUse" | "disabled" | "unknown" | "unavailable";  // 非 iOS stub
 
 type LocationRequestOptions = {
   timeout?: number;
   timeoutMs?: number;
 };
 
-type LocationCurrentOptions = LocationRequestOptions & {
+type LocationCurrentOptions = {
+  timeout?: number;
+  timeoutMs?: number;
+} & ({
   maxAge?: number;
   maxAgeMs?: number;
   accuracy?: "full" | "reduced";
   purposeKey?: string;
-};
+});
 
 type LocationPayload = {
   latitude: number;
@@ -194,9 +228,32 @@ type LocationPayload = {
 
 declare const $location: {
   isAvailable(): boolean;
-  authorizationStatus(): LocationAuthorizationStatus;
-  requestAuthorization(options?: LocationRequestOptions): Promise<boolean>;
-  current(options?: LocationCurrentOptions): Promise<LocationPayload>;
+  authorizationStatus(): "notDetermined" | "restricted" | "denied" | "authorizedAlways" | "authorizedWhenInUse" | "disabled" | "unknown" | "unavailable";
+  requestAuthorization(options?: {
+    timeout?: number;
+    timeoutMs?: number;
+  }): Promise<boolean>;
+  current(options?: {
+    timeout?: number;
+    timeoutMs?: number;
+  } & ({
+    maxAge?: number;
+    maxAgeMs?: number;
+    accuracy?: "full" | "reduced";
+    purposeKey?: string;
+  })): Promise<{
+        latitude: number;
+        longitude: number;
+        altitude: number;
+        accuracy: number;
+        verticalAccuracy: number;
+        speed: number;
+        course: number;
+        timestamp: string;
+        accuracyAuthorization: "full" | "reduced" | "unknown";
+        age: number;
+        isStale: boolean;
+      }>;
 };
 
 declare const $storage: {
@@ -210,18 +267,9 @@ declare const $storage: {
 };
 
 type JSWidgetSize =
-  | "small"
-  | "medium"
-  | "large"
-  | "extraLarge"
-  | "accessoryInline"
-  | "accessoryCircular"
-  | "accessoryRectangular"
-  | "live-activity"
-  | "dynamic-island"
-  | "function";
+  "small" | "medium" | "large" | "extraLarge" | "accessoryInline" | "accessoryCircular" | "accessoryRectangular" | "live-activity" | "dynamic-island" | "function";
 
-declare function $getenv(key: "widget-size"): JSWidgetSize | "";
+declare function $getenv(key: "widget-size"): "small" | "medium" | "large" | "extraLarge" | "accessoryInline" | "accessoryCircular" | "accessoryRectangular" | "live-activity" | "dynamic-island" | "function" | "";
 declare function $getenv(key: "widget-param" | "script-dir"): string;
 declare function $getenv(key: string): string;
 
@@ -242,13 +290,28 @@ type DynamicIslandExpandedConfig = {
 };
 
 type DynamicIslandConfig = {
-  expanded: DynamicIslandExpandedConfig;
+  expanded: {
+      leading?: unknown;
+      trailing?: unknown;
+      center?: unknown;
+      bottom?: unknown;
+    };
   compactLeading: unknown;
   compactTrailing: unknown;
   minimal: unknown;
 };
 
-declare function $dynamic_island(config: DynamicIslandConfig): void;
+declare function $dynamic_island(config: {
+  expanded: {
+      leading?: unknown;
+      trailing?: unknown;
+      center?: unknown;
+      bottom?: unknown;
+    };
+  compactLeading: unknown;
+  compactTrailing: unknown;
+  minimal: unknown;
+}): void;
 
 declare const $element: {
   createElement(
@@ -281,7 +344,24 @@ interface JSWidgetCommonAttributes {
   /** 垂直对齐 */
   align?: "start" | "center" | "end";
   /** 内边距（数字或 {horizontal, vertical, top, bottom, leading, trailing, left, right}） */
-  padding?: JSWidgetPadding;
+  padding?: number | {
+      /** 左右内边距 */
+      horizontal?: number;
+      /** 上下内边距 */
+      vertical?: number;
+      /** 顶部内边距 */
+      top?: number;
+      /** 底部内边距 */
+      bottom?: number;
+      /** 左内边距 */
+      leading?: number;
+      /** 右内边距 */
+      trailing?: number;
+      /** 左内边距 */
+      left?: number;
+      /** 右内边距 */
+      right?: number;
+    };
   /** 背景色 */
   backgroundColor?: string;
   /** 前景色 */
@@ -340,7 +420,13 @@ declare namespace JSWidget {
       };
       text: JSWidgetCommonAttributes & {
         /** 字体：语义名 / 数字字号 / {name,weight,design,size} / {custom,size} */
-        font?: JSWidgetFont;
+        font?: "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2" | number | {
+                  name?: "largeTitle" | "title" | "title2" | "title3" | "headline" | "subheadline" | "body" | "callout" | "footnote" | "caption" | "caption2";
+                  weight?: "ultraLight" | "thin" | "light" | "regular" | "medium" | "semibold" | "bold" | "heavy" | "black";
+                  design?: "monospaced" | "rounded" | "serif" | "default";
+                  size?: number;
+                  custom?: string;
+                };
         /** 粗体 */
         bold?: string | number | boolean;
         /** 斜体 */
