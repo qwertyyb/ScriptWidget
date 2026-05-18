@@ -1,6 +1,6 @@
 # JSWidget JSX 元素完整文档
 
-本文档与 JSWidget 类型定义（`components.d.ts`、`types.d.ts`）保持一致，描述 JSWidget 支持的所有 JSX 元素、属性及其用法。
+本文档描述 JSWidget 支持的所有 JSX 元素、属性及其用法。
 
 各组件专有属性均与 `JSWidgetCommonAttributes` 交叉组合（`row` 除外，见下文）。除另有说明外，均可使用[通用属性](#通用属性jswidgetcommonattributes)。
 
@@ -108,11 +108,19 @@
 | `textAlign` | `"start" \| "center" \| "end"` | 文本对齐 |
 | `lineLimit` | `number` | 行数限制 |
 
-**`JSWidgetFont`**：
+**`JSWidgetFont`** 支持三种形式：
 
-- 语义名：`"largeTitle"` \| `"title"` \| `"title2"` \| `"title3"` \| `"headline"` \| `"subheadline"` \| `"body"` \| `"callout"` \| `"footnote"` \| `"caption"` \| `"caption2"`
-- 数字：字号
-- 对象：`{ name?, weight?, design?, size?, custom? }`
+- **语义名**：`"largeTitle"` \| `"title"` \| `"title2"` \| `"title3"` \| `"headline"` \| `"subheadline"` \| `"body"` \| `"callout"` \| `"footnote"` \| `"caption"` \| `"caption2"`
+- **数字**：直接指定字号
+- **对象**：精细控制
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `name` | 语义名 | 基础字体名 |
+| `weight` | `"ultraLight"` \| `"thin"` \| `"light"` \| `"regular"` \| `"medium"` \| `"semibold"` \| `"bold"` \| `"heavy"` \| `"black"` | 字重 |
+| `design` | `"monospaced"` \| `"rounded"` \| `"serif"` \| `"default"` | 字体设计 |
+| `size` | `number` | 字号 |
+| `custom` | `string` | 自定义字体名 |
 
 ```jsx
 <text font="title" color="#333">Hello World</text>
@@ -582,7 +590,7 @@ SF Symbol 图标。继承 `JSWidgetCommonAttributes`。
 
 ## 通用属性（`JSWidgetCommonAttributes`）
 
-多数标签通过交叉类型继承 `JSWidgetCommonAttributes`。
+多数标签通过交叉类型继承。
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
@@ -603,7 +611,18 @@ SF Symbol 图标。继承 `JSWidgetCommonAttributes`。
 
 #### `JSWidgetPadding`
 
-`number` 或对象：`{ horizontal?, vertical?, top?, bottom?, leading?, trailing?, left?, right? }`。
+`number`（四边统一）或对象，按需指定各方向：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `horizontal` | `number` | 左右内边距 |
+| `vertical` | `number` | 上下内边距 |
+| `top` | `number` | 顶部内边距 |
+| `bottom` | `number` | 底部内边距 |
+| `leading` | `number` | 左内边距 |
+| `trailing` | `number` | 右内边距 |
+| `left` | `number` | 左内边距（同 `leading`） |
+| `right` | `number` | 右内边距（同 `trailing`） |
 
 ```jsx
 <text size="max" padding={10} backgroundColor="#1e293b" />
@@ -621,6 +640,52 @@ SF Symbol 图标。继承 `JSWidgetCommonAttributes`。
 - **十六进制**：`"#ff0000"`, `"#f00"`, `"#ff000080"`（RGBA 顺序）
 - **RGB 函数**：`"rgb(255, 0, 0)"`
 - **RGBA 函数**：`"rgba(255, 0, 0, 0.5)"`
+
+---
+
+## 函数组件
+
+除了内置 JSX 元素外，你还可以编写**函数组件**来封装和复用 UI 片段。函数组件接收一个 `props` 对象（包含传入的属性和 `children`），返回 JSX 元素。
+
+```jsx
+function Greeting(props) {
+  return (
+    <col>
+      <text font="headline" color={props.color}>Hello, {props.name}!</text>
+      {props.children}
+    </col>
+  );
+}
+
+$render(
+  <col size="max" padding={16}>
+    <Greeting name="World" color="#0f172a">
+      <text font="caption">Welcome to JSWidget</text>
+    </Greeting>
+  </col>
+);
+```
+
+**注意**：函数组件**必须是同步函数**，不支持 `async` 函数组件。如果需要异步数据，请在函数组件外部获取数据后通过 props 传入。
+
+```jsx
+// ✅ 正确：在外部获取数据，通过 props 传入
+const data = await $http.get("https://api.example.com/data");
+
+function DataCard(props) {
+  return <text>{props.data}</text>;
+}
+
+$render(<DataCard data={data} />);
+```
+
+```jsx
+// ❌ 错误：不支持 async 函数组件
+async function DataCard() {
+  const data = await $http.get("https://api.example.com/data");
+  return <text>{data}</text>;
+}
+```
 
 ---
 

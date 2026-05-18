@@ -413,8 +413,12 @@ declare namespace JSWidget {
     props?: JSWidget.JSX.IntrinsicElements[T] | null,
     ...children: unknown[]
   ): unknown;
+  /**
+   * 函数组件重载——仅支持**同步**函数，不支持 async 函数。
+   * 函数接收 props 对象（含 children），必须同步返回 JSX 元素。
+   */
   function createElement(
-    tag: ((...args: unknown[]) => unknown),
+    tag: ((props: Record<string, unknown>) => unknown),
     props?: Record<string, unknown> | null,
     ...children: unknown[]
   ): unknown;

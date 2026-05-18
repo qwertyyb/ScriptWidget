@@ -8,7 +8,8 @@
     "docs:preview": "vitepress preview",
     "build:jsx-compiler": "pnpm --filter jsx-compiler build",
     "generate:completion": "pnpm --filter completion-gen generate",
-    "build:tools": "pnpm run build:jsx-compiler && pnpm run generate:completion"
+    "sync:bundle-docs": "node Tools/sync-bundle-docs.mjs",
+    "build:tools": "pnpm run build:jsx-compiler && pnpm run generate:completion && pnpm run sync:bundle-docs"
   },
   "devDependencies": {
     "vitepress": "next"

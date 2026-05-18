@@ -787,6 +787,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F29117F2279101DF00B860B0 /* Build configuration list for PBXNativeTarget "ScriptWidgetMac" */;
 			buildPhases = (
+				A1B2C3D400000002DOCS0001 /* Sync Bundle Docs */,
 				F29117E0279101DF00B860B0 /* Sources */,
 				F29117E1279101DF00B860B0 /* Frameworks */,
 				F29117E2279101DF00B860B0 /* Resources */,
@@ -906,6 +907,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A1B2C3D400000002DOCS0001 /* Sync Bundle Docs */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../docs/guide/getting-started.md",
+				"$(SRCROOT)/../docs/guide/ai.md",
+				"$(SRCROOT)/../docs/api/index.md",
+				"$(SRCROOT)/../docs/components/index.md",
+			);
+			name = "Sync Bundle Docs";
+			outputPaths = (
+				"$(SRCROOT)/../Shared/ScriptWidgetRuntime/Resource/Script.bundle/docs/getting-started.md",
+				"$(SRCROOT)/../Shared/ScriptWidgetRuntime/Resource/Script.bundle/docs/ai.md",
+				"$(SRCROOT)/../Shared/ScriptWidgetRuntime/Resource/Script.bundle/docs/api.md",
+				"$(SRCROOT)/../Shared/ScriptWidgetRuntime/Resource/Script.bundle/docs/components.md",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"${SRCROOT}/../docs/guide/getting-started.md\" \"${SRCROOT}/../Shared/ScriptWidgetRuntime/Resource/Script.bundle/docs/getting-started.md\"\ncp \"${SRCROOT}/../docs/guide/ai.md\" \"${SRCROOT}/../Shared/ScriptWidgetRuntime/Resource/Script.bundle/docs/ai.md\"\ncp \"${SRCROOT}/../docs/api/index.md\" \"${SRCROOT}/../Shared/ScriptWidgetRuntime/Resource/Script.bundle/docs/api.md\"\ncp \"${SRCROOT}/../docs/components/index.md\" \"${SRCROOT}/../Shared/ScriptWidgetRuntime/Resource/Script.bundle/docs/components.md\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F29117E0279101DF00B860B0 /* Sources */ = {
