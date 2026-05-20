@@ -30,8 +30,7 @@ struct ScriptWidgetApp: App {
                         }
                     }
                     
-                    if host == "xnu.app/scriptwidget" {
-                        print("ignore open url for : xnu.app/scriptwidget")
+                    if isDocumentationSiteURL(url) {
                         UIApplication.shared.open(url)
                         return
                     }
@@ -78,5 +77,18 @@ struct ScriptWidgetApp: App {
         }
         
         pendingImport = ScriptImportData(name: name, code: code)
+    }
+    
+    /// Opens documentation site links in the browser when the widget is tapped (`linkurl`).
+    private func isDocumentationSiteURL(_ url: URL) -> Bool {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let host = components.host?.lowercased() else {
+            return false
+        }
+        let path = components.path.isEmpty ? "/" : components.path.lowercased()
+        if host == "qwertyyb.github.io" {
+            return path == "/jswidget" || path.hasPrefix("/jswidget/")
+        }
+        return false
     }
 }

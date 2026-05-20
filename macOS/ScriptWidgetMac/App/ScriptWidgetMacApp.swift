@@ -41,20 +41,14 @@ struct ScriptWidgetMacApp: App {
             }
             
             CommandGroup(replacing: .help) {
-                Button("Discord") {
-                    NSWorkspace.shared.open(URL(string: "https://discord.gg/eGzEaP6TzR")!)
-                }
                 Button("Mail") {
                     NSWorkspace.shared.open(URL(string: "mailto:xnuapp@gmail.com?subject=ScriptWidgetMac_Feedback")!)
                 }
                 Button("Developer") {
-                    NSWorkspace.shared.open(URL(string: "https://github.com/everettjf")!)
+                    NSWorkspace.shared.open(URL(string: "https://github.com/qwertyyb")!)
                 }
                 Button("Help") {
-                    NSWorkspace.shared.open(URL(string: "https://xnu.app/scriptwidget")!)
-                }
-                Button("More Apps") {
-                    NSWorkspace.shared.open(URL(string: "https://xnu.app")!)
+                    NSWorkspace.shared.open(URL(string: "https://qwertyyb.github.io/JSWidget/")!)
                 }
             }
         }

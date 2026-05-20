@@ -1,6 +1,6 @@
 //
 // JSWidget
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 //
 // Crypto Price Ticker (CoinGecko)
 // widget-param: coin id, e.g. "bitcoin", "ethereum"

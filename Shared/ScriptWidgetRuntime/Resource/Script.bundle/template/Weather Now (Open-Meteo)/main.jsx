@@ -1,6 +1,6 @@
 //
 // JSWidget
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 //
 // Weather Now - Open-Meteo (no API key required)
 // widget-param: "lat,lon" (optional)

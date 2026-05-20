@@ -1,3 +1,8 @@
+// 
+// JSWidget 
+// https://qwertyyb.github.io/JSWidget/
+// 
+
 const API_URL = "https://episodate.com/api/show-details?q="
 
 const colors = {

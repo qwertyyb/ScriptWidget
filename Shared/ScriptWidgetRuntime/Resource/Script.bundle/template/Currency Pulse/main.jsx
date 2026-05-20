@@ -1,6 +1,6 @@
 //
 // JSWidget
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 //
 // Currency Pulse (open.er-api.com)
 // widget-param: base currency (optional)

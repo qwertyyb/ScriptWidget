@@ -1,7 +1,7 @@
 
 //
 // JSWidget
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 //
 // Custom Component
 // Thanks for Reina for telling me this good idea

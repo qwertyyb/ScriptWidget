@@ -1,6 +1,6 @@
 //
 // JSWidget
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 //
 // Stock Snapshot (stooq.com)
 // widget-param: symbol, e.g. "aapl.us"

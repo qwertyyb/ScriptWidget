@@ -1,6 +1,6 @@
 //
 // JSWidget
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 //
 // Local Weather (Location)
 // Requires Location permission in the main app.

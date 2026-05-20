@@ -1,6 +1,6 @@
 //
 // JSWidget
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 //
 // Meeting Countdown
 // widget-param: "2026-02-01 09:30" or ISO string

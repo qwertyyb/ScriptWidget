@@ -1,6 +1,6 @@
 //
 // JSWidget
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 //
 // Air Quality Now - Open-Meteo (no API key)
 // widget-param: "lat,lon" (optional)

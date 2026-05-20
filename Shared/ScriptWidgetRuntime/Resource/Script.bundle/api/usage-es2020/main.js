@@ -1,7 +1,7 @@
 
 //
 // ScriptWidget
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 //
 //
 

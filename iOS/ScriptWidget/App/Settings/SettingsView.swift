@@ -102,12 +102,9 @@ struct SettingsView: View {
                         NavigationLink(destination: AppIconsView()) {
                             SettingsTextRowView(name: "App Icons", content: "")
                         }
-                        SettingsLinkRowView(name: "Website", label: "https://xnu.app/scriptwidget", urlString: "https://xnu.app/scriptwidget")
-                        SettingsLinkRowView(name: "Discord", label: "", urlString: "https://discord.gg/eGzEaP6TzR")
-                        SettingsLinkRowView(name: "Developer", label: "everettjf", urlString: "https://twitter.com/everettjf")
-                        SettingsLinkRowView(name: "Special Thanks", label: "Reina", urlString: "https://github.com/Reinachan")
+                        SettingsLinkRowView(name: "Website", label: "https://qwertyyb.github.io/JSWidget/", urlString: "https://qwertyyb.github.io/JSWidget/")
+                        SettingsLinkRowView(name: "Developer", label: "qwertyyb", urlString: "https://github.com/qwertyyb")
                         SettingsTextRowView(name: "Version", content: AppHelper.getAppVersion())
-                        SettingsLinkRowView(name: "More Apps", label: "https://xnu.app", urlString: "https://xnu.app")
                     }
                     
                 }

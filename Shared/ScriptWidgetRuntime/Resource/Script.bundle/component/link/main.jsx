@@ -1,12 +1,12 @@
 // 
 // JSWidget 
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 // 
 // Usage for component link
 // 
 
 $render(
-  <col size="max" linkurl="https://xnu.app/scriptwidget">
+  <col size="max" linkurl="https://qwertyyb.github.io/JSWidget/">
     <link url="https://www.baidu.com" backgroundColor="blue">
       <text font="title">Hello Baidu</text>
     </link>

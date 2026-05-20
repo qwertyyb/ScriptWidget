@@ -1,6 +1,6 @@
 // 
 // JSWidget 
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 // 
 // Usage for component Live Activity and Dynamic Island
 // 

@@ -1,5 +1,5 @@
 // JSWidget 
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 // 
 // Mapping over an array
 // Thanks for Reina for telling me this good idea

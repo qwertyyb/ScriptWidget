@@ -1,4 +1,7 @@
-//
+// 
+// JSWidget 
+// https://qwertyyb.github.io/JSWidget/
+// 
 // When setting up the widget provide a parameter
 // in the setup dialog like Please provide a parameter like
 // '2022-11-26 Vacation' if you want to count down

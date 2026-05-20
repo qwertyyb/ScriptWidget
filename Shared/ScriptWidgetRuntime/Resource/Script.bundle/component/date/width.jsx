@@ -1,6 +1,6 @@
 // 
 // JSWidget 
-// https://xnu.app/scriptwidget
+// https://qwertyyb.github.io/JSWidget/
 // 
 // Usage for component date
 // try to fix the expanding issue , we can add a frame attribute : size={{width: 50, height: "fill"}} justify="start"
