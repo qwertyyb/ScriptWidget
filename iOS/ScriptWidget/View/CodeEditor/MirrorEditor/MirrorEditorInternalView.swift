@@ -39,6 +39,8 @@ class MirrorEditorInternalView: WKWebView {
     var lastSaveContent = ""
     
     var action: MirrorEditorInternalActionProvider?
+    /// When false, hides the in-editor remote (PeerJS) editing controls — used for bundle templates.
+    var enablePeerEditing: Bool = true
     
 
     required init?(coder: NSCoder) {
@@ -232,6 +234,18 @@ class MirrorEditorInternalView: WKWebView {
         })
     }
     
+    func editor_setPeerEnabled(enabled: Bool) {
+        guard !isTearingDown else { return }
+        let message = ["enabled": enabled]
+        self.bridge?.call(handlerName: "editor_setPeerEnabled", data: message, callback: { responseData in
+            print("editor_setPeerEnabled response : \(String(describing: responseData))")
+        })
+    }
+    
+    func applyPeerEditingConfig() {
+        editor_setPeerEnabled(enabled: enablePeerEditing)
+    }
+    
     func editor_getValue(callback: @escaping (Bool, String)-> Void){
         guard !isTearingDown else {
             callback(false, "")
@@ -283,7 +297,7 @@ class MirrorEditorInternalView: WKWebView {
             }
             
             DispatchQueue.main.async {
-                // init tasks
+                self.applyPeerEditingConfig()
             }
         }
     }
@@ -298,6 +312,7 @@ class MirrorEditorInternalView: WKWebView {
             }else {
                 self.editor_setReadonly(readonly: false)
             }
+            self.applyPeerEditingConfig()
             
             lastSaveContent = content
         }

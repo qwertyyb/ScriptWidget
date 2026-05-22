@@ -37,7 +37,7 @@ struct CreateGuideView: View {
     @Environment(\.presentationMode) var presentationMode
         
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 ForEach(dataObject.models) { item in
                     NavigationLink(destination: ScriptCodeEditorView(mode: .creator,scriptModel:item, actionCreate: {
@@ -60,9 +60,10 @@ struct CreateGuideView: View {
                     }
                 }
             }
-            .navigationBarTitle(Text("Create from template"), displayMode: .large)
+            .navigationTitle("Create from template")
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
                     }) {

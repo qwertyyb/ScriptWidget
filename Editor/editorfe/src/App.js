@@ -24,6 +24,7 @@ export default function App() {
   const fileNameRef = useRef('main.jsx');
   const bridgeRef = useRef(null);
 
+  const [peerEnabled, setPeerEnabled] = useState(true);
   const [peerState, setPeerState] = useState('idle');
   const [peerIdText, setPeerIdText] = useState('');
   const [connectInput, setConnectInput] = useState('');
@@ -218,6 +219,17 @@ export default function App() {
           result: 'ok',
         });
       })
+      bridge.registerHandler('editor_setPeerEnabled', function (data, responseCallback) {
+        const enabled = data.enabled !== false;
+        setPeerEnabled(enabled);
+        if (!enabled) {
+          disconnectPeer();
+          setShowPeerMenu(false);
+          setShowConnectInput(false);
+          setPeerIdText('');
+        }
+        responseCallback({ result: 'ok', enabled });
+      })
 
       bridge.callHandler('event_editorReady', {}, function (response) { })
     })
@@ -232,7 +244,7 @@ export default function App() {
   }, [setContainer]);
 
   const renderPeerBanner = () => {
-    if (peerState === 'idle') return null;
+    if (!peerEnabled || peerState === 'idle') return null;
 
     if (peerState === 'connecting') {
       return (
@@ -277,7 +289,7 @@ export default function App() {
   const [showPeerMenu, setShowPeerMenu] = useState(false);
 
   const renderPeerControls = () => {
-    if (peerState !== 'idle') return null;
+    if (!peerEnabled || peerState !== 'idle') return null;
 
     if (showConnectInput) {
       return (
@@ -315,7 +327,7 @@ export default function App() {
         {renderPeerBanner()}
         {renderPeerControls()}
         <div className='editor' ref={editor} />
-        {peerState === 'idle' && !showPeerMenu && !showConnectInput && (
+        {peerEnabled && peerState === 'idle' && !showPeerMenu && !showConnectInput && (
           <button
             className="fab-remote"
             onClick={() => setShowPeerMenu(true)}

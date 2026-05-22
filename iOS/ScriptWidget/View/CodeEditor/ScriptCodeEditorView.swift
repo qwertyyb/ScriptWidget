@@ -94,8 +94,10 @@ struct ScriptCodeEditorView: View {
             codeeditor
                 .navigationBarTitle(self.dataObject.scriptModel.name, displayMode: .inline)
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        leadingButtons
+                    if self.mode != .creator {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            leadingButtons
+                        }
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         trailingButtons
@@ -109,16 +111,12 @@ struct ScriptCodeEditorView: View {
     }
 
     var leadingButtons: some View {
-        HStack {
-            if self.mode != .creator {
-                ScriptCodeEditorNavButtonView(image: "book") {
-                    self.showResourceCodeView.toggle()
-                }
-                .sheet(isPresented: $showResourceCodeView, content: {
-                    ResourceCodeView(model: dataObject.scriptModel)
-                })
-            }
+        ScriptCodeEditorNavButtonView(image: "book") {
+            self.showResourceCodeView.toggle()
         }
+        .sheet(isPresented: $showResourceCodeView, content: {
+            ResourceCodeView(model: dataObject.scriptModel)
+        })
     }
     
     var previewView: some View {

@@ -33,9 +33,12 @@ struct ScriptWidgetMainWidget: Widget {
 
 @main
 struct ScriptWidgets: WidgetBundle {
+    @WidgetBundleBuilder
     var body: some Widget {
         ScriptWidgetMainWidget()
         ScriptLiveActivityWidget()
-        ScriptWidgetControlWidget()
+        if #available(iOSApplicationExtension 18.0, *) {
+            ScriptWidgetControlWidget()
+        }
     }
 }

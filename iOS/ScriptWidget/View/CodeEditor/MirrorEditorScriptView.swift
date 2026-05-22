@@ -48,6 +48,7 @@ struct MirrorEditorScriptView: UIViewRepresentable {
         print("MirrorEditorScriptView make ui view : \(filePath.lastPathComponent)")
         let uiView = MirrorEditorInternalView()
         uiView.action = createActionProvider()
+        uiView.enablePeerEditing = !model.package.readonly
         
         return uiView;
     }
@@ -55,7 +56,11 @@ struct MirrorEditorScriptView: UIViewRepresentable {
     func updateUIView(_ uiView: MirrorEditorInternalView, context: Context) {
         print("MirrorEditorScriptView update ui view: \(filePath.lastPathComponent)")
         uiView.action = createActionProvider()
+        uiView.enablePeerEditing = !model.package.readonly
         uiView.updateScript()
+        if uiView.isEditorReady {
+            uiView.applyPeerEditingConfig()
+        }
     }
     
 }
