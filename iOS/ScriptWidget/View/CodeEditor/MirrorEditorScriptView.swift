@@ -23,28 +23,13 @@ struct MirrorEditorScriptView: UIViewRepresentable {
     }
     
     func createActionProvider() -> MirrorEditorInternalActionProvider {
-        let provider = MirrorEditorInternalActionProvider {
-            print("on read : \(self.filePath.lastPathComponent)")
-            guard let content = model.package.readFile(fullPath: self.filePath).0 else {
-                return ""
+        return MirrorEditorInternalActionProvider(
+            package: model.package,
+            filePath: filePath,
+            onIsReadOnly: {
+                return model.package.readonly
             }
-            return content
-        } onWrite: { content in
-            print("on write : \(self.filePath.lastPathComponent)")
-            let result = model.package.writeFile(fullPath: self.filePath, content: content)
-            if !result.0 {
-                print("save failed : write file : \(result.1)")
-                return false
-            }
-            if self.filePath.standardizedFileURL == model.package.jsxPath.standardizedFileURL {
-                _ = sharedScriptManager.buildScriptPackage(package: model.package)
-            }
-            return true
-        } onIsReadOnly: {
-            
-            return model.package.readonly
-        }
-        return provider
+        )
     }
     
     func makeUIView(context: Context) -> MirrorEditorInternalView {

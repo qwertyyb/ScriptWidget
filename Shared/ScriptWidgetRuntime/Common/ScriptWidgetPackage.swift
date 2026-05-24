@@ -618,6 +618,7 @@ struct ScriptWidgetPackage {
         
         var items = [FileModel]()
         for file in files {
+            if file.hasPrefix(".") { continue }
             let fullPath = curDir.appendingPathComponent(file)
             var isDir: ObjCBool = false
             if !FileManager.default.fileExists(atPath: fullPath.path, isDirectory: &isDir) {
@@ -626,9 +627,7 @@ struct ScriptWidgetPackage {
             if isDir.boolValue {
                 continue
             }
-            if Self.isListedRootFileName(file) {
-                items.append(FileModel(name: file, relativePath: file, path: fullPath))
-            }
+            items.append(FileModel(name: file, relativePath: file, path: fullPath))
         }
         
         return items.sorted { a, b in
@@ -640,6 +639,49 @@ struct ScriptWidgetPackage {
             }
             return a.name < b.name
         }
+    }
+
+    func listFileTree(_ relativeDirPath: String = "") -> [[String: Any]] {
+        let curDir = relativeDirPath.isEmpty ? self.path : self.path.appendingPathComponent(relativeDirPath)
+        guard let entries = try? FileManager.default.contentsOfDirectory(atPath: curDir.path) else {
+            return []
+        }
+
+        var dirs = [[String: Any]]()
+        var files = [[String: Any]]()
+
+        for entry in entries.sorted() {
+            if entry.hasPrefix(".") { continue }
+            let fullPath = curDir.appendingPathComponent(entry)
+            var isDir: ObjCBool = false
+            if !FileManager.default.fileExists(atPath: fullPath.path, isDirectory: &isDir) { continue }
+            let relPath = relativeDirPath.isEmpty ? entry : relativeDirPath + "/" + entry
+
+            if isDir.boolValue {
+                let children = listFileTree(relPath)
+                if !children.isEmpty {
+                    dirs.append([
+                        "name": entry,
+                        "type": "directory",
+                        "relativePath": relPath,
+                        "children": children
+                    ])
+                }
+            } else {
+                let item: [String: Any] = [
+                    "name": entry,
+                    "type": "file",
+                    "relativePath": relPath
+                ]
+                if entry == "main.jsx" && relativeDirPath.isEmpty {
+                    files.insert(item, at: 0)
+                } else {
+                    files.append(item)
+                }
+            }
+        }
+
+        return files + dirs
     }
 }
 

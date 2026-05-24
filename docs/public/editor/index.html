@@ -70,8 +70,26 @@
         <button type="button" id="btn-save" disabled title="Cmd/Ctrl+S" data-i18n="btn_save">Save to Phone</button>
         <button type="button" id="btn-disconnect" class="btn-danger" data-i18n="btn_disconnect">Disconnect</button>
       </header>
-      <div id="editor-root" class="editor-root"></div>
+      <div class="editor-body">
+        <nav id="file-tree" class="file-tree"></nav>
+        <div id="editor-root" class="editor-root"></div>
+      </div>
     </section>
+
+    <!-- Hidden file input -->
+    <input type="file" id="file-upload-input" multiple hidden />
+
+    <!-- Upload dialog -->
+    <div id="upload-dialog" class="overlay hidden">
+      <div class="upload-dialog-content">
+        <h3 id="upload-dialog-title" data-i18n="upload_title">Upload Files</h3>
+        <div id="upload-file-list" class="upload-file-list"></div>
+        <div class="upload-dialog-actions">
+          <button type="button" id="btn-upload-cancel" class="btn-sm" data-i18n="btn_cancel">Cancel</button>
+          <button type="button" id="btn-upload-confirm" class="btn-primary" data-i18n="btn_upload">Upload</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Disconnected overlay -->
     <div id="disconnected-overlay" class="overlay hidden">

@@ -9,26 +9,15 @@ import SwiftUI
 
 struct ScriptPackageEditorView: View {
     let model: ScriptModel
-    @Binding var filePath: URL
+    let filePath: URL
 
     var body: some View {
-        VStack {
-            ScriptPackageHorizontalFileView(model: model, currentFilePath: $filePath) { file in
-                changeFile(fileModel: file)
-            }
-            MirrorEditorScriptView(model: model, filePath: filePath)
-        }
-    }
-    
-    
-    func changeFile(fileModel: FileModel) {
-        print("change file : \(fileModel.path.lastPathComponent)")
-        self.filePath = fileModel.path
+        MirrorEditorScriptView(model: model, filePath: filePath)
     }
 }
 
 struct ScriptPackageEditorView_Previews: PreviewProvider {
     static var previews: some View {
-        ScriptPackageEditorView(model: globalScriptModel, filePath: .constant(URL(string: "/Users/main.jsx")!))
+        ScriptPackageEditorView(model: globalScriptModel, filePath: globalScriptModel.package.jsxPath)
     }
 }

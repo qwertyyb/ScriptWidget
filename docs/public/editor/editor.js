@@ -27,6 +27,14 @@
       btn_go_home: 'Back to Home',
       alert_connect_fail: 'Connection failed: ',
       alert_create_fail: 'Creation failed: ',
+      file_tree_title: 'Files',
+      btn_upload: 'Upload',
+      btn_cancel: 'Cancel',
+      upload_title: 'Upload Files',
+      upload_save_as: 'Save as:',
+      upload_drop_hint: 'Drop files here to upload',
+      confirm_delete_file: 'Delete "{name}"?',
+      confirm_delete_dir: 'Delete folder "{name}" and all its contents?',
     },
     zh: {
       home_desc: '在电脑上编辑手机中的脚本',
@@ -54,6 +62,14 @@
       btn_go_home: '返回主页',
       alert_connect_fail: '连接失败: ',
       alert_create_fail: '创建失败: ',
+      file_tree_title: '文件',
+      btn_upload: '上传',
+      btn_cancel: '取消',
+      upload_title: '上传文件',
+      upload_save_as: '保存为:',
+      upload_drop_hint: '拖拽文件到此处上传',
+      confirm_delete_file: '确定删除「{name}」？',
+      confirm_delete_dir: '确定删除文件夹「{name}」及其所有内容？',
     },
   };
 
@@ -88,6 +104,7 @@
     localStorage.setItem('sw_editor_lang', currentLang);
     applyI18n();
     refreshDynamicText();
+    renderFileTree();
   });
 
   // ── DOM refs ──
@@ -114,7 +131,14 @@
   const syncDot = document.getElementById('sync-dot');
   const syncLabel = document.getElementById('sync-label');
   const editorRoot = document.getElementById('editor-root');
+  const fileTree = document.getElementById('file-tree');
   const btnGoHome = document.getElementById('btn-go-home');
+
+  const fileUploadInput = document.getElementById('file-upload-input');
+  const uploadDialog = document.getElementById('upload-dialog');
+  const uploadFileList = document.getElementById('upload-file-list');
+  const btnUploadCancel = document.getElementById('btn-upload-cancel');
+  const btnUploadConfirm = document.getElementById('btn-upload-confirm');
 
   let peer = null;
   let conn = null;
@@ -123,6 +147,11 @@
   let lastSyncedContent = '';
   let currentSyncState = 'synced';
   let currentConnState = 'connected';
+
+  let fileList = [];
+  let currentFileName = 'main.jsx';
+  let pendingRpcCallbacks = {};
+  let pendingUploadFiles = [];
 
   const ICE_SERVERS = [
     { urls: 'stun:stun.l.google.com:19302' },
@@ -153,17 +182,23 @@
     if (peer) { try { peer.destroy(); } catch (_) {} }
     peer = null;
     conn = null;
+    pendingRpcCallbacks = {};
   }
 
   function goHome() {
     cleanupPeer();
     disconnectedOverlay.classList.add('hidden');
+    uploadDialog.classList.add('hidden');
     showPage(homePanel);
     btnSave.disabled = true;
     qrWrap.innerHTML = '';
     peerIdText.textContent = '';
     inputPeerId.value = '';
     lastSyncedContent = '';
+    fileList = [];
+    currentFileName = 'main.jsx';
+    pendingUploadFiles = [];
+    renderFileTree();
   }
 
   function onConnected() {
@@ -183,6 +218,394 @@
     disconnectedOverlay.classList.remove('hidden');
   }
 
+  // ── File tree ──
+  let collapsedDirs = {};
+
+  function renderFileTree() {
+    fileTree.innerHTML = '';
+    if (fileList.length === 0) return;
+
+    const title = document.createElement('div');
+    title.className = 'file-tree-title';
+    title.textContent = t('file_tree_title');
+    fileTree.appendChild(title);
+
+    const list = document.createElement('ul');
+    list.className = 'file-tree-list';
+    renderTreeNodes(fileList, list, 0);
+    fileTree.appendChild(list);
+
+    const uploadBtn = document.createElement('button');
+    uploadBtn.className = 'file-tree-upload-btn';
+    uploadBtn.textContent = '+ ' + t('btn_upload');
+    uploadBtn.addEventListener('click', () => fileUploadInput.click());
+    fileTree.appendChild(uploadBtn);
+  }
+
+  function createDeleteBtn(node) {
+    const btn = document.createElement('button');
+    btn.className = 'file-tree-delete';
+    btn.textContent = '×';
+    btn.title = 'Delete';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isDir = node.type === 'directory';
+      const msgKey = isDir ? 'confirm_delete_dir' : 'confirm_delete_file';
+      const msg = t(msgKey).replace('{name}', node.name);
+      if (!confirm(msg)) return;
+      if (isDir && node.children) {
+        const allFiles = [];
+        const collect = (nodes) => {
+          nodes.forEach(n => {
+            if (n.type === 'file') allFiles.push(n.relativePath);
+            else if (n.children) collect(n.children);
+          });
+        };
+        collect(node.children);
+        allFiles.forEach(f => removeFile(f));
+      }
+      removeFile(node.relativePath);
+      if (!isDir && node.relativePath === currentFileName) {
+        hideBinaryPreview();
+        if (monacoEditor) bootMonaco('', 'main.jsx');
+        currentFileName = 'main.jsx';
+      }
+    });
+    return btn;
+  }
+
+  function renderTreeNodes(nodes, parentEl, depth) {
+    nodes.forEach(node => {
+      if (node.type === 'directory') {
+        const isCollapsed = !!collapsedDirs[node.relativePath];
+        const li = document.createElement('li');
+        li.className = 'file-tree-dir';
+        li.style.paddingLeft = (14 + depth * 16) + 'px';
+
+        const toggle = document.createElement('span');
+        toggle.className = 'file-tree-toggle' + (isCollapsed ? ' collapsed' : '');
+        toggle.textContent = '▶';
+        li.appendChild(toggle);
+
+        const icon = document.createElement('span');
+        icon.className = 'file-tree-icon';
+        icon.textContent = isCollapsed ? '📁' : '📂';
+        li.appendChild(icon);
+
+        const name = document.createElement('span');
+        name.className = 'file-tree-name';
+        name.textContent = node.name;
+        li.appendChild(name);
+
+        li.appendChild(createDeleteBtn(node));
+
+        li.addEventListener('click', () => {
+          collapsedDirs[node.relativePath] = !collapsedDirs[node.relativePath];
+          renderFileTree();
+        });
+        parentEl.appendChild(li);
+
+        if (!isCollapsed && node.children && node.children.length > 0) {
+          renderTreeNodes(node.children, parentEl, depth + 1);
+        }
+      } else {
+        const li = document.createElement('li');
+        li.className = 'file-tree-item' + (node.relativePath === currentFileName ? ' active' : '');
+        li.style.paddingLeft = (14 + depth * 16) + 'px';
+
+        const icon = document.createElement('span');
+        icon.className = 'file-tree-icon';
+        icon.textContent = getFileIcon(node.name);
+        li.appendChild(icon);
+
+        const name = document.createElement('span');
+        name.className = 'file-tree-name';
+        name.textContent = node.name;
+        li.appendChild(name);
+
+        if (node.name !== 'main.jsx') {
+          li.appendChild(createDeleteBtn(node));
+        }
+
+        li.addEventListener('click', () => switchToFile(node.relativePath));
+        parentEl.appendChild(li);
+      }
+    });
+  }
+
+  function getFileIcon(name) {
+    const ext = name.split('.').pop().toLowerCase();
+    if (ext === 'jsx' || ext === 'js') return '📜';
+    if (ext === 'json') return '📋';
+    if (ext === 'css') return '🎨';
+    if (ext === 'html' || ext === 'htm') return '🌐';
+    if (ext === 'md' || ext === 'markdown') return '📝';
+    if (['png','jpg','jpeg','gif','webp','svg','ico'].includes(ext)) return '🖼';
+    return '📄';
+  }
+
+  function isBinaryFile(name) {
+    const ext = (name || '').split('.').pop().toLowerCase();
+    return ['png','jpg','jpeg','gif','webp','svg','ico','bmp','tiff','tif',
+            'mp3','wav','aac','m4a','ogg','flac',
+            'mp4','mov','avi','webm',
+            'pdf','zip','gz','tar','ttf','otf','woff','woff2'].includes(ext);
+  }
+
+  function getMimeType(name) {
+    const ext = (name || '').split('.').pop().toLowerCase();
+    const map = {
+      png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif',
+      webp: 'image/webp', svg: 'image/svg+xml', ico: 'image/x-icon',
+      bmp: 'image/bmp', tiff: 'image/tiff', tif: 'image/tiff',
+      mp3: 'audio/mpeg', wav: 'audio/wav', aac: 'audio/aac',
+      m4a: 'audio/mp4', ogg: 'audio/ogg', flac: 'audio/flac',
+      mp4: 'video/mp4', mov: 'video/quicktime', avi: 'video/x-msvideo', webm: 'video/webm',
+    };
+    return map[ext] || 'application/octet-stream';
+  }
+
+  function showBinaryPreview(base64, fileName) {
+    editorRoot.style.display = 'none';
+    let preview = document.getElementById('binary-preview');
+    if (!preview) {
+      preview = document.createElement('div');
+      preview.id = 'binary-preview';
+      preview.className = 'binary-preview';
+      editorRoot.parentNode.appendChild(preview);
+    }
+    preview.innerHTML = '';
+    preview.style.display = '';
+    const mime = getMimeType(fileName);
+    if (mime.startsWith('image/')) {
+      const img = document.createElement('img');
+      img.src = 'data:' + mime + ';base64,' + base64;
+      img.alt = fileName;
+      preview.appendChild(img);
+    } else if (mime.startsWith('audio/')) {
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.src = 'data:' + mime + ';base64,' + base64;
+      preview.appendChild(audio);
+    } else if (mime.startsWith('video/')) {
+      const video = document.createElement('video');
+      video.controls = true;
+      video.src = 'data:' + mime + ';base64,' + base64;
+      preview.appendChild(video);
+    } else {
+      const fallback = document.createElement('div');
+      fallback.className = 'binary-preview-fallback';
+      fallback.textContent = fileName;
+      preview.appendChild(fallback);
+    }
+  }
+
+  function hideBinaryPreview() {
+    editorRoot.style.display = '';
+    const preview = document.getElementById('binary-preview');
+    if (preview) preview.style.display = 'none';
+  }
+
+  function switchToFile(relativePath) {
+    if (relativePath === currentFileName) return;
+    if (monacoEditor && currentSyncState === 'dirty') {
+      sendSave();
+    }
+    currentFileName = relativePath;
+    renderFileTree();
+    requestFile(relativePath);
+  }
+
+  function requestFile(filePath) {
+    if (!conn) return;
+    const id = rpcId++;
+    setSyncState('synced');
+    pendingRpcCallbacks[id] = 'get_file';
+    const encoding = isBinaryFile(filePath) ? 'base64' : 'utf8';
+    conn.send({ id, method: 'get_file', params: { filePath, encoding } });
+  }
+
+  function requestFileList() {
+    if (!conn) return;
+    const id = rpcId++;
+    pendingRpcCallbacks[id] = 'list_files';
+    conn.send({ id, method: 'list_files' });
+  }
+
+  function removeFile(filePath) {
+    if (!conn) return;
+    const id = rpcId++;
+    pendingRpcCallbacks[id] = 'remove_file';
+    conn.send({ id, method: 'remove_file', params: { filePath } });
+  }
+
+  // ── Upload ──
+  function isTextFile(name) {
+    const ext = name.split('.').pop().toLowerCase();
+    return ['js','jsx','ts','tsx','json','txt','md','markdown','csv','xml','html','htm','css','yaml','yml','svg'].includes(ext);
+  }
+
+  function openUploadDialog(files) {
+    if (!files || files.length === 0) return;
+    pendingUploadFiles = Array.from(files).map(f => ({
+      file: f,
+      savePath: f.name,
+    }));
+    renderUploadDialog();
+    uploadDialog.classList.remove('hidden');
+  }
+
+  function renderUploadDialog() {
+    uploadFileList.innerHTML = '';
+    pendingUploadFiles.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.className = 'upload-file-row';
+
+      const preview = document.createElement('div');
+      preview.className = 'upload-file-preview';
+      if (item.file.type && item.file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(item.file);
+        preview.appendChild(img);
+      } else {
+        const icon = document.createElement('span');
+        icon.className = 'upload-file-icon';
+        icon.textContent = getFileIcon(item.file.name);
+        preview.appendChild(icon);
+      }
+      row.appendChild(preview);
+
+      const info = document.createElement('div');
+      info.className = 'upload-file-info';
+
+      const originalName = document.createElement('div');
+      originalName.className = 'upload-file-original';
+      originalName.textContent = item.file.name;
+      const size = document.createElement('span');
+      size.className = 'upload-file-size';
+      size.textContent = formatSize(item.file.size);
+      originalName.appendChild(size);
+      info.appendChild(originalName);
+
+      const label = document.createElement('label');
+      label.className = 'upload-file-label';
+      label.textContent = t('upload_save_as');
+      info.appendChild(label);
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'upload-file-path';
+      input.value = item.savePath;
+      input.addEventListener('input', (e) => {
+        pendingUploadFiles[idx].savePath = e.target.value;
+      });
+      info.appendChild(input);
+
+      row.appendChild(info);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'upload-file-remove';
+      removeBtn.textContent = '×';
+      removeBtn.addEventListener('click', () => {
+        pendingUploadFiles.splice(idx, 1);
+        if (pendingUploadFiles.length === 0) {
+          uploadDialog.classList.add('hidden');
+        } else {
+          renderUploadDialog();
+        }
+      });
+      row.appendChild(removeBtn);
+
+      uploadFileList.appendChild(row);
+    });
+  }
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function executeUpload() {
+    if (!conn) return;
+    const items = pendingUploadFiles.slice();
+    pendingUploadFiles = [];
+    uploadDialog.classList.add('hidden');
+
+    let remaining = items.length;
+    items.forEach(item => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const id = rpcId++;
+        let content, encoding;
+        if (isTextFile(item.savePath)) {
+          content = reader.result;
+          encoding = 'utf8';
+        } else {
+          const dataUrl = reader.result;
+          content = dataUrl.split(',')[1] || '';
+          encoding = 'base64';
+        }
+        pendingRpcCallbacks[id] = 'save_content';
+        conn.send({ id, method: 'save_content', params: { content, fileName: item.savePath, encoding } });
+        remaining--;
+        if (remaining <= 0) {
+          setTimeout(() => requestFileList(), 300);
+        }
+      };
+      if (isTextFile(item.savePath)) {
+        reader.readAsText(item.file);
+      } else {
+        reader.readAsDataURL(item.file);
+      }
+    });
+  }
+
+  fileUploadInput.addEventListener('change', () => {
+    if (fileUploadInput.files.length > 0) {
+      openUploadDialog(fileUploadInput.files);
+    }
+    fileUploadInput.value = '';
+  });
+
+  btnUploadCancel.addEventListener('click', () => {
+    pendingUploadFiles = [];
+    uploadDialog.classList.add('hidden');
+  });
+
+  btnUploadConfirm.addEventListener('click', executeUpload);
+
+  // Drag and drop on editor body
+  const editorBody = document.querySelector('.editor-body');
+  if (editorBody) {
+    let dragCounter = 0;
+    editorBody.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      dragCounter++;
+      editorBody.classList.add('drag-over');
+    });
+    editorBody.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      dragCounter--;
+      if (dragCounter <= 0) {
+        dragCounter = 0;
+        editorBody.classList.remove('drag-over');
+      }
+    });
+    editorBody.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+    editorBody.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dragCounter = 0;
+      editorBody.classList.remove('drag-over');
+      if (e.dataTransfer.files.length > 0) {
+        openUploadDialog(e.dataTransfer.files);
+      }
+    });
+  }
+
+  // ── Monaco ──
   function loadMonacoTypes() {
     return fetch('./jswidget.d.ts').then(r => r.text());
   }
@@ -191,10 +614,26 @@
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'vs-dark' : 'vs';
   }
 
-  function bootMonaco(initialValue) {
+  function getMonacoLanguage(fileName) {
+    const ext = (fileName || '').split('.').pop().toLowerCase();
+    if (ext === 'jsx' || ext === 'tsx') return 'typescript';
+    if (ext === 'js' || ext === 'ts') return 'typescript';
+    if (ext === 'json') return 'json';
+    if (ext === 'css') return 'css';
+    if (ext === 'html' || ext === 'htm') return 'html';
+    if (ext === 'md' || ext === 'markdown') return 'markdown';
+    return 'plaintext';
+  }
+
+  function bootMonaco(initialValue, fileName) {
     lastSyncedContent = initialValue || '';
+    const lang = getMonacoLanguage(fileName || currentFileName);
     if (monacoEditor) {
-      monacoEditor.setValue(initialValue || '');
+      const oldModel = monacoEditor.getModel();
+      const newUri = monaco.Uri.parse('file:///' + (fileName || currentFileName));
+      const newModel = monaco.editor.createModel(initialValue || '', lang, newUri);
+      monacoEditor.setModel(newModel);
+      if (oldModel) oldModel.dispose();
       setSyncState('synced');
       return;
     }
@@ -210,10 +649,8 @@
         target: monaco.languages.typescript.ScriptTarget.ES2020,
         module: monaco.languages.typescript.ModuleKind.ESNext,
         moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-        // Exclude DOM lib so jswidget.d.ts can declare `console` / `fetch` without conflicting with globals.
         lib: ['es2020'],
         noLib: false,
-        // Widget scripts use top-level await; treat editor buffer as a module without requiring export {}.
         moduleDetection: monaco.languages.typescript.ModuleDetectionKind?.Force ?? 3,
       };
       monaco.languages.typescript.typescriptDefaults.setCompilerOptions(widgetCompilerOptions);
@@ -222,8 +659,8 @@
         monaco.languages.typescript.typescriptDefaults.addExtraLib(dts, 'file:///jswidget.d.ts');
       }).catch(() => {});
 
-      const modelUri = monaco.Uri.parse('file:///main.tsx');
-      const model = monaco.editor.createModel(initialValue || '', 'typescript', modelUri);
+      const modelUri = monaco.Uri.parse('file:///' + (fileName || currentFileName));
+      const model = monaco.editor.createModel(initialValue || '', lang, modelUri);
       monacoEditor = monaco.editor.create(editorRoot, {
         model,
         theme: getMonacoTheme(),
@@ -237,8 +674,8 @@
         setSyncState(current === lastSyncedContent ? 'synced' : 'dirty');
 
         for (const change of e.changes) {
-          const t = change.text;
-          if (t === '"' || t === "'" || t === '""' || t === "''") {
+          const txt = change.text;
+          if (txt === '"' || txt === "'" || txt === '""' || txt === "''") {
             setTimeout(() => {
               monacoEditor.trigger('quote', 'editor.action.triggerSuggest', {});
             }, 100);
@@ -261,18 +698,76 @@
     if (!conn || !monacoEditor) return;
     const id = rpcId++;
     const content = monacoEditor.getValue();
-    conn.send({ id, method: 'save_content', params: { content, fileName: 'main.tsx' } });
+    pendingRpcCallbacks[id] = 'save_content';
+    conn.send({ id, method: 'save_content', params: { content, fileName: currentFileName } });
   }
 
   btnSave.addEventListener('click', sendSave);
 
   function handleData(data) {
     if (!data || typeof data !== 'object') return;
+
     if (data.method === 'push_content' && data.params && typeof data.params.content === 'string') {
-      bootMonaco(data.params.content);
+      currentFileName = data.params.fileName || 'main.jsx';
+      bootMonaco(data.params.content, currentFileName);
+      renderFileTree();
       onConnected();
     }
-    if (data.result && typeof data.result === 'object' && 'success' in data.result) {
+
+    if (data.method === 'push_file_list' && data.params && Array.isArray(data.params.files)) {
+      fileList = data.params.files;
+      renderFileTree();
+    }
+
+    if (data.method === 'update_file_list' && data.params && Array.isArray(data.params.files)) {
+      fileList = data.params.files;
+      renderFileTree();
+    }
+
+    if (data.id && pendingRpcCallbacks[data.id] === 'get_file' && data.result) {
+      delete pendingRpcCallbacks[data.id];
+      if (data.result.error) {
+        console.error('get_file failed:', data.result.error);
+        return;
+      }
+      const fn = data.result.fileName || currentFileName;
+      currentFileName = fn;
+      if (data.result.encoding === 'base64' || isBinaryFile(fn)) {
+        showBinaryPreview(data.result.content, fn);
+      } else {
+        hideBinaryPreview();
+        bootMonaco(data.result.content, fn);
+      }
+      renderFileTree();
+    }
+
+    if (data.id && pendingRpcCallbacks[data.id] === 'save_content' && data.result) {
+      delete pendingRpcCallbacks[data.id];
+      if (data.result.success) {
+        lastSyncedContent = monacoEditor ? monacoEditor.getValue() : '';
+        setSyncState('synced');
+      } else {
+        setSyncState('error');
+      }
+    }
+
+    if (data.id && pendingRpcCallbacks[data.id] === 'remove_file' && data.result) {
+      delete pendingRpcCallbacks[data.id];
+      if (data.result.error) {
+        console.error('remove_file failed:', data.result.error);
+      }
+      setTimeout(() => requestFileList(), 200);
+    }
+
+    if (data.id && pendingRpcCallbacks[data.id] === 'list_files' && data.result) {
+      delete pendingRpcCallbacks[data.id];
+      if (Array.isArray(data.result.files)) {
+        fileList = data.result.files;
+        renderFileTree();
+      }
+    }
+
+    if (!data.id && data.result && typeof data.result === 'object' && 'success' in data.result) {
       if (data.result.success) {
         lastSyncedContent = monacoEditor ? monacoEditor.getValue() : '';
         setSyncState('synced');
@@ -348,6 +843,5 @@
     btnConnect.click();
   }
 
-  // Apply initial locale
   applyI18n();
 })();

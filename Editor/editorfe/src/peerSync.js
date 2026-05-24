@@ -1,6 +1,6 @@
 /**
- * PeerJS session for JSWidget remote editing (single file).
- * Saves go through existing WKWebViewJavascriptBridge `event_editorSave`.
+ * PeerJS session for JSWidget remote editing (multi-file).
+ * Saves go through WKWebViewJavascriptBridge `method_saveFile`.
  */
 import Peer from "peerjs";
 
@@ -32,10 +32,6 @@ export function setPeerDeps(d) {
   deps = d;
 }
 
-function getBridge() {
-  return deps && deps.getBridge ? deps.getBridge() : typeof window !== "undefined" ? window.WKWebViewJavascriptBridge : null;
-}
-
 function log(msg) {
   console.log('[peerSync]', msg);
   if (deps && deps.log) deps.log(msg);
@@ -53,26 +49,131 @@ export function disconnectPeer() {
   notifyState('idle');
 }
 
+function pushFileList() {
+  if (!conn || !deps) return;
+  const bridge = deps.getBridge ? deps.getBridge() : null;
+  if (!bridge) return;
+  bridge.callHandler('method_listFiles', {}, function (response) {
+    if (response && response.result === 'ok' && Array.isArray(response.files)) {
+      try {
+        conn.send({ method: "push_file_list", params: { files: response.files } });
+      } catch (e) {
+        log("push_file_list error: " + e.message);
+      }
+    }
+  });
+}
+
+export function notifyFileListUpdate(files) {
+  if (!conn) return;
+  try {
+    conn.send({ method: "update_file_list", params: { files } });
+  } catch (e) {
+    log("update_file_list error: " + e.message);
+  }
+}
+
+function handleGetFile(data, c) {
+  const bridge = deps && deps.getBridge ? deps.getBridge() : null;
+  if (!bridge) {
+    try { c.send({ id: data.id, result: { error: "no bridge" } }); } catch (_) {}
+    return;
+  }
+  const filePath = data.params && data.params.filePath;
+  if (!filePath) {
+    try { c.send({ id: data.id, result: { error: "missing filePath" } }); } catch (_) {}
+    return;
+  }
+  const encoding = data.params && data.params.encoding;
+  const params = { filePath };
+  if (encoding) params.encoding = encoding;
+  bridge.callHandler('method_getFile', params, function (response) {
+    if (response && response.result === 'ok') {
+      try {
+        c.send({ id: data.id, result: { content: response.content, fileName: filePath, encoding: response.encoding } });
+      } catch (_) {}
+    } else {
+      try {
+        c.send({ id: data.id, result: { error: (response && response.message) || "read failed" } });
+      } catch (_) {}
+    }
+  });
+}
+
+function handleSaveContent(data, c) {
+  const content = data.params.content;
+  const fileName = data.params.fileName || (deps.getFileName ? deps.getFileName() : "main.jsx");
+  const encoding = data.params.encoding || 'utf8';
+  if (!deps) {
+    log("save_content: no deps");
+    return;
+  }
+  if (encoding === 'utf8' && fileName === (deps.getFileName ? deps.getFileName() : "main.jsx")) {
+    deps.setContent(content);
+  }
+  if (deps.saveFile) {
+    deps.saveFile(fileName, content, encoding);
+  }
+  try {
+    c.send({ id: data.id, result: { success: true } });
+  } catch (_) {}
+}
+
+function handleListFiles(data, c) {
+  const bridge = deps && deps.getBridge ? deps.getBridge() : null;
+  if (!bridge) {
+    try { c.send({ id: data.id, result: { error: "no bridge" } }); } catch (_) {}
+    return;
+  }
+  bridge.callHandler('method_listFiles', {}, function (response) {
+    if (response && response.result === 'ok' && Array.isArray(response.files)) {
+      try {
+        c.send({ id: data.id, result: { files: response.files } });
+      } catch (_) {}
+    } else {
+      try {
+        c.send({ id: data.id, result: { error: "list failed" } });
+      } catch (_) {}
+    }
+  });
+}
+
+function handleRemoveFile(data, c) {
+  const bridge = deps && deps.getBridge ? deps.getBridge() : null;
+  if (!bridge) {
+    try { c.send({ id: data.id, result: { error: "no bridge" } }); } catch (_) {}
+    return;
+  }
+  const filePath = data.params && data.params.filePath;
+  if (!filePath) {
+    try { c.send({ id: data.id, result: { error: "missing filePath" } }); } catch (_) {}
+    return;
+  }
+  bridge.callHandler('method_removeFile', { filePath }, function (response) {
+    if (response && response.result === 'ok') {
+      try { c.send({ id: data.id, result: { success: true } }); } catch (_) {}
+    } else {
+      try { c.send({ id: data.id, result: { error: (response && response.message) || "delete failed" } }); } catch (_) {}
+    }
+  });
+}
+
 function attachConn(c) {
   conn = c;
   c.on("data", (data) => {
     log("received data: " + JSON.stringify(data).slice(0, 200));
     if (!data || typeof data !== "object") return;
     if (data.method === "save_content" && data.params && typeof data.params.content === "string") {
-      const content = data.params.content;
-      const bridge = getBridge();
-      if (!bridge || !deps) {
-        log("save_content: no bridge or deps");
-        return;
-      }
-      deps.setContent(content);
-      bridge.callHandler("event_editorSave", { value: content }, (response) => {
-        const ok = response && response.result === "ok";
-        log("save_content result: " + JSON.stringify(response));
-        try {
-          c.send({ id: data.id, result: { success: !!ok } });
-        } catch (_) {}
-      });
+      handleSaveContent(data, c);
+    }
+    if (data.method === "get_file" && data.params) {
+      handleGetFile(data, c);
+    }
+    if (data.method === "list_files") {
+      handleListFiles(data, c);
+    }
+    if (data.method === "remove_file" && data.params) {
+      handleRemoveFile(data, c);
     }
   });
   c.on("close", () => {
@@ -111,9 +212,10 @@ export function startPeerHost(onPeerId) {
     log("incoming connection from remote");
     attachConn(c);
     c.on("open", () => {
-      log("connection open, pushing script");
+      log("connection open, pushing script and file list");
       notifyState('connected');
       pushCurrentScript();
+      pushFileList();
     });
   });
   peer.on("error", (err) => {
@@ -132,9 +234,10 @@ export function connectPeerTo(remotePeerId, onOpen, onError) {
     const c = peer.connect(remotePeerId, { reliable: true });
     attachConn(c);
     c.on("open", () => {
-      log("connected to remote peer, pushing script");
+      log("connected to remote peer, pushing script and file list");
       notifyState('connected');
       pushCurrentScript();
+      pushFileList();
       if (onOpen) onOpen();
     });
     c.on("error", (err) => {

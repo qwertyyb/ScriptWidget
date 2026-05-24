@@ -10,18 +10,11 @@ import WebKit
 import Combine
 
 
-class MirrorEditorService {
-    static let saveNotification = Notification.Name("MirrorEditorSaveNotification")
-}
-
-
 struct MirrorEditorInternalActionProvider {
-    typealias READER = () -> String
     typealias ISREADONLY = () -> Bool
-    typealias WRITER = (String) -> Bool
-    
-    var onRead: READER?
-    var onWrite: WRITER?
+
+    var package: ScriptWidgetPackage?
+    var filePath: URL?
     var onIsReadOnly: ISREADONLY?
 }
 
@@ -32,11 +25,8 @@ class MirrorEditorInternalView: WKWebView {
     var bridge: WKWebViewJavascriptBridge?
     var isEditorReady = false
     var pendingActions: [() -> Void] = []
-    var cancellables = [Cancellable]()
     var isTearingDown = false
-    
-    var saveTimer: Timer? = nil
-    var lastSaveContent = ""
+    var filesDidChangeCancellable: AnyCancellable?
     
     var action: MirrorEditorInternalActionProvider?
     /// When false, hides the in-editor remote (PeerJS) editing controls — used for bundle templates.
@@ -77,7 +67,7 @@ class MirrorEditorInternalView: WKWebView {
         }
         
         // event_printLog
-        self.bridge?.register(handlerName: "event_printLog", handler: { [weak self] (parameters, callback) in
+        self.bridge?.register(handlerName: "event_printLog", handler: { (parameters, callback) in
             guard let value = parameters?["value"] as? String else {
                 print("editor print log : param invalid")
                 callback?(["result": "failed"])
@@ -88,29 +78,133 @@ class MirrorEditorInternalView: WKWebView {
             callback?(["result": "ok"])
         })
         
-        // event_editorSave
-        self.bridge?.register(handlerName: "event_editorSave", handler: { [weak self] (parameters, callback) in
-            
-            guard let value = parameters?["value"] as? String else {
-                print("save failed : param invalid")
-                callback?(["result": "failed"])
+        // method_saveFile: JS -> Swift, save file content (text or binary via encoding param)
+        self.bridge?.register(handlerName: "method_saveFile", handler: { [weak self] (parameters, callback) in
+            guard let self = self else {
+                callback?(["result": "failed", "message": "view deallocated"])
                 return
             }
-            
-            // save
-            if let onWrite = self?.action?.onWrite {
-                let writeSucceed = onWrite(value)
-                if !writeSucceed {
-                    print("save failed : write file ")
-                    callback?(["result": "failed"])
+            guard let package = self.action?.package else {
+                callback?(["result": "failed", "message": "no package"])
+                return
+            }
+            guard let filePath = parameters?["filePath"] as? String,
+                  let content = parameters?["content"] as? String else {
+                callback?(["result": "failed", "message": "missing filePath or content"])
+                return
+            }
+
+            let encoding = (parameters?["encoding"] as? String) ?? "utf8"
+
+            if encoding == "base64" {
+                guard let data = Data(base64Encoded: content, options: .ignoreUnknownCharacters) else {
+                    callback?(["result": "failed", "message": "invalid base64"])
                     return
                 }
-                self?.lastSaveContent = value
+                guard let fileURL = package.resolvePackageURL(relativePath: filePath) else {
+                    callback?(["result": "failed", "message": "invalid file path"])
+                    return
+                }
+                do {
+                    let parent = fileURL.deletingLastPathComponent()
+                    if !FileManager.default.fileExists(atPath: parent.path) {
+                        try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true, attributes: [
+                            FileAttributeKey.protectionKey: FileProtectionType.none
+                        ])
+                    }
+                    try data.write(to: fileURL)
+                    try FileManager.default.setAttributes([FileAttributeKey.protectionKey: FileProtectionType.none], ofItemAtPath: fileURL.path)
+                } catch {
+                    callback?(["result": "failed", "message": "write error: \(error)"])
+                    return
+                }
+                package.postFilesDidChangeNotification()
+                ScriptWidgetTimelineRefresher.requestReload()
+            } else {
+                let (ok, errorMsg) = package.writeFile(relativePath: filePath, content: content)
+                if !ok {
+                    callback?(["result": "failed", "message": errorMsg])
+                    return
+                }
             }
 
             callback?(["result": "ok"])
         })
-        
+
+        // method_listFiles: JS -> Swift, list all files in the package as a tree
+        self.bridge?.register(handlerName: "method_listFiles", handler: { [weak self] (parameters, callback) in
+            guard let package = self?.action?.package else {
+                callback?(["result": "failed", "message": "no package"])
+                return
+            }
+            let tree = package.listFileTree()
+            callback?(["result": "ok", "files": tree])
+        })
+
+        // method_getFile: JS -> Swift, read file content
+        self.bridge?.register(handlerName: "method_getFile", handler: { [weak self] (parameters, callback) in
+            guard let package = self?.action?.package else {
+                callback?(["result": "failed", "message": "no package"])
+                return
+            }
+            guard let filePath = parameters?["filePath"] as? String else {
+                callback?(["result": "failed", "message": "missing filePath"])
+                return
+            }
+            let encoding = (parameters?["encoding"] as? String) ?? "utf8"
+
+            guard let fileURL = package.resolvePackageURL(relativePath: filePath) else {
+                callback?(["result": "failed", "message": "invalid file path"])
+                return
+            }
+
+            var isDir: ObjCBool = false
+            if !FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDir) || isDir.boolValue {
+                callback?(["result": "failed", "message": "file not found"])
+                return
+            }
+
+            if encoding == "base64" {
+                if let data = try? Data(contentsOf: fileURL) {
+                    callback?(["result": "ok", "content": data.base64EncodedString(), "encoding": "base64"])
+                } else {
+                    callback?(["result": "failed", "message": "read error"])
+                }
+            } else {
+                let (content, errorInfo) = package.readFile(relativePath: filePath)
+                if let content = content {
+                    callback?(["result": "ok", "content": content, "encoding": "utf8"])
+                } else {
+                    callback?(["result": "failed", "message": errorInfo])
+                }
+            }
+        })
+
+        // method_removeFile: JS -> Swift, delete a file from the package
+        self.bridge?.register(handlerName: "method_removeFile", handler: { [weak self] (parameters, callback) in
+            guard let package = self?.action?.package else {
+                callback?(["result": "failed", "message": "no package"])
+                return
+            }
+            guard let filePath = parameters?["filePath"] as? String, !filePath.isEmpty else {
+                callback?(["result": "failed", "message": "missing filePath"])
+                return
+            }
+            guard let fileURL = package.resolvePackageURL(relativePath: filePath) else {
+                callback?(["result": "failed", "message": "invalid file path"])
+                return
+            }
+            do {
+                try FileManager.default.removeItem(at: fileURL)
+            } catch {
+                callback?(["result": "failed", "message": "delete error: \(error)"])
+                return
+            }
+            package.postFilesDidChangeNotification()
+            ScriptWidgetTimelineRefresher.requestReload()
+            callback?(["result": "ok"])
+        })
+
         // Load CodeMirror bundle
         guard let bundlePath = Bundle.main.url(forResource: "MirrorEditor", withExtension: "bundle") else {
             fatalError("MirrorEditor.bundle is missing")
@@ -129,27 +223,35 @@ class MirrorEditorInternalView: WKWebView {
             html = html.replacingOccurrences(of: "theme:light", with: "theme:dark")
         }
         self.loadHTMLString(html, baseURL: baseUrl)
-        
-        startAutoSave()
-        
-        let saveNoti = NotificationCenter.default.publisher(for: MirrorEditorService.saveNotification, object: nil).sink { [weak self] noti in
-            self?.saveCurrentContent()
-        }
-        self.cancellables.append(saveNoti)
     }
     
+    func subscribeToFileChanges() {
+        filesDidChangeCancellable?.cancel()
+        guard let package = action?.package else { return }
+        let packagePath = package.path.standardizedFileURL.path
+        filesDidChangeCancellable = NotificationCenter.default.publisher(for: ScriptWidgetPackage.filesDidChangeNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                guard let self = self, !self.isTearingDown else { return }
+                guard let changedPath = notification.userInfo?[ScriptWidgetPackage.filesDidChangePackagePathKey] as? String,
+                      changedPath == packagePath else { return }
+                self.pushFileListToJS()
+            }
+    }
+
+    func pushFileListToJS() {
+        guard !isTearingDown, let package = action?.package else { return }
+        package.updateFiles()
+        let tree = package.listFileTree()
+        self.bridge?.call(handlerName: "editor_updateFiles", data: ["files": tree], callback: nil)
+    }
+
     deinit {
         print("de-init editor")
         isTearingDown = true
         pendingActions.removeAll()
-        self.saveTimer?.invalidate()
-        self.saveTimer = nil
+        filesDidChangeCancellable?.cancel()
         self.stopLoading()
-        
-        for cancellable in self.cancellables {
-            cancellable.cancel()
-        }
-        self.cancellables.removeAll()
         self.bridge = nil
     }
     
@@ -157,55 +259,8 @@ class MirrorEditorInternalView: WKWebView {
         return accessoryView
     }
     
-    func startAutoSave() {
-        self.saveTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true, block: { [weak self] timer in
-            self?.saveCurrentContent()
-        })
-    }
-    
-    func saveCurrentContent() {
-        guard !isTearingDown else {
-            return
-        }
-        editor_getValue { [weak self] (succeed, value) in
-            guard let self = self else { return }
-            guard !self.isTearingDown else { return }
-            if !succeed {
-                return
-            }
-            
-            
-            if self.lastSaveContent == value {
-//                print("content same, already saved")
-                return
-            }
-            
-            if let onWrite = self.action?.onWrite {
-                let saveSucceed = onWrite(value)
-                if !saveSucceed {
-                    return
-                }
-                self.lastSaveContent = value
-            }
-            
-            print("save succeed")
-        }
-    }
-    
-    func editor_setValue(value: String) {
-        guard !isTearingDown else { return }
-        // tell editor
-        let message = [
-            "value": value
-        ]
-        self.bridge?.call(handlerName: "editor_setValue", data: message, callback: { responseData in
-            print("editor_setValue response : \(String(describing: responseData))")
-        })
-    }
-    
     func editor_insertValue(value: String) {
         guard !isTearingDown else { return }
-        // tell editor
         let message = [
             "value": value
         ]
@@ -213,9 +268,9 @@ class MirrorEditorInternalView: WKWebView {
             print("editor_insertValue response : \(String(describing: responseData))")
         })
     }
+
     func editor_formatCode() {
         guard !isTearingDown else { return }
-        // tell editor
         let message = [
             "value": "format"
         ]
@@ -223,10 +278,10 @@ class MirrorEditorInternalView: WKWebView {
             print("editor_formatCode response : \(String(describing: responseData))")
         })
     }
+
     func editor_setReadonly(readonly: Bool) {
         guard !isTearingDown else { return }
-        // tell editor
-        let message = [
+        let message: [String: Any] = [
             "readonly": readonly
         ]
         self.bridge?.call(handlerName: "editor_setReadonly", data: message, callback: { responseData in
@@ -236,7 +291,7 @@ class MirrorEditorInternalView: WKWebView {
     
     func editor_setPeerEnabled(enabled: Bool) {
         guard !isTearingDown else { return }
-        let message = ["enabled": enabled]
+        let message: [String: Any] = ["enabled": enabled]
         self.bridge?.call(handlerName: "editor_setPeerEnabled", data: message, callback: { responseData in
             print("editor_setPeerEnabled response : \(String(describing: responseData))")
         })
@@ -246,34 +301,13 @@ class MirrorEditorInternalView: WKWebView {
         editor_setPeerEnabled(enabled: enablePeerEditing)
     }
     
-    func editor_getValue(callback: @escaping (Bool, String)-> Void){
-        guard !isTearingDown else {
-            callback(false, "")
-            return
-        }
-        self.bridge?.call(handlerName: "editor_getValue", data: [], callback: { responseData in
-            guard let data = responseData as? [String: Any] else {
-                callback(false, "")
-                return
-            }
-            
-            guard let value = data["value"] as? String else {
-                callback(false, "")
-                return
-            }
-            
-            callback(true, value)
-        })
-    }
-    
-    
     func updateScript() {
         self.runJSAction { [weak self] in
-            print("update script : \(String(describing: self))")
-            self?.reloadCurrentScript()
+            guard let self = self else { return }
+            print("update script")
+            self.applyEditorConfig()
         }
     }
-    
     
     func runJSAction(_ action:@escaping () -> Void) {
         guard !isTearingDown else { return }
@@ -302,20 +336,27 @@ class MirrorEditorInternalView: WKWebView {
         }
     }
     
-    func reloadCurrentScript() {
-        if let onRead = action?.onRead {
-            let content = onRead()
-            
-            self.editor_setValue(value: content)
-            if let onIsReadOnly = action?.onIsReadOnly {
-                self.editor_setReadonly(readonly: onIsReadOnly())
-            }else {
-                self.editor_setReadonly(readonly: false)
-            }
-            self.applyPeerEditingConfig()
-            
-            lastSaveContent = content
+    func editor_loadFile(fileName: String) {
+        guard !isTearingDown else { return }
+        let message: [String: Any] = ["fileName": fileName]
+        self.bridge?.call(handlerName: "editor_loadFile", data: message, callback: { responseData in
+            print("editor_loadFile response : \(String(describing: responseData))")
+        })
+    }
+
+    func applyEditorConfig() {
+        subscribeToFileChanges()
+        if let filePath = action?.filePath, let package = action?.package {
+            let relativePath = filePath.standardizedFileURL.path
+                .replacingOccurrences(of: package.path.standardizedFileURL.path + "/", with: "")
+            self.editor_loadFile(fileName: relativePath)
         }
+        if let onIsReadOnly = action?.onIsReadOnly {
+            self.editor_setReadonly(readonly: onIsReadOnly())
+        } else {
+            self.editor_setReadonly(readonly: false)
+        }
+        self.applyPeerEditingConfig()
     }
     
 }

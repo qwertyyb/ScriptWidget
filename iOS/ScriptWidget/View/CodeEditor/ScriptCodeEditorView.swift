@@ -30,11 +30,9 @@ struct ScriptCodeEditorNavButtonView: View {
 class ScriptCodeEditorViewDataObject : ObservableObject {
     
     @Published var scriptModel: ScriptModel
-    @Published var filePath: URL
     
     init(scriptModel: ScriptModel) {
         self.scriptModel = scriptModel
-        self.filePath = scriptModel.package.jsxPath
         
         NotificationCenter.default.addObserver(forName: ScriptWidgetHomeViewDataObject.scriptRenameNotification, object: nil, queue: OperationQueue.main) { (noti) in
             
@@ -75,15 +73,9 @@ struct ScriptCodeEditorView: View {
     }
     
     var codeeditor: some View {
-        ScriptPackageEditorView(model: dataObject.scriptModel, filePath: $dataObject.filePath)
-            .onAppear {
-                dataObject.filePath = dataObject.scriptModel.package.jsxPath
-            }
+        ScriptPackageEditorView(model: dataObject.scriptModel, filePath: dataObject.scriptModel.package.jsxPath)
             .onDisappear {
-                NotificationCenter.default.post(name: MirrorEditorService.saveNotification, object: nil)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                    ScriptWidgetTimelineRefresher.requestReload(immediate: true)
-                }
+                ScriptWidgetTimelineRefresher.requestReload(immediate: true)
             }
     }
     
@@ -140,7 +132,7 @@ struct ScriptCodeEditorView: View {
             }
             
             ScriptCodeEditorNavButtonView(image: "play") {
-                self.showRunnerView.toggle()
+                self.showRunnerView = true
             }
             .sheet(isPresented: $showRunnerView, content: {
                 previewView
