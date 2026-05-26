@@ -59,6 +59,7 @@ struct ScriptCodeEditorView: View {
     
     @State private var showingAlert = false
     @State private var alertMessage = ""
+    @State private var keyboardHeight: CGFloat = 0
     
     init(mode: ScriptCodeEditorViewMode, scriptModel: ScriptModel) {
         self.mode = mode
@@ -85,71 +86,105 @@ struct ScriptCodeEditorView: View {
     }
     
     var body: some View {
-        VStack {
+        ZStack(alignment: .bottom) {
             codeeditor
-                .navigationBarTitle(self.dataObject.scriptModel.name, displayMode: .inline)
-                .toolbar {
-                    if self.mode != .creator {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            leadingButtons
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        trailingButtons
-                    }
-                }
+            floatingToolbar
         }
         .ignoresSafeArea(.all, edges: .bottom)
+        .navigationBarTitle(self.dataObject.scriptModel.name, displayMode: .inline)
+        .toolbar {
+            if self.mode == .creator {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        DispatchQueue.main.async {
+                            if let action = self.actionCreate {
+                                action()
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "plus.square")
+                            .font(.title3)
+                    }
+                }
+            }
+        }
         .alert(isPresented: $showingAlert) {
             Alert(title: Text("Notification"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
+            if let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                let screenHeight = UIScreen.main.bounds.height
+                let kbTop = screenHeight - frame.origin.y
+                withAnimation(.easeOut(duration: 0.25)) {
+                    keyboardHeight = kbTop
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            withAnimation(.easeOut(duration: 0.25)) {
+                keyboardHeight = 0
+            }
+        }
     }
 
-    var leadingButtons: some View {
-        ScriptCodeEditorNavButtonView(image: "book") {
-            self.showResourceCodeView.toggle()
-        }
-        .sheet(isPresented: $showResourceCodeView, content: {
-            ResourceCodeView(model: dataObject.scriptModel)
-        })
-    }
-    
     var previewView: some View {
         ScriptCodePreviewView(model: dataObject.scriptModel)
     }
-    
-    var trailingButtons: some View {
+
+    var floatingToolbar: some View {
         HStack {
-            if self.mode != .creator {
-                if #available(iOS 16.1, *) {
-                    ScriptCodeEditorNavButtonView(image: "lock") {
-                        let buildResult = sharedScriptManager.buildScriptPackage(package: self.dataObject.scriptModel.package)
-                        print("build result = \(buildResult)")
-                        sharedLiveActivityManager.create(scriptName: self.dataObject.scriptModel.name, scriptParameter: "")
-                        showAlert("Lock screen live activity created :)")
-                    }
-                }
+            Button {
+                self.showResourceCodeView.toggle()
+            } label: {
+                Image(systemName: "book")
+                    .font(.system(size: 16, weight: .medium))
             }
-            
-            ScriptCodeEditorNavButtonView(image: "play") {
-                self.showRunnerView = true
+            .sheet(isPresented: $showResourceCodeView) {
+                ResourceCodeView(model: dataObject.scriptModel)
             }
-            .sheet(isPresented: $showRunnerView, content: {
-                previewView
-            })
-            
-            if self.mode == .creator {
-                ScriptCodeEditorNavButtonView(image: "plus.square") {
-                    print("create tapped")
-                    
-                    DispatchQueue.main.async {
-                        if let action = self.actionCreate {
-                            action()
+
+            Spacer()
+
+            HStack(spacing: 20) {
+                if self.mode != .creator {
+                    if #available(iOS 16.1, *) {
+                        Button {
+                            let buildResult = sharedScriptManager.buildScriptPackage(package: self.dataObject.scriptModel.package)
+                            print("build result = \(buildResult)")
+                            sharedLiveActivityManager.create(scriptName: self.dataObject.scriptModel.name, scriptParameter: "")
+                            showAlert("Lock screen live activity created :)")
+                        } label: {
+                            Image(systemName: "lock")
+                                .font(.system(size: 16, weight: .medium))
                         }
                     }
                 }
+
+                Button {
+                    self.showRunnerView = true
+                } label: {
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 16, weight: .medium))
+                }
+                .sheet(isPresented: $showRunnerView, content: {
+                    previewView
+                })
             }
         }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(.thickMaterial)
+        .clipShape(Capsule())
+        .overlay(Capsule().stroke(Color.primary.opacity(0.1), lineWidth: 0.5))
+        .shadow(color: .black.opacity(0.2), radius: 10, y: 4)
+        .padding(.horizontal, 16)
+        .padding(.bottom, {
+            let insetBottom = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first?.windows.first?.safeAreaInsets.bottom ?? 0
+            return keyboardHeight > 0 ? keyboardHeight + 12 : insetBottom + 12
+        }())
     }
 }
 

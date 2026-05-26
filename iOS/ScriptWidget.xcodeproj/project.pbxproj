@@ -2162,8 +2162,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/xnuapp/ClockHandRotationKit";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 		F228DDB427A37776009E8F04 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {

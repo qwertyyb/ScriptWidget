@@ -159,12 +159,12 @@ body {
 
 .cm-editor {
   background-color: transparent;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 16px);
 }
 
 .fab-remote {
   position: fixed;
-  bottom: 60px;
+  bottom: 100px;
   right: 12px;
   width: 36px;
   height: 36px;
@@ -190,6 +190,7 @@ body {
   justify-content: center;
   overflow: auto;
   padding: 16px;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 16px);
 }
 
 .binary-preview img {
