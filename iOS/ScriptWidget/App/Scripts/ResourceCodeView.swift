@@ -13,6 +13,7 @@ struct ResourceCodeView: View {
     
     @State var showingToast = false
     @State var toastMessage = ""
+    @State var showShareActivity = false
 
     let model: ScriptModel
     
@@ -40,6 +41,13 @@ struct ResourceCodeView: View {
                         Label("Files", systemImage: "doc.plaintext")
                     }
                 }
+                Section(header: Text("Share")) {
+                    Button {
+                        showShareActivity = true
+                    } label: {
+                        Label("Export Script (.jwt)", systemImage: "square.and.arrow.up")
+                    }
+                }
                 
             }
             .navigationBarTitle(Text("Resources"), displayMode: .inline)
@@ -51,6 +59,9 @@ struct ResourceCodeView: View {
                         .padding()
                 })
             )
+            .sheet(isPresented: $showShareActivity) {
+                ActivityViewController(activityItems: sharedScriptManager.exportScriptItemsInTempPath(model: model))
+            }
         }
     }
 }

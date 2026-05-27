@@ -51,7 +51,7 @@ class ShareViewController: UIViewController {
         let fileExt = fileURL.pathExtension.lowercased()
         switch fileExt {
         case "jsx": importJSXFile(fileURL: fileURL)
-        case "swt": importSWTFile(fileURL: fileURL)
+        case "jwt", "swt": importSWTFile(fileURL: fileURL)
         default: print("un support file format")
         }
     }

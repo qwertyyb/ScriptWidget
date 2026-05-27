@@ -24,7 +24,7 @@ struct ScriptModel : Identifiable {
     
     var exportFileName: String {
         get {
-            "\(self.package.name).swt"
+            "\(self.package.name).jwt"
         }
     }
 }
