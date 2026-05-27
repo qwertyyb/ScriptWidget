@@ -35,26 +35,19 @@ struct CreateGuideView: View {
     @ObservedObject var dataObject = CreateGuideDataObject()
     
     @Environment(\.presentationMode) var presentationMode
-        
+
+    @State private var showNameAlert = false
+    @State private var scriptName = ""
+    @State private var pendingTemplate: ScriptModel?
+
     var body: some View {
         NavigationStack {
             List {
                 ForEach(dataObject.models) { item in
-                    NavigationLink(destination: ScriptCodeEditorView(mode: .creator,scriptModel:item, actionCreate: {
-                        // create
-                        guard let content = item.package.readMainFile().0 else { return }
-                        
-                        // image copy path
-                        let imageCopyPath = item.package.imagePath
-                        
-                        _ = sharedScriptManager.createScript(content: content, recommendPackageName: item.name, imageCopyPath: imageCopyPath)
-                        
-                        NotificationCenter.default.post(name: ScriptWidgetHomeViewDataObject.scriptCreateNotification, object: nil)
-                        
-                        // dismiss
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
-                            self.presentationMode.wrappedValue.dismiss()
-                        })
+                    NavigationLink(destination: ScriptCodeEditorView(mode: .creator, scriptModel: item, actionCreate: {
+                        pendingTemplate = item
+                        scriptName = item.name
+                        showNameAlert = true
                     })) {
                         WidgetRowView(model: item)
                     }
@@ -72,6 +65,29 @@ struct CreateGuideView: View {
                     }
                 }
             }
+        }
+        .alert("Script Name", isPresented: $showNameAlert) {
+            TextField("Enter script name", text: $scriptName)
+            Button("Cancel", role: .cancel) {
+                pendingTemplate = nil
+            }
+            Button("Create") {
+                guard let item = pendingTemplate else { return }
+                guard !scriptName.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+                guard let content = item.package.readMainFile().0 else { return }
+
+                let imageCopyPath = item.package.imagePath
+                _ = sharedScriptManager.createScript(content: content, recommendPackageName: scriptName, imageCopyPath: imageCopyPath)
+
+                NotificationCenter.default.post(name: ScriptWidgetHomeViewDataObject.scriptCreateNotification, object: nil)
+
+                pendingTemplate = nil
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.presentationMode.wrappedValue.dismiss()
+                }
+            }
+        } message: {
+            Text("Enter a name for your new script")
         }
     }
 }
