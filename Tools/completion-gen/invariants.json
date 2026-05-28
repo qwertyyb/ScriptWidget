@@ -1,0 +1,22 @@
+[
+  {
+    "id": "render-or-island",
+    "rule": "Exactly one of $render or $dynamic_island must be called per script; never both, never neither."
+  },
+  {
+    "id": "sync-components",
+    "rule": "Function components must be synchronous. Fetch async data at top level, pass via props."
+  },
+  {
+    "id": "lowercase-jsx",
+    "rule": "JSX tag names are always lowercase intrinsic elements; no UpperCamelCase HTML-style tags."
+  },
+  {
+    "id": "no-html-tags",
+    "rule": "Do not use HTML/React DOM tag names (div, span, p, h1, …). Use documented JSWidget tags only."
+  },
+  {
+    "id": "top-level-await",
+    "rule": "Top-level await is supported for data fetching. Do not wrap entry code in an async IIFE."
+  }
+]

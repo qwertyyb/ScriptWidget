@@ -26,6 +26,8 @@ When generating a script, output:
 
 1. **Brief implementation notes** (2-3 sentences).
 2. **Complete `main.jsx`** ready to paste into JSWidget.
+3. **Self-check log**: list any tag/prop you considered and rejected because
+   it failed a schema check (kept brief, helps debugging).
 
 ## Quick Reference
 
@@ -92,14 +94,23 @@ When generating a script, output:
 | `$import`      | Import .js/.jsx files   |
 | `console`      | Logging                 |
 
-## Detailed References
+## Schema (machine-readable, authoritative)
 
-For full component props and API signatures, read these files:
+Before writing any JSX, load `references/schema.json`. It is the single
+source of truth for:
 
-- [Components reference](references/components/index.md) — all JSX elements and attributes
-- [API reference](references/api/index.md) — all runtime APIs with signatures and examples
+- `tags[*]`: every allowed JSX tag and its allowed props (already
+  denormalized — `Omit` is applied, common attrs are merged in).
+- `tags[*].omit`: props you MUST NOT use on that tag (e.g. `row.omit = ["align"]`).
+- `props[*].enum`: closed set of legal string values (e.g.
+  `text.props.textAlign.enum = ["start","center","end","left","right"]`).
+- `globals[*]`: every $-prefixed API with argument names, types and
+  return types. Do not call any global not listed here.
+- `invariants[*]`: cross-cutting rules dts cannot express.
 
-Read them **before** generating any non-trivial script.
+Read `references/components/index.md` / `references/api/index.md` only
+for prose explanations and code examples — schema.json takes precedence
+on any disagreement.
 
 ## Example: Data-Fetching Widget
 
@@ -146,8 +157,18 @@ $render(
 
 ## Checklist Before Output
 
-- [ ] Only used documented tags and APIs
-- [ ] `$render` or `$dynamic_island` called exactly once
-- [ ] Async data fetched at top level, not inside function components
-- [ ] Responsive layout via `$getenv("widget-size")` if relevant
-- [ ] Error handling with try/catch + `$storage` cache fallback for network calls
+For every JSX tag in your output:
+- [ ] Tag name appears in `schema.tags`.
+- [ ] Every prop used appears in that tag's `props`.
+- [ ] No prop appears in that tag's `omit` list.
+- [ ] Every prop typed with `enum` uses one of the allowed enum strings.
+
+For every $-API call in your output:
+- [ ] Identifier appears in `schema.globals`.
+- [ ] If `kind: "object"`, the method appears under `methods`.
+- [ ] Argument count and types match one of the listed signatures/overloads.
+
+Global:
+- [ ] All entries in `schema.invariants` hold.
+- [ ] Responsive layout via `$getenv("widget-size")` if relevant.
+- [ ] Error handling with try/catch + `$storage` cache fallback for network calls.

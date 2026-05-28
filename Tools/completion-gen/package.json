@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "generate": "node generate.mjs"
+    "generate": "node generate.mjs",
+    "test": "node test.mjs"
   },
   "dependencies": {
     "ts-morph": "^24.0.0"
