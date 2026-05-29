@@ -13,6 +13,7 @@ const ICE_SERVERS = [
   { urls: "stun:stun.l.google.com:19302" },
   { urls: "stun:stun1.l.google.com:19302" },
   { urls: "turn:81.71.162.5:3478", username: "coturn", credential: "coturn" },
+  { urls: "turn:81.71.162.5:3478?transport=tcp", username: "coturn", credential: "coturn" },
 ];
 
 const PEER_OPTIONS = {
